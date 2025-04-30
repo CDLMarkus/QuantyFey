@@ -1,0 +1,487 @@
+---
+title: "QuantyFey - Report"
+author: "Default User"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document:
+    df_print: paged
+header-includes:
+  - \usepackage{multicol}
+  - \setlength{\columnsep}{1cm} % Adjust column spacing
+  - \usepackage{caption}
+  - \usepackage{booktabs}
+  - \usepackage{tabu}
+  - \usepackage{longtable} % Required for full-width tables
+  - \usepackage{array} % For column alignment customization
+  - \setlength{\tabcolsep}{4pt} % Adjust column padding
+  - \renewcommand{\arraystretch}{1.2} % Adjust row height
+  - \usepackage{pifont}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::opts_chunk$set(echo = FALSE)
+options(knitr.table.format = "latex")
+
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+knitr::opts_chunk$set(echo = TRUE)
+hook_output <- knitr::knit_hooks$get("output")
+
+
+theme_set(theme_bw(base_family = "serif"))
+
+
+```
+
+## Quantitation Summary for `r input_list$Compound`
+
+This report shows a summary of the quantification of `r input_list$Compound`. This includes all plots from the overviewiew tap. A summary of the method used for quantification and their individual plots, as well as a summary of all used calibration functions and the used settings.
+
+```{r, echo = F}
+
+plots <- for_markdown$plots
+
+cals_table <- for_markdown$cals_table
+
+regression_model <- for_markdown$regression_model
+
+table_n = 1
+fig_n = 1
+
+
+```
+
+# Overview of the data
+## Retention Time Analysis
+
+The following plot shows the retention time (RT) of the compound for the different sample types. 
+
+```{r, echo = F, fig.height = 3, results = "asis"}
+suppressWarnings({
+  
+  caption_text <- paste0("Figure ", fig_n, ": ", "overviewiew of Retention Time per Sample Type")
+  
+  fig_n <- fig_n + 1
+  
+  p <- plots$RT
+  p <- p + labs(x = "Retention Time", y = "Sample Type")+theme(legend.position = "none")
+  
+  plot(p)
+
+  cat(caption_text)
+  cat("\\newline \n")
+})
+
+```
+
+\newpage
+
+## Qualifier and Quantifier Analysis
+The following plot shows the ratio of the Quantifier and Qualifier transitions (Q/Q).
+
+```{r, echo = F, fig.height = 3, results = "asis"}
+suppressWarnings({
+  
+   caption_text <- paste0("Figure ", fig_n, ": ", "overviewiew of Q/Q-Ratio per Sample Type")
+  
+  fig_n <- fig_n + 1
+  
+  rv_list$p_quan_qual$mapping[["text"]] <- NULL
+  
+  p <- rv_list$p_quan_qual + labs(y = "relative Q/Q Ratio", x = "Sample Type")+ theme(legend.position = "none")
+  p <- p 
+  
+  })
+
+  plot(p)
+  
+  cat(caption_text)
+  cat("\\newline \n")
+  
+  
+```
+
+## Blank Analysis
+The following plot shows the blank to sample ratio. 
+
+
+```{r, echo = F, fig.height = 3, results = "asis"}
+suppressWarnings({try({
+  
+  
+   caption_text <- paste0("Figure ", fig_n, ": ", "Overview of Sample to Blank")
+  
+  fig_n <- fig_n + 1
+  
+  p <- plots$blank 
+  p <- p + labs(y = "Blank Ratio", x = "Sample Type")+theme(legend.position = "none") 
+  
+})
+
+  plot(p)
+ 
+  cat(caption_text)
+  cat("\\newline \n")
+
+})
+```
+\newpage
+
+## Method for Quantification
+
+For this compound the method `r input_list$quantitation_method` was used. 
+
+
+```{r, echo = F, warning = F, results = "asis", error = F}
+
+
+
+
+suppressWarnings({
+  
+
+  
+if(input_list$quantitation_method == "Bracketing"){
+  checkbox_data <- rv_list$selection_table_bracketing
+  
+  latex_table <- function(data) {
+  # Create LaTeX table header
+  header <- paste0(
+    "\\begin{tabular}{|c|", paste(rep("c", ncol(data) - 1), collapse = "|"), "|}\n",
+    "  \\hline\n  ", 
+    paste(colnames(data), collapse = " & "), " \\\\\n  \\hline"
+  )
+  
+  # Create rows
+  rows <- apply(data, 1, function(row) {
+    item <- row[1] # First column is the row label (e.g., "Item")
+    options <- sapply(row[-1], function(x) {
+      if (x == TRUE) {
+        "$\\boxtimes$"  # Checked box
+      } else {
+        "$\\Box$"       # Unchecked box
+      }
+    })
+    paste0(item, " & ", paste(options, collapse = " & "), " \\\\")
+  })
+  
+  # Combine everything into a LaTeX table
+  table <- paste0(
+    header, "\n",
+    paste(rows, collapse = "\n"), "\n",
+    "  \\hline\n\\end{tabular}"
+  )
+  return(table)
+}
+
+  cat("The following table shows the Calibration Functions used for the specific Blocks within the Measured Sequence.")
+  cat(paste0("\\newline \n\n Table ", table_n, ": Bracketing Table used for the analysis."))
+  
+  table_n <- table_n + 1
+  
+# Print LaTeX table
+cat(latex_table(checkbox_data))
+  
+}else if(input_list$quantitation_method == "IS Correction"){
+  cat("The red dots mark the Peak Areas of the Internal Standard compounds and the Bars represent the Peak Areas of the Compound over the whole Measurement Sequence. The lower plot represents the ratios from the respective Sample after each Peak Area from the Compound was divided by the Peak Area from the selected Internal Standard.\\newline \n\n")
+  
+  # Combine plots using patchwork
+
+tryCatch({
+  combined_plot <- (rv_list$IS_plot[[1]] + 
+      theme(legend.position = "none")) / 
+      (rv_list$IS_plot[[2]] + 
+      theme(legend.position = "bottom"))  # Stack plots vertically
+
+  # Display the combined plot
+  print(combined_plot)
+
+  caption_text <- paste0("Figure ", fig_n, ": ", "Overview of internal standard correction")
+  cat(caption_text)
+  cat("\\newline \n")
+}, error = function(e) NA, warning = function(w) NA)
+
+
+  cat("\\newline \n")
+  cat("The following table shows the correction factors used for the specific Sample Types. This is useful if different dilutions were used for the analysis.")
+  cat(paste0("\\newline \n Table ", table_n, ": Information about the correction factors for each sample type"))
+ 
+#  table_n <- table_n + 1
+#  print(kable(rv_list$IS_table, booktabs = T))
+
+
+
+#print(rv$list$IS_table)
+# Render the table in LaTeX format
+#print(kable(rv_list$IS_table, format = "latex", booktabs = TRUE) %>% kable_styling(latex_options = c("striped", "hold_position")))
+  print(kable(as.data.frame(rv_list$IS_table), format = "latex", row.names = F, booktabs = T))
+
+
+
+}else if(input_list$quantitation_method == "Drift Correction"){
+  cat("The following plots showcase the Peak Areas for the selected compound from the measured data. The first plot show the Peak Areas as they were processed without any manipulation with red indicated bars showcasing the Samples selected for Drift Correction and the red line indicating the model used for Drift Correction. The second plot shows the manipulated data after Drift Correction.\\newline \n")
+  
+  p1 <- rv_list$plot_dc[[1]] + theme(legend.position = "none") 
+  p2 <- rv_list$plot_dc[[2]] + theme(legend.position = "bottom")
+
+  legend <- get_legend(p2)
+
+  p2_clean <- p2 + theme(legend.position = "none")
+
+  plots <-  plot_grid(p1, p2_clean, nrow = 2, align = "hv")
+  plot_grid(plots, legend,
+  rel_heights = c(1, 0.1),
+  nrow = 2
+) %>% plot()
+
+  caption_text <- paste0("Figure ", fig_n, ": ", "Overview of Drift Correction")
+  cat(caption_text)
+  cat("\\newline \n")
+  
+}else if(input_list$quantitation_method == "Default"){
+  
+  df <- rv$data[,c("Sample.Name","Sample.Type", input_list$Compound)]
+  colnames(df)[colnames(df) == input_list$Compound] <- "Peak Area"
+  df$inj <- 1:nrow(df)
+  
+  p <- ggplot(df, aes(x = inj, y = `Peak Area`, fill = Sample.Type))+geom_bar(stat = "identity", col = "black") + 
+  scale_fill_manual(values = c("Model" = "red3", "Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3"))
+  
+  plot(p)
+
+  caption_text <- paste0("Figure ", fig_n, ": ", "Sequence Overview")
+  fig_n <- fig_n + 1
+  cat(caption_text)
+  cat("\\newline \n")
+}
+
+})
+
+```
+
+
+
+
+```{r, echo = F, warnings = F, error= F}
+    quant_data <- for_markdown$results_quant[[1]]
+    mods <- for_markdown$results_quant[[3]]
+               
+    
+                               
+    plots_quant <- list()
+    for(block_name in names(cals_table)){
+    
+    mod <- mods[[block_name]]
+
+    cals_data_block <- cals_table[[block_name]]
+     quant_data_block <- quant_data[quant_data$Classification == block_name,]
+     quant_data_not_block <- quant_data[!quant_data$Classification == block_name,]
+
+     p <- generate_quantitate_ggplot(data = cals_data_block, regression_model = mod, regression_method = regression_model)
+    
+    p <- p + theme(plot.title = element_blank())
+
+      
+      plots_quant[[block_name]] <- p
+      
+    }
+```
+
+
+
+```{r, echo = F, warnings = F, error = F}
+   
+suppressWarnings({
+  
+
+    mods <- for_markdown$results_quant[[3]]
+    
+    results_acc <- list()
+    
+    for(block in names(cals_table)){
+      
+      
+      
+      df <- for_markdown$results_quant[[1]] 
+    
+    mod_temp <- mods[[block]]
+    used_cals <- unique(cals_table[[block]]$Classification)
+
+    
+    #print(used_cals)
+    pd <- for_markdown$pd
+
+    df <- df[(df$Classification %in% used_cals) | ((df$Classification == block) & (pd == "Cal")),]
+
+    df$Concentration <- sapply(df$Sample.Name, FUN = function(x, label, concentration){
+      for(i in 1:length(label)){
+        if(grepl(label[i], x)){
+          return(concentration[i])
+        }
+      }
+    }, label = for_markdown$template$Cal.Names,
+    concentration = for_markdown$template$concentration)
+
+    
+
+
+    if(for_markdown$regression_model == "linear"){
+      k <- mod_temp$coefficients[2]
+      d <- mod_temp$coefficients[1]
+
+      df$pred <- (df$PeakArea - d) / k
+    }else{
+      a <- mod_temp$coefficients[3]
+      b <- mod_temp$coefficients[2]
+      c <- mod_temp$coefficients[1]
+
+      df$pred <- sapply(df$PeakArea, function(x){
+        return((-b + sqrt(b^2 - 4*a*(c - x))) / (2*a))
+      })
+
+    }
+
+    df$pred <- signif(df$pred, digits = 3)
+
+
+
+    df$PeakArea <- round(df$PeakArea, 1)
+
+    df$Accuracy <- signif(df$pred / df$Concentration * 100, 3)
+
+    df <- dplyr::select(df, Sample.Name, Classification, PeakArea, Concentration, pred, Accuracy)
+
+    
+    results_acc[[block]] <- df
+    }
+    
+})
+
+```
+
+
+\newpage
+
+# Quantitation Summary
+## Summary of the Calibration Functions and the Accuracy of the models
+
+The following plots show for all separate Blocks the Calibration model used for the specific blocks. 
+
+
+```{r, results = "asis", warnings = F, echo = F, fig.height = 4}
+
+
+auto_set_format <- function() { 
+   if (knitr::is_latex_output()) { 
+     options(knitr.table.format = "latex") 
+   } else { 
+     options(knitr.table.format = "html") 
+   } 
+ }
+
+ escape_md <- function(text) {
+  # Escape special Markdown characters
+  gsub("([\\*_\\[\\](){}<>`#\\+\\-!|])", "\\\\\\1", text, perl = TRUE)
+}
+
+comment_escaped <- escape_md(input_list$Comment)
+
+auto_set_format()
+
+
+# Suppress warnings to avoid unnecessary output
+ suppressWarnings({
+   # Loop through each block in the calibration plots
+   for (i in names(plots_quant)) {
+  
+     # Skip blocks that contain "Cal" in their name
+     if (grepl("Cal", i)) {
+       next
+     }
+  
+     # Convert the results for the current block into a data frame
+     dt <- as.data.frame(results_acc[[i]])
+  
+     # Generate a caption for the calibration plot
+     caption_text <- paste0("Figure ", fig_n, ": ", "Calibration Plot for Block: ", i, sep = "")
+     fig_n <- fig_n + 1
+  
+     # Add the caption to the plot and adjust its theme
+     p <- plots_quant[[i]]# +
+
+      #cat("\\newline \n")
+      
+
+
+
+       #theme(plot.caption = element_textbox_simple(padding = margin(0, 10, 5, 0)))
+  
+     # Print the plot
+     print(p)
+
+     cat(caption_text)
+    cat("\\newline \n")
+  
+     # Generate specific settings for the quantitation method
+     quantitation_method_specifific <- sapply(input_list$quantitation_method, FUN = function(x) {
+       if (x == "Drift Correction") {
+         return(paste0(
+           "Model for Drift Correction: ", ifelse(input_list$model_drift == "lm", "linear", "LOESS"), "\\newline \n",
+           "File for Drift Correction: ", input_list$files_for_correction, 
+           ifelse(input_list$model_drift != "lm", paste0("\\newline \n", "Span Width: ", input_list$span_width), "")
+         ))
+       } else if (x == "IS Correction") {
+         compound_IS <- input_list$Compound_IS %>% gsub("_", "-", .)
+         return(paste0("IS Compound for Correction:\\newline \n", compound_IS))
+       } else {
+         return(c(""))
+       }
+     })
+  
+     # Start a two-column layout for the summary
+     cat("\\begin{multicols}{2}")
+  
+     # Add a table for concentration levels
+     cat(paste0("Table ", table_n, ": ", "Concentration levels ", "\\newline"))
+     print(kable(rv_list$setup_cal, booktabs = T))
+     table_n <- table_n + 1
+  
+     # Add a column break for the second column
+     cat("\\columnbreak \\newline \n")
+  
+     # Add a summary of settings
+     cat("\\textbf{Summary of Settings:}\\newline")
+     cat(paste0(
+       "\\newline \n",
+       "Model used: ", regression_model, "\\newline \n",
+       "Quantitation Method used: ", input_list$quantitation_method, "\\newline \n",
+       "Lower Limit of Quantification: ", rv_list$LLOQs[[i]], "\\newline \n",
+       "Weighting Method: ", input_list$weight_method, "\\newline \n",
+       quantitation_method_specifific, "\\newline \n",
+       "Comment added to this Compound:\\newline \n  ", comment_escaped, "\\newline \n", "\\newline \n"
+     ))
+  
+     # End the two-column layout
+     cat("\\end{multicols}")
+  
+     # Add a table for accuracy results
+     cat(paste0("\n\n\\pagebreak\n", "Table ", table_n, ": Accuracy Table of Block: ", i, "\\newline \n"))
+     table_n <- table_n + 1
+     print(kable(dt, row.names = F, booktabs = T) %>% kable_styling(full_width = T))
+  
+     # Break the loop if the block is "all"
+     if (i == "all") {
+       break
+     }
+  
+     # Add a page break for the next block
+     cat("\n\n\\pagebreak\n")
+   }
+ })
+```
+
+
+
