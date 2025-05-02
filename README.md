@@ -1,7 +1,7 @@
 <table style="border-collapse: collapse; border: none; margin: 0; padding: 0;">
   <tr>
     <td style="border: none; padding: 0; vertical-align: middle;">
-      <img src="icon.ico" alt="Icon" width="100">
+      <img src="Dependencies/icon.ico" alt="Icon" width="100">
     </td>
     <td style="border: none; padding: 0; vertical-align: middle;">
       <h1 style="font-size: 100px; margin: 0;">QuantyFey</h1>
