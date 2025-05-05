@@ -163,7 +163,7 @@ navset_pill(
             title = "Upload Metabolomics Data",
             page_sidebar(
               sidebar = sidebar(
-                fileInput("file1", "Upload Peak Area Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv")),
+                fileInput("file1", "Upload Peak Area Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv", ".xlsx")),
                 fileInput("file_RT", "Upload Retention Time Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv")),
                 checkboxInput("change_project_name", "Use Project Name", value = F),
                 conditionalPanel(condition = 'input.change_project_name == true',

@@ -1007,7 +1007,8 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
             shinyalert("Error", "The 'readxl' package is required to read Excel files. Please install it.", type = "error")
             return(NULL)
           }
-          data <- readxl::read_excel(file_name)
+          data <- readxl::read_excel(file_name) %>% as.data.frame()
+          #print(data)
         } else {
           valid_sep <- NULL
           df_temp <- NULL
