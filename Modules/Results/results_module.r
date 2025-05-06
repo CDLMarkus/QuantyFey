@@ -21,9 +21,6 @@ results_module <- function(input, output, session, rv){
     rv$results[info$row, info$col] <- info$value
   })
 
-  observeEvent(input$generate_output, {
-    write.csv(rv$results, "Results_evaluation.csv")
-  })
 
 
 
