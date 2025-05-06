@@ -1766,7 +1766,6 @@ get_acc_table <- function(input, rv)  {
     return(NULL)
   }
 
-  print(sel_cal_table)
 
 
 
@@ -1788,7 +1787,13 @@ if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block)){
   rv$acc_table <- sel_cal_table
 
   sel_cal_table$pred <- signif(sel_cal_table$pred, digits = 3)
-  sel_cal_table$PeakArea <- round(sel_cal_table$PeakArea, digits = 0)
+
+  if(input$quantitation_method == "IS Correction"){
+    sel_cal_table$PeakArea <- signif(sel_cal_table$PeakArea, digits = 3)
+  } else {
+    sel_cal_table$PeakArea <- round(sel_cal_table$PeakArea, digits = 0)
+  }
+  #sel_cal_table$PeakArea <- ifelse(input$quantitation_method == "IS correction", signif(sel_cal_table$PeakArea, 3),round(sel_cal_table$PeakArea, digits = 0))
   sel_cal_table$Accuracy <- round(sel_cal_table$Accuracy, digits = 2)
   sel_cal_table$weights <- ifelse(sel_cal_table$weights > 9999, 
                                   round(sel_cal_table$weights, digits = nchar(as.character(floor(sel_cal_table$weights)))), 
