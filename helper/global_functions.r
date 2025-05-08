@@ -400,7 +400,7 @@ generate_quantitate_ggplot <- function(data, regression_model, regression_method
       
       p <- p + geom_line(data = df_mods, mapping = aes(x = Concentration, y = PeakArea), col = "black", linewidth = 1)
 
-    p <- p + theme_pubclean()
+    p <- p + theme_pubclean(base_size = 17)
 
     if (regression_method == "quadratic") {
       a <- signif(regression_model$coefficients[3], 5)
@@ -1071,8 +1071,8 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
     p <- ggplot(df, aes(x = Sample.Type, y = blank_ratio, fill = Sample.Type)) +
       geom_boxplot(width = 0.5) +
-      theme_pubclean() + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3")) +
-        labs(x = "Sample Type", y = "QQ Ratios", fill = "Sample Type", color = "Sample Type")
+      theme_pubclean(base_size = 17) + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3")) +
+        labs(x = "Sample Type", y = "Blank Ratio", fill = "Sample Type", color = "Sample Type")
 
     return(p)
   }
@@ -1117,14 +1117,14 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
             p <- ggplot() + 
           scale_y_continuous(limits = c(0, 1.5)) + 
           labs(x = "Sample Type", y = "QQ Ratios") + 
-          theme_pubclean()
+          theme_pubclean(base_size = 17)
 
         } else {
           df_ss$Sequence.Position <- paste0("Sequence Position: ", df_ss$Sequence.Position)
 
         suppressWarnings({
         p <- ggplot(df_ss, aes(x = Sample.Type, y = QQ_ratios, fill = Sample.Type, label = Sample.Name, text = Sequence.Position)) + geom_boxplot(outlier.shape = NA, alpha = 0.7, width = 0.5) + 
-        geom_jitter(width = 0.2, size = 2) + theme_pubclean() + 
+        geom_jitter(width = 0.2, size = 2) + theme_pubclean(base_size = 17) + 
         geom_hline(yintercept = QQ_ratios_standards) + geom_hline(yintercept = (QQ_ratios_standards * 1.5), linetype = "dotted") + 
         geom_hline(yintercept = (QQ_ratios_standards * 0.5), linetype = "dotted") + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3")) +
         labs(x = "Sample Type", y = "QQ Ratio", fill = "Sample Type", color = "Sample Type", text = "Sequence Position")
@@ -1165,7 +1165,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         p <- ggplot() + 
         scale_y_continuous(limits = c(0, 1.5)) + 
         labs(x = "Sample.Type", y = "Retention.Time") + 
-        theme_pubclean()
+        theme_pubclean(base_size = 17)
       })
     } else {
       suppressWarnings({
@@ -1184,7 +1184,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
           fill = "Sample Type",
           color = "Sample Type"
         ) +
-        theme_pubclean() + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3"))
+        theme_pubclean(base_size = 17) + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3"))
         
 
       })
@@ -1237,7 +1237,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     suppressWarnings({
          p1 <- ggplot(data = df, aes(x = inj, y = PeakArea, label = Sample.Name, fill = Sample.Type))+ geom_bar(stat = "identity", col = "black", width = 0.7) +
       scale_fill_manual(values = c("Model" = "red3", "Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3")) +
-      theme_pubclean() +
+      theme_pubclean(base_size = 17) +
       theme(legend.position = "bottom") +
       labs(x = NULL, y = "Peak Area") 
       #theme(legend.position = "bottom")+
@@ -1255,7 +1255,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
     p2 <- ggplot(data = df, aes(x = inj, y = corrected.PeakArea, label = Sample.Name, fill = Sample.Type))+ geom_bar(stat = "identity", col = "black", width = 0.7) +
       scale_fill_manual(values = c("Model" = "red3", "Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3")) +
-      theme_pubclean() +
+      theme_pubclean(base_size = 17) +
       labs(x = "Injection Sequence", y = "corrected Peak Area") +
       theme(legend.position = "bottom")+
       stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = corrected.PeakArea, x = inj), formula = y ~ x, method = "lm", col = "red3", se = F)
@@ -1299,14 +1299,14 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
       p1 <- ggplot(df)+
     geom_bar(aes(y =Areas, x = inj, label = Sample.Name, fill = Sample.Type), stat = "identity", col = "black") +
     geom_point(aes(x = inj, y = IS_Area, label = Sample.Name), col = "red3") +
-    theme_pubclean() +
+    theme_pubclean(base_size = 17) +
     scale_fill_manual(values = c("Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3"))
 
  
 
     p2 <- ggplot(data = df, aes(x = inj, y = IS_ratios, label = Sample.Name, fill = Sample.Type)) +
       geom_bar(stat = "identity", col = "black") +
-      theme_pubclean() +
+      theme_pubclean(base_size = 17) +
       labs(y = "IS Ratios", x = "Injection Sequence")+
       scale_fill_manual(values = c("Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3"))
     })
@@ -1581,7 +1581,7 @@ get_plotly_acc <- function(rv) {
         geom_hline(yintercept = 70, linetype = "dotted") +
         scale_alpha_manual(values = c("used" = 1, "not used" = 0.3)) +
         labs(fill = NULL, used = NULL) +
-        theme_pubclean()
+        theme_pubclean(base_size = 17)
 
       # Adjust fill colors based on accuracy classification
       if (all(df$accuracy == "< 70 & > 130 %")) {
@@ -1773,8 +1773,8 @@ get_acc_table <- function(input, rv)  {
   mod_temp <- quantitate_object[[3]][[input$Block]]
   sel_cal_table$pred <- predict_concentrations(data = sel_cal_table, model = mod_temp, method = rv$regression_model)
   sel_cal_table$Accuracy <- sel_cal_table$pred / sel_cal_table$Concentration * 100
-
-if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block)){
+suppressWarnings({
+  if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block)){
   Standard_QC <- quantitate_object[[1]][pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block, ]
 
   
@@ -1782,6 +1782,9 @@ if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block)){
     sel_cal_table <- rbind(sel_cal_table, data.frame(Sample.Name = Standard_QC$Sample.Name, Classification = Standard_QC$Classification, PeakArea  = Standard_QC$PeakArea, Concentration = conc_temp, weights = 0, used = FALSE, pred = Standard_QC$pred, Accuracy = Standard_QC$pred / conc_temp * 100))
 
 }
+
+})
+
 
 
   rv$acc_table <- sel_cal_table
@@ -1806,4 +1809,209 @@ if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block)){
 
 
 
+}
+
+
+build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
+  
+    if(input$quantitation_method == "Bracketing"){
+        res_df$PeakArea <- rv$data[, cpt_name]
+        res_df$RetentionTime <- rv$data_RT[, cpt_name]
+        res_df$Concentration <- signif(quant$pred, 3)
+        
+        res_df$LLOQ <- sapply(res_df$Classification, FUN = function(x) {
+            for (i in 1:length(rv$LLOQs)) {
+            if (names(rv$LLOQs)[i] == x) {
+                return(rv$LLOQs[[i]])
+            }
+            }
+        })
+
+        res_df$Function <- sapply(res_df$Classification, FUN = function(x) {
+            model <- res_list[["models"]][[x]]
+            coef <- signif(model$coefficients, 7)
+            if (rv$regression_model == "linear") {
+                paste0("y = ", coef[2], " * x + ", coef[1])
+            } else if (rv$regression_model == "quadratic") {
+                paste0("y = ", coef[1], " + ", coef[2], " * x + ", coef[3], " * x^2")
+            } else if (rv$regression_model == "power") {
+                paste0("y = ", exp(coef[1]), " * x^", coef[2])
+            } else if (rv$regression_model == "exponential") {
+                paste0("y = ", exp(coef[1]), " * e^(", coef[2], " * x)")
+            } else if (rv$regression_model == "log(y)") {
+                paste0("log(y) = ", coef[2], " * x + ", coef[1])
+            }
+        })
+
+        res_df$Cals_used <- sapply(res_df$Classification, FUN = function(x){
+            temp <- rv$selection_cals_table[[x]]
+            cals_used <- unique(temp$Classification[temp$used])
+            cals_used <- paste(cals_used, collapse = ", ")
+            return(cals_used)
+        }, USE.NAMES = F)
+
+        res_df$Levels_used <- sapply(res_df$Classification, FUN = function(x){
+            temp <- rv$selection_cals_table[[x]]
+            cals_used <- temp$Sample.Name[temp$used]
+            cals_used <- paste(cals_used, collapse = ", ")
+            return(cals_used)
+        }, USE.NAMES = F)
+
+    } else if (input$quantitation_method == "IS Correction") {
+        res_df$PeakArea <- rv$data[, cpt_name]
+        res_df$IS_PeakArea <- rv$data[, input$Compound_IS]
+        res_df$IS_Ratio <- rv$IS_ratio
+        res_df$RetentionTime <- rv$data_RT[, cpt_name]
+        res_df$Concentration <- signif(quant$pred, 3)
+        
+        res_df$` ` <- rep("", nrow(res_df))
+        res_df$info_label <- rep("", nrow(res_df))
+        res_df$info_value <- rep("", nrow(res_df))
+
+        res_df$info_label[1] <- "Function"
+        res_df$info_label[2] <- "LLOQ"
+
+        coef <- signif(unique(res_list[["models"]])[[1]]$coefficients, 7)
+        if (rv$regression_model == "linear") {
+            coeficients <- paste0("y = ", coef[2], " * x + ", coef[1])
+        } else if (rv$regression_model == "quadratic") {
+            coeficients <- paste0("y = ", coef[1], " + ", coef[2], " * x + ", coef[3], " * x^2")
+        } else if (rv$regression_model == "power") {
+            coeficients <- paste0("y = ", exp(coef[1]), " * x^", coef[2])
+        } else if (rv$regression_model == "exponential") {
+            coeficients <- paste0("y = ", exp(coef[1]), " * e^(", coef[2], " * x)")
+        } else if (rv$regression_model == "log(y)") {
+            coeficients <- paste0("log(y) = ", coef[2], " * x + ", coef[1])
+        }
+
+        res_df$info_value[1] <- coeficients
+        res_df$info_value[2] <- unique(unlist(rv$LLOQs))
+
+        res_df$info_label[3] <- "IS Compound"
+        res_df$info_label[4] <- "Correction Factors"
+        
+        res_df$info_value[3] <- input$Compound_IS
+        res_df$info_value[4] <- paste(rv$IS_table$Sample.Type, rv$IS_table$Correction.Factors, sep = " = ", collapse = ", ")
+
+    } else if (input$quantitation_method == "Drift Correction") {
+        res_df$PeakArea <- rv$data[, cpt_name]
+
+        res_df$corrected_area <- rv$dc_area
+
+        res_df$RetentionTime <- rv$data_RT[, cpt_name]
+
+        res_df$Concentration <- signif(quant$pred, 3)
+
+
+        res_df$` ` <- rep("", nrow(res_df))
+        res_df$info_label <- rep("", nrow(res_df))
+        res_df$info_value <- rep("", nrow(res_df))
+
+        res_df$info_label[1] <- "Function"
+        res_df$info_label[2] <- "LLOQ"
+
+        
+        coef <- signif(unique(res_list[["models"]])[[1]]$coefficients, 7)
+        if (rv$regression_model == "linear") {
+            coeficients <- paste0("y = ", coef[2], " * x + ", coef[1])
+        } else if (rv$regression_model == "quadratic") {
+            coeficients <- paste0("y = ", coef[1], " + ", coef[2], " * x + ", coef[3], " * x^2")
+        } else if (rv$regression_model == "power") {
+            coeficients <- paste0("y = ", exp(coef[1]), " * x^", coef[2])
+        } else if (rv$regression_model == "exponential") {
+            coeficients <- paste0("y = ", exp(coef[1]), " * e^(", coef[2], " * x)")
+        } else if (rv$regression_model == "log(y)") {
+            coeficients <- paste0("log(y) = ", coef[2], " * x + ", coef[1])
+        }
+
+
+        res_df$info_value[1] <- coeficients
+        res_df$info_value[2] <- unique(unlist(rv$LLOQs))
+
+
+
+        res_df$info_label[3] <- "Drift Model"
+        res_df$info_label[4] <- "Span Width"
+        res_df$info_label[5] <- "Files for Correction"
+        
+        res_df$info_value[3] <- input$model_drift
+        res_df$info_value[4] <- input$span_width
+        res_df$info_value[5] <- input$files_for_correction
+
+
+
+    } else if (input$quantitation_method == "Default") {
+
+        res_df$PeakArea <- rv$data[, cpt_name]
+
+        res_df$RetentionTime <- rv$data_RT[, cpt_name]
+
+        res_df$Concentration <- signif(quant$pred, 3)
+
+        res_df$` ` <- rep("", nrow(res_df))
+        res_df$info_label <- rep("", nrow(res_df))
+        res_df$info_value <- rep("", nrow(res_df))
+
+
+        res_df$info_label[1] <- "Function"
+        res_df$info_label[2] <- "LLOQ"
+
+        coef <- signif(unique(res_list[["models"]])[[1]]$coefficients, 7)
+        if (rv$regression_model == "linear") {
+            coeficients <- paste0("y = ", coef[2], " * x + ", coef[1])
+        } else if (rv$regression_model == "quadratic") {
+            coeficients <- paste0("y = ", coef[1], " + ", coef[2], " * x + ", coef[3], " * x^2")
+        } else if (rv$regression_model == "power") {
+            coeficients <- paste0("y = ", exp(coef[1]), " * x^", coef[2])
+        } else if (rv$regression_model == "exponential") {
+            coeficients <- paste0("y = ", exp(coef[1]), " * e^(", coef[2], " * x)")
+        } else if (rv$regression_model == "log(y)") {
+            coeficients <- paste0("log(y) = ", coef[2], " * x + ", coef[1])
+        }
+
+        res_df$info_value[1] <- coeficients
+        res_df$info_value[2] <- unique(unlist(rv$LLOQs))
+    }
+
+    if(input$quantitation_method != "Bracketing"){
+      acc_table <- get_acc_table(input, rv)
+   
+    # Add two empty columns to res_df before combining
+    res_df$` ` <- ""
+    res_df$`  ` <- ""
+
+    # Adjust acc_table to match the number of rows in res_df
+    if (nrow(acc_table) < nrow(res_df)) {
+      acc_table <- rbind(as.matrix(acc_table), matrix("", nrow = nrow(res_df) - nrow(acc_table), ncol = ncol(acc_table)))
+      colnames(acc_table) <- colnames(rv$acc_table)
+    }
+    
+
+    # Combine res_df and acc_table
+    res_df <- cbind(res_df, acc_table)
+    
+    # Ensure empty columns do not appear as column names when written
+    colnames(res_df)[colnames(res_df) %in% c(" ", "  ")] <- ""
+    
+    }
+    
+    return(res_df)
+
+}
+
+write_quant_results <- function(res_df, cpt_name){
+  suppressWarnings({
+      if (!file.exists("results_quant.xlsx")) {
+      res_df <- list(cpt_name = res_df)
+      names(res_df)[which(names(res_df) == "cpt_name")] <- cpt_name
+      writexl::write_xlsx(res_df, "results_quant.xlsx")
+    }else {
+      suppressMessages({
+        append_xlsx(existing_file = "results_quant.xlsx", new_data = res_df, sheet_name = cpt_name)
+
+      })
+        
+    }
+
+    })
 }
