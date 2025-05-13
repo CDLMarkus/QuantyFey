@@ -186,9 +186,9 @@ output$p_acc <- renderPlotly({
 
         p <- p %>% layout(
         xaxis = list(
+          mode = "category",
           autorange = TRUE,
-          autotick = TRUE,
-          tickmode = "auto",
+          
           fixedrange = FALSE  # allow zoom
         ),
         yaxis = list(

@@ -35,9 +35,10 @@ output$qual_quant_plot <- renderPlotly({
     suppressWarnings({
       p <- ggplotly(p, tooltip = c("QQ_ratios", "Sample.Name", "Sequence.Position")) %>% layout(
       xaxis = list(
+        mode = "category",
         autorange = TRUE,
-        autotick = TRUE,
-        tickmode = "auto",
+        
+        
         fixedrange = FALSE  # allow zoom
       ),
       yaxis = list(
@@ -74,11 +75,12 @@ output$RT_plot <- renderPlotly({
     suppressWarnings({
         p <- ggplotly(p, tooltip = c("Retention.Time", "Sample.Name", "Sequence.Position")) %>% layout(
         xaxis = list(
-          autorange = TRUE,
-          autotick = TRUE,
-          tickmode = "auto",
-          fixedrange = FALSE  # allow zoom
-        ),
+        mode = "category",
+        autorange = TRUE,
+        
+        
+        fixedrange = FALSE  # allow zoom
+      ),
         yaxis = list(
           autorange = TRUE,
           autotick = TRUE,
