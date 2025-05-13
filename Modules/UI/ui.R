@@ -269,7 +269,7 @@ navset_pill(
                       card("Plot", plotlyOutput("RT_plot", height = "800px")),
                       col_widths = c(2, 10)
                     )),
-                    nav_panel("Qual/Quant Analysis", value = "QQ_analysis", layout_columns(
+                    nav_panel("Qual/Quant Ion Ratio Analysis", value = "QQ_analysis", layout_columns(
                       card("Settings", checkboxGroupInput("quan_qual_groups", "Groups to Include:", choices = NULL)),
                       card("Plot", plotlyOutput("qual_quant_plot", height = "800px")),
                       col_widths = c(2, 10)
@@ -277,22 +277,6 @@ navset_pill(
                     nav_panel("Blank Analysis", 
                       card("Plot", plotlyOutput("Blank_plot", height = "800px"))
                       )
-                  )
-                ),
-                accordion_panel(
-                  title = "Drift Correction",
-                  icon = bs_icon("graph-down"),
-                  layout_columns(
-                    card(
-                      "Settings",
-                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess")),
-                      selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
-                      conditionalPanel(condition = "input.model_drift == 'loess'",
-                        numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75)
-                      )
-                    ),
-                    card("Plot", plotlyOutput("drift_output", height = "800px")),
-                    col_widths = c(2, 10)
                   )
                 ),
                 accordion_panel(
@@ -314,6 +298,22 @@ navset_pill(
                   ),
                   
                   col_widths = c(12, 4)
+                  )
+                ),
+                accordion_panel(
+                  title = "Drift Correction",
+                  icon = bs_icon("graph-down"),
+                  layout_columns(
+                    card(
+                      "Settings",
+                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess")),
+                      selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
+                      conditionalPanel(condition = "input.model_drift == 'loess'",
+                        numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75)
+                      )
+                    ),
+                    card("Plot", plotlyOutput("drift_output", height = "800px")),
+                    col_widths = c(2, 10)
                   )
                 ),
                 accordion_panel("Bracketing",

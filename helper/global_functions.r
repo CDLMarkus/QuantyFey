@@ -1103,10 +1103,10 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         df[is.na(df)] <- 0
         
 
-        df$QQ_ratios <- as.numeric(df[[qual_name]]) / as.numeric(df[[quant_name]])
-        df$QQ_ratios[is.na(df$QQ_ratios) | is.infinite(df$QQ_ratios)] <- 0
+        df$ion_ratios <- as.numeric(df[[qual_name]]) / as.numeric(df[[quant_name]])
+        df$ion_ratios[is.na(df$ion_ratios) | is.infinite(df$ion_ratios)] <- 0
 
-        QQ_ratios_standards <- median(df$QQ_ratios[df$Sample.Type == "Cal" & df$QQ_ratios != 0], na.rm = T)
+        ion_ratios_standards <- median(df$ion_ratios[df$Sample.Type == "Cal" & df$ion_ratios != 0], na.rm = T)
 
         df_ss <- subset(df, Sample.Type %in% input$quan_qual_groups)
         
@@ -1116,18 +1116,18 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         if (nrow(df_ss) == 0) {
             p <- ggplot() + 
           scale_y_continuous(limits = c(0, 1.5)) + 
-          labs(x = "Sample Type", y = "QQ Ratios") + 
+          labs(x = "Sample Type", y = "Ion Ratios") + 
           theme_pubclean(base_size = 17)
 
         } else {
           df_ss$Sequence.Position <- paste0("Sequence Position: ", df_ss$Sequence.Position)
 
         suppressWarnings({
-        p <- ggplot(df_ss, aes(x = Sample.Type, y = QQ_ratios, fill = Sample.Type, label = Sample.Name, text = Sequence.Position)) + geom_boxplot(outlier.shape = NA, alpha = 0.7, width = 0.5) + 
+        p <- ggplot(df_ss, aes(x = Sample.Type, y = ion_ratios, fill = Sample.Type, label = Sample.Name, text = Sequence.Position)) + geom_boxplot(outlier.shape = NA, alpha = 0.7, width = 0.5) + 
         geom_jitter(width = 0.2, size = 2) + theme_pubclean(base_size = 17) + 
-        geom_hline(yintercept = QQ_ratios_standards) + geom_hline(yintercept = (QQ_ratios_standards * 1.5), linetype = "dotted") + 
-        geom_hline(yintercept = (QQ_ratios_standards * 0.5), linetype = "dotted") + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3")) +
-        labs(x = "Sample Type", y = "QQ Ratio", fill = "Sample Type", color = "Sample Type", text = "Sequence Position")
+        geom_hline(yintercept = ion_ratios_standards) + geom_hline(yintercept = (ion_ratios_standards * 1.5), linetype = "dotted") + 
+        geom_hline(yintercept = (ion_ratios_standards * 0.5), linetype = "dotted") + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3")) +
+        labs(x = "Sample Type", y = "Ion Ratio", fill = "Sample Type", color = "Sample Type", text = "Sequence Position")
 
         })
     }
