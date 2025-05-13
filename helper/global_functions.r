@@ -1158,13 +1158,17 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     colnames(df_ss)[which(colnames(df_ss) == input$Compound)] <- "Retention.Time"
     
 
-
+    ylab <- if(is.null(rt_unit)) {
+      "Retention Time"
+    } else {
+      paste("Retention Time [", rt_unit, "]", sep = "")
+    }
 
     if (nrow(df_ss) == 0) {
       suppressWarnings({
         p <- ggplot() + 
         scale_y_continuous(limits = c(0, 1.5)) + 
-        labs(x = "Sample.Type", y = "Retention.Time") + 
+        labs(x = "Sample.Type", y = ylab) + 
         theme_pubclean(base_size = 17)
       })
     } else {
@@ -1180,7 +1184,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         geom_hline(yintercept = means_cal, color = "black", linetype = "solid") +
         labs(
           x = "Sample Type",
-          y = "Retention Time",
+          y = ylab,
           fill = "Sample Type",
           color = "Sample Type"
         ) +
@@ -1233,6 +1237,8 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     df$Sample.Type <- rv$data$Sample.Type
 
     df$Sample.Type[df$Sample.Name == cal_dc] <- "Model"
+
+
 
     suppressWarnings({
          p1 <- ggplot(data = df, aes(x = inj, y = PeakArea, label = Sample.Name, fill = Sample.Type))+ geom_bar(stat = "identity", col = "black", width = 0.7) +
@@ -1294,6 +1300,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     df <- data.frame(Sample.Name = rv$data$Sample.Name, IS_Area = IS_Areas, Areas = Areas, IS_ratios = IS_ratios, Sample.Type = rv$data$Sample.Type)
     df$inj <- 1:nrow(df)
 
+    
     # Create plots
     suppressWarnings({
       p1 <- ggplot(df)+
@@ -1580,7 +1587,7 @@ get_plotly_acc <- function(rv) {
         geom_hline(yintercept = 130, linetype = "dotted") +
         geom_hline(yintercept = 70, linetype = "dotted") +
         scale_alpha_manual(values = c("used" = 1, "not used" = 0.3)) +
-        labs(fill = NULL, used = NULL) +
+        labs(fill = NULL, used = NULL, y = "Accuracy [%]", x = "Sample Name") +
         theme_pubclean(base_size = 17)
 
       # Adjust fill colors based on accuracy classification
@@ -1654,11 +1661,25 @@ get_plotly_quant <- function(input, rv) {
     })
   }
 
+  ylab <- if(input$quantitation_method == "IS Correction") {
+    "IS Ratio"
+  } else if (is.null(int_unit)) {
+    "Peak Area"
+  } else {
+    paste("Peak Area [", int_unit, "]", sep = "")
+  }
+
+  xlab <- if(is.null(conc_unit)) {
+    "Concentration"
+  } else {
+    paste("Concentration [", conc_unit, "]", sep = "")
+  }
+
   p <- p + {
     if (input$log_scale) {
       scale_y_log10() + labs(x = "Concentration", y = "Peak Area (log)")
     } else {
-      labs(x = "Concentration", y = "Peak Area")
+      labs(x = xlab, y = ylab)
     }
   }
 

@@ -94,12 +94,22 @@ output$drift_output <- renderPlotly({
     g2$x$data[[i]]$legendgroup <- g1$x$data[[i]]$legendgroup  # ensure same legend group
     }
 
+    if(is.null(int_unit)) {
+      ylab <- "Peak Area"
+      ylab_corr <- "corrected Peak Area"
+    } else {
+      ylab <- paste("Peak Area [", int_unit, "]", sep = "")
+      ylab_corr <- paste("corrected Peak Area [", int_unit, "]", sep = "")
+    }
+
+  
+
   # Combine with shared legend
   p <- subplot(g1, g2, nrows = 2, shareX = TRUE, shareY = FALSE) %>%
   layout(
     showlegend = TRUE,
-    yaxis = list(title = "Peak Area"),  
-    yaxis2 = list(title = "corrected Peak Area"),
+    yaxis = list(title = ylab),  
+    yaxis2 = list(title = ylab_corr),
     xaxis2 = list(title = "Injection Sequence")
   )
 

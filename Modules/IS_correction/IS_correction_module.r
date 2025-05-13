@@ -83,6 +83,12 @@ observeEvent(event_data("plotly_doubleclick", source = "IS"), {
     g1 <- ggplotly(p1, source = "IS") 
   	g2 <- ggplotly(p2, source = "IS")
 
+    ylab <- if(is.null(int_unit)) {
+      "Peak Area"
+    } else {
+      paste("Peak Area [", int_unit, "]", sep = "")
+    }
+
 
 
     # Manually adjust legend settings
@@ -94,7 +100,7 @@ observeEvent(event_data("plotly_doubleclick", source = "IS"), {
     # Combine with shared legend
     p <- subplot(g1, g2, nrows = 2, shareX = TRUE, shareY = FALSE) %>%
     layout(showlegend = TRUE,
-    yaxis = list(title = "Peak Area"),
+    yaxis = list(title = ylab),
     yaxis2 = list(title = "IS Ratios"))
 
     if(!is.null(rv$current_layout_IS)){
