@@ -31,7 +31,8 @@ observeEvent(input$save_compound, {
   
 observeEvent(input$Compound, {
   req(input$file1)
-  req(input$Compound != "")
+  req(nzchar(input$Compound))  # Ensure it's not empty
+
   tryCatch({
     observe_input_compound(input, rv, session)
   }, error = function(e) {
@@ -43,3 +44,7 @@ observeEvent(input$Compound, {
 
 
 }
+
+
+
+

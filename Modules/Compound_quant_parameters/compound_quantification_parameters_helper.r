@@ -202,7 +202,8 @@ save_interim_results <- function(input, rv) {
             }
             write.csv(rv$results, results_filename)
         } else {
-            write.csv(rv$results, "Results_evaluation_interim.csv")
+          results_filename <- "Results_evaluation_interim.csv"
+            write.csv(rv$results, results_filename)
         }
         if(is.null(results_filename)){
             results_filename <- "Results_evaluation_interim.csv"
@@ -304,237 +305,226 @@ show_success_notification <- function(input, cpt_name, output_file, results_file
     )
 }
 
-
 observe_input_compound <- function(input, rv, session) {
+    
+  rv$current_layout <- NULL
+  rv$current_layout_IS <- NULL
+  rv$current_layout_dc <- NULL
+  rv$current_layout_acc <- NULL  
 
-    rv$current_layout <- NULL
-    rv$current_layout_IS <- NULL
-    rv$current_layout_dc <- NULL
-    rv$current_layout_acc <- NULL
 
-    tryCatch({
-        restore_previous_settings(input, rv, session)
-        update_internal_standard_correction(input, rv)
-        update_classification_and_quantitation(input, rv, session)
-        prepare_calibration_selection(input, rv, session)
-    }, error = function(e) {
-        showNotification(paste("Error in 'observe_input_compound':", e$message), type = "error")
-    })
-}
-
-restore_previous_settings <- function(input, rv, session) {
-    tryCatch({
-        if (input$Compound %in% rv$compounds_analyzed) {
-            settings <- rv$settings_used[[input$Compound]]
-
-            updateSelectInput(session, inputId = "regression_model", choices = c("linear", "quadratic"), selected = settings$regression_model)
-            updateNumericInput(session, inputId = "LOQ", value = settings$LLOQs[[input$Block]], min = min(concentrations(rv)) %||% 0, max = max(concentrations(rv)) %||% 0, step = min(concentrations(rv)))
-            rv$LLOQs <- settings$LLOQ
-
-            rv$selection_table_bracketing <- settings$bracketing_sel_table
-            rv$bracketing_table <- create_bracketing_table(rv$selection_table_bracketing)
-
-            updateSelectInput(session, "Compound_IS", choices = unique(colnames(rv$data[, grepl(input$IS_indicator, colnames(rv$data))])), selected = settings$IS_Compound)
-            updateSelectInput(session, "weight_method", choices = c("none", "1/x", "1/x2", "1/y", "1/y2", "1/x force 0", "1/y force 0"), selected = settings$weight_method)
-            rv$selection_cals_table <- settings$selection_table
-
-            update_quantitation_method(input, session, settings)
-            updateTextInput(session, "Comment", value = settings$comment)
-            updateRadioButtons(session, "model_drift", choices = c("lm", "loess"), selected = settings$model)
-            updateSelectInput(session, "files_for_correction", choices = unique(rv$data$Sample.Name), selected = settings$file_for_correction)
-            updateNumericInput(session, "span_width", value = settings$span_width, min = 0.4, max = 2, step = 0.05)
-
-            rv$IS_table <- settings$IS_table
-        }
-    }, error = function(e) {
-        stop("Error in 'restore_previous_settings': ", e$message)
-    })
-}
-
-update_internal_standard_correction <- function(input, rv) {
-    tryCatch({
-        rv$IS_compound_data_for_correction <- tryCatch({
-            as.numeric(rv$data[[input$Compound_IS]])
-        }, error = function(e) {
-            rep(1, nrow(rv$data))
-        })
-
-        compound_data <- tryCatch(as.numeric(rv$data[[input$Compound]]), error = function(e) NA)
-        rv$Area <- compound_data
-
-        med_IS <- median(rv$IS_compound_data_for_correction, na.rm = TRUE)
-        rv$IS_ratio <- tryCatch({
-            compound_data / sapply(rv$IS_compound_data_for_correction, function(x) {
-                ifelse(x / med_IS < 0.01, med_IS, x)
-            })
-        }, error = function(e) {
-            compound_data
-        })
-
-        rv$dc_area <- tryCatch({
-            as.numeric(rv$drift_corrected_data_temp$corrected.PeakArea)
-        }, error = function(e) NA)
-    }, error = function(e) {
-        stop("Error in 'update_internal_standard_correction': ", e$message)
-    })
-}
-
-update_classification_and_quantitation <- function(input, rv, session) {
-    tryCatch({
-        if (input$quantitation_method == "Bracketing") {
-            rv$Classification_temp <- rv$data$Classification
-        } else {
-            Classification_temp <- rv$data$Classification
-            Classification_temp[!grepl("Cal", Classification_temp)] <- "all"
-            rv$Classification_temp <- Classification_temp
-        }
-
-        if (input$Compound %in% colnames(rv$specific_setup)) {
-            new_setup <- data.frame(
-                Cal.Name = rv$specific_setup$Cal.Name,
-                Concentration = rv$specific_setup[[input$Compound]]
-            )
-            if (!identical(rv$setup_cal, new_setup)) {
-                rv$setup_cal <- new_setup
-            }
-        }
-
-        rv$LLOQs <- create_classification_min_list(rv)
-
-        min_LOQ <- suppressWarnings(min(rv$setup_cal$Concentration, na.rm = TRUE))
-        max_LOQ <- suppressWarnings(max(rv$setup_cal$Concentration, na.rm = TRUE))
-
-        updateNumericInput(session,
-            inputId = "LOQ",
-            label = "Limit of Quantification",
-            value = rv$LLOQs[[input$Block]] %||% 0,
-            min = ifelse(is.finite(min_LOQ), min_LOQ, 0),
-            max = ifelse(is.finite(max_LOQ), max_LOQ, 0),
-            step = ifelse(is.finite(min_LOQ), min_LOQ, 0.1)
-        )
-    }, error = function(e) {
-        stop("Error in 'update_classification_and_quantitation': ", e$message)
-    })
-}
-
-prepare_calibration_selection <- function(input, rv, session) {
-    if (!all(rv$setup_cal$Cal.Name %in% rv$data$Sample.Name) || 
-        !all(rv$data$Sample.Name[pd_temp(rv) == "Cal"] %in% rv$setup_cal$Cal.Name)) {
-        
-        stop("Calibration samples do not match the data. Please check the calibration samples and the data.")
+    if (input$Compound %in% rv$compounds_analyzed) {
+     update_if_analyzed(input, rv, session)
     }
 
+  tryCatch({
+    try({
+      update_dc_data(input, rv)
+    }, silent = T)
+    
 
-    tryCatch({
-        df <- data(input, rv)
-        class <- unique(rv$Classification_temp)
-
-        if (is.null(rv$bracketing_table)) {
-            rv$bracketing_table <- create_bracketing_table(rv$data$Classification)
-            rv$selection_table <- create_selection_table(class, input$quantitation_method)
-            rv$selection_table_bracketing <- create_selection_table(unique(rv$data$Classification), "Bracketing")
-        }
-
-        selection_table <- if (input$quantitation_method == "Bracketing") {
-            rv$selection_table_bracketing
-        } else {
-            rv$selection_table
-        }
-
-        updateSelectInput(inputId = "Block", choices = selection_table$Class)
-
-        df_for_sel_cal_tab <- data.frame(
-            Sample.Name = rv$data$Sample.Name,
-            Classification = rv$Classification_temp
-        )
-
-        df_for_sel_cal_tab$PeakArea <- switch(
-            input$quantitation_method,
-            "Bracketing" = rv$Area,
-            "Default" = rv$Area,
-            "IS Correction" = rv$IS_ratio,
-            "Drift Correction" = rv$dc_area,
-            rv$Area
-        )
-
-        selection_cals_table <- create_block_sample_subsets(
-            block_cal = selection_table,
-            sample_data = df_for_sel_cal_tab
-        )
-
-        enrich_calibration_table(rv, input, selection_cals_table)
-        updateTextInput(session, "Comment", value = "")
+    # Internal standard correction
+    rv$IS_compound_data_for_correction <- tryCatch({
+      as.numeric(rv$data[[input$Compound_IS]])
     }, error = function(e) {
-        stop("Error in 'prepare_calibration_selection': ", e$message)
+      rep(1, nrow(rv$data))
     })
+
+    # Calculate area and ratios
+    compound_data <- tryCatch(as.numeric(rv$data[[input$Compound]]), error = function(e) NA)
+    rv$Area <- compound_data
+
+    med_IS <- median(rv$IS_compound_data_for_correction, na.rm = TRUE)
+    tryCatch({
+      rv$IS_ratio <- compound_data / sapply(rv$IS_compound_data_for_correction, function(x) {
+      ifelse(x / med_IS < 0.01, med_IS, x)
+    })
+
+    }, error = function(e){
+      rv$IS_ratio <- compound_data
+    })
+    
+
+    rv$dc_area <- tryCatch({
+      as.numeric(rv$drift_corrected_data_temp$corrected.PeakArea)
+    }, error = function(e) NA)
+
+    # Classification logic
+    if (input$quantitation_method == "Bracketing") {
+      rv$Classification_temp <- rv$data$Classification
+    } else {
+      Classification_temp <- rv$data$Classification
+      Classification_temp[!grepl("Cal", Classification_temp)] <- "all"
+      rv$Classification_temp <- Classification_temp
+    }
+
+  
+    # Update setup_cal if Compound exists
+    if (input$Compound %in% colnames(rv$specific_setup)) {
+      new_setup <- data.frame(
+        Cal.Name = rv$specific_setup$Cal.Name,
+        Concentration = rv$specific_setup[[input$Compound]]
+      )
+      if (!identical(rv$setup_cal, new_setup)) {
+        rv$setup_cal <- new_setup
+      }
+    }
+
+    rv$LLOQs <- create_classification_min_list(rv)
+
+    
+
+
+    # Update LOQ input
+    min_LOQ <- suppressWarnings(min(rv$setup_cal$Concentration, na.rm = TRUE))
+    max_LOQ <- suppressWarnings(max(rv$setup_cal$Concentration, na.rm = TRUE))
+
+  #cat("Updating LOQ input. Block:", input$Block, 
+  #  "Value:", rv$LLOQs[[input$Block]], "\n")
+
+    
+
+    updateNumericInput(session,
+      inputId = "LOQ",
+      label = "Limit of Quantification",
+      value = rv$LLOQs[[input$Block]] %||% 0,
+      min = ifelse(is.finite(min_LOQ), min_LOQ, 0),
+      max = ifelse(is.finite(max_LOQ), max_LOQ, 0),
+      step = ifelse(is.finite(min_LOQ), min_LOQ, 0.1)
+    )
+
+    #session$sendCustomMessage('force-blur', list(id = 'LOQ'))
+   
+    #cat("LLOQ was updated")
+
+    # Data classification and quantitation method switching
+    df <- data(input, rv)
+    class <- unique(rv$Classification_temp)
+
+if (is.null(rv$bracketing_table)) {
+      bracketing_table <- data.frame(Class = unique(rv$data$Classification))
+      selection_table_bracketing <- data.frame(Class = unique(rv$data$Classification))
+      selection_table <- data.frame(Class = class)
+
+      for (i in 1:length(class[grepl("Cal", class)])) {
+        bracketing_table <- cbind(bracketing_table, checkboxColumn(len = nrow(bracketing_table), col = i + 1))
+        selection_table_bracketing <- cbind(selection_table_bracketing, rep(FALSE, nrow(selection_table_bracketing)))
+        selection_table <- cbind(selection_table, rep(FALSE, nrow(selection_table)))
+
+        names(bracketing_table)[i + 1] <- paste("Cal", i, sep = " ")
+        names(selection_table)[i + 1] <- paste("Cal", i, sep = " ")
+        names(selection_table_bracketing)[i + 1] <- paste("Cal", i, sep = " ")
+      }
+
+      if (input$quantitation_method != "Bracketing") {
+        selection_table[selection_table == F] <- T
+      }
+
+      rv$selection_table <- selection_table
+      rv$bracketing_table <- bracketing_table
+      rv$selection_table_bracketing <- selection_table_bracketing
+    }
+
+    selection_table <- if (input$quantitation_method == "Bracketing") {
+      rv$selection_table_bracketing
+    } else {
+      rv$selection_table
+    }
+
+    updateSelectInput(inputId = "Block", choices = selection_table$Class)
+
+    # Prepare table for calibration selection
+    df_for_sel_cal_tab <- data.frame(
+      Sample.Name = rv$data$Sample.Name,
+      Classification = rv$Classification_temp
+    )
+
+    df_for_sel_cal_tab$PeakArea <- switch(
+      input$quantitation_method,
+      "Bracketing" = rv$Area,
+      "Default" = rv$Area,
+      "IS Correction" = rv$IS_ratio,
+      "Drift Correction" = rv$dc_area,
+      rv$Area
+    )
+
+    selection_cals_table <- create_block_sample_subsets(
+      block_cal = selection_table,
+      sample_data = df_for_sel_cal_tab
+    )
+
+    # Enrich calibration table
+    if (all(rv$setup_cal$Cal.Name %in% selection_cals_table[[1]]$Sample.Name)) {
+      for (i in seq_along(selection_cals_table)) {
+        sel_temp <- selection_cals_table[[i]]
+
+        sel_temp$Concentration <- sapply(sel_temp$Sample.Name, function(x) {
+          rv$setup_cal$Concentration[rv$setup_cal$Cal.Name == x][1]
+        })
+
+        sel_temp <- add_weights(input$weight_method, sel_temp)
+
+        if (is.null(sel_temp$used)) {
+          sel_temp$used <- sel_temp$PeakArea != 0
+        }
+
+        selection_cals_table[[i]] <- subset(sel_temp, Concentration != 0)
+      }
+
+      rv$selection_cals_table <- selection_cals_table
+    }
+
+    updateTextInput(session, "Comment", value = "")
+
+    # If compound was analyzed before, restore settings
+       
+
+  }, error = function(e) {
+    showNotification(paste("Error in compound setup:", e$message), type = "error")
+  })
 }
 
-create_bracketing_table <- function(classification) {
-    tryCatch({
-        bracketing_table <- data.frame(Class = unique(classification))
-        for (i in 1:length(unique(classification[grepl("Cal", classification)]))) {
-            bracketing_table <- cbind(bracketing_table, checkboxColumn(len = nrow(bracketing_table), col = i + 1))
-            names(bracketing_table)[i + 1] <- paste("Cal", i, sep = " ")
-        }
-        return(bracketing_table)
-    }, error = function(e) {
-        stop("Error in 'create_bracketing_table': ", e$message)
-    })
+update_if_analyzed <- function(input, rv, session) {
+      settings <- rv$settings_used[[input$Compound]]
+      #print(settings)
+      updateSelectInput(session, inputId = "regression_model", choices = c("linear", "quadratic"), selected = settings$regression_model)
+    
+      updateNumericInput(session, inputId = "LOQ", value = settings$LLOQs[[input$Block]],min = min(concentrations(rv)) %||% 0, max = max(concentrations(rv)) %||% 0 ,  step = min(concentrations(rv)))
+      rv$LLOQs <- settings$LLOQ
+      
+      rv$selection_table_bracketing <- settings$bracketing_sel_table
+      #rv$bracketing_table <- settings$bracketing_table
+      bracketing_table <- data.frame(Class = rv$selection_table_bracketing$Class)
+
+      for (i in 1:(ncol(rv$selection_table_bracketing) - 1)) {
+  values <- rv$selection_table_bracketing[[i + 1]]  # Skip Class column
+  bracketing_table <- cbind(
+    bracketing_table,
+    checkboxColumn(len = nrow(rv$selection_table_bracketing), col = i + 1, values = values)
+  )
+  names(bracketing_table)[i + 1] <- names(rv$selection_table_bracketing)[i + 1]
+    }
+
+    rv$bracketing_table <- bracketing_table
+      
+      updateSelectInput(session, "Compound_IS", choices = unique(colnames(rv$data[, grepl(input$IS_indicator, colnames(rv$data))])), selected = settings$IS_Compound)
+
+
+      updateSelectInput(session, "weight_method", choices = c("none", "1/x", "1/x2", "1/y", "1/y2", "1/x force 0", "1/y force 0"), selected = settings$weight_method)
+      rv$selection_cals_table <- settings$selection_table
+      
+      if(input$Compound_IS == "none" | is.na(input$Compound_IS) | is.null(input$Compound_IS) | input$Compound_IS == ""){
+        updateSelectInput(session, "quantitation_method", choices = c("Drift Correction", "Bracketing", "Default"), selected = settings$quantitation_method)
+      } else {
+        updateSelectInput(session, "quantitation_method", choices = c("IS Correction", "Drift Correction", "Bracketing", "Default"), selected = settings$quantitation_method)
+      }
+
+
+      updateTextInput(session, "Comment", value = settings$comment)
+      updateRadioButtons(session, "model_drift", choices = c("lm", "loess"), selected = settings$model)
+      updateSelectInput(session, "files_for_correction", choices = unique(rv$data$Sample.Name), selected = settings$file_for_correction)
+      updateNumericInput(session, "span_width", value = settings$span_width, min = 0.4, max = 2, step = 0.05)
+
+      rv$IS_table <- settings$IS_table
+     
 }
-
-create_selection_table <- function(class, quantitation_method) {
-    tryCatch({
-        selection_table <- data.frame(Class = class)
-        print(selection_table)
-        for (i in 1:length(class[grepl("Cal", class)])) {
-            selection_table <- cbind(selection_table, rep(FALSE, nrow(selection_table)))
-            names(selection_table)[i + 1] <- paste("Cal", i, sep = " ")
-        }
-        if (quantitation_method != "Bracketing") {
-            selection_table[selection_table == F] <- T
-        }
-        return(selection_table)
-    }, error = function(e) {
-        stop("Error in 'create_selection_table': ", e$message)
-    })
-}
-
-enrich_calibration_table <- function(rv, input, selection_cals_table) {
-    tryCatch({
-        if (all(rv$setup_cal$Cal.Name %in% selection_cals_table[[1]]$Sample.Name)) {
-            for (i in seq_along(selection_cals_table)) {
-                sel_temp <- selection_cals_table[[i]]
-
-                sel_temp$Concentration <- sapply(sel_temp$Sample.Name, function(x) {
-                    rv$setup_cal$Concentration[rv$setup_cal$Cal.Name == x][1]
-                })
-
-                sel_temp <- add_weights(input$weight_method, sel_temp)
-
-                if (is.null(sel_temp$used)) {
-                    sel_temp$used <- sel_temp$PeakArea != 0
-                }
-
-                selection_cals_table[[i]] <- subset(sel_temp, Concentration != 0)
-            }
-
-            rv$selection_cals_table <- selection_cals_table
-        }
-    }, error = function(e) {
-        stop("Error in 'enrich_calibration_table': ", e$message)
-    })
-}
-
-update_quantitation_method <- function(input, session, settings) {
-    tryCatch({
-        if (input$Compound_IS == "none" | is.na(input$Compound_IS) | is.null(input$Compound_IS) | input$Compound_IS == "") {
-            updateSelectInput(session, "quantitation_method", choices = c("Drift Correction", "Bracketing", "Default"), selected = settings$quantitation_method)
-        } else {
-            updateSelectInput(session, "quantitation_method", choices = c("IS Correction", "Drift Correction", "Bracketing", "Default"), selected = settings$quantitation_method)
-        }
-    }, error = function(e) {
-        stop("Error in 'update_quantitation_method': ", e$message)
-    })
-}
-
-
