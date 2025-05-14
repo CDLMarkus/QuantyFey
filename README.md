@@ -41,9 +41,9 @@ QuantyFey provides:
 ### **Linux**
 
 To make sure `QuantyFey` runs smoothly on Ubuntu, please make sure the following dependencies are installed:
-1. r-base
-2. pandoc
-3. cmake
+1. **r-base**
+2. **pandoc**
+3. **cmake**
 
 ### **Mac**
 
