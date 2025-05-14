@@ -141,7 +141,7 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 
 ---
 
-### ✅ Summary: Minimum Upload Requirements
+### Summary: Minimum Upload Requirements
 
 | File                | Required Columns                        | Notes                                                       |
 |---------------------|------------------------------------------|-------------------------------------------------------------|
@@ -149,109 +149,95 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 | **RT Table**        | `Sample.Name`, transitions from Peak Table | Must match Peak Table sample names.                         |
 
 
+## **Configure Settings: Change Patterns**
+
+The application automatically identifies **Quantifier**, **Qualifier**, and **Internal Standard (IS)** transitions by searching for patterns in the column names of your Peak Table. These patterns can be customized to match your dataset structure.
+
+> **Tip:** You can set default values by modifying the `default_settings.R` file, or override them directly within the app interface.
+
+---
+
+### **Default Pattern Setup (in `default_settings.R`)**
+
+```r
+## Setup Default Settings for QuantyFey
+
+# Default Template name
+Template_name = "Example1" 
+# Pattern for Quant Transition:
+quant_pattern = "_quant"
+# Pattern for Qual Transition:
+qual_pattern = "_qual"
+# Pattern for IS Transition:
+IS_pattern = "IS"
+
+#### ---- Units ---- ####
+# Set to NULL if you don't want to show the unit in the plot
+# Concentration 
+conc_unit = "µg/mL"
+# Intensity Unit
+int_unit = "counts*s"
+# RT Unit
+rt_unit = "min"
+```
+
+> **Note:** Updating the units helps ensure consistency between your dataset and the visualization/output displays in the app.
+
+---
+
+### **Pattern for Quantifier Transitions**
+
+This pattern identifies **quantifier** transitions from Peak Table column names.
+
+- Supports **regular expressions**
+- Only columns matching this pattern (and **not** matching the IS pattern) will be used for quantification.
+
+#### Examples:
+- `^Compound1_` → Columns starting with `Compound1_`
+- `_quant$` → Columns ending with `_quant`
+- `Compound[0-9]+_` → Matches names like `Compound1_`, `Compound2_`, etc.
+- `.*_qual` → Columns containing `_qual`
+- `^Cal.*ppb$` → Columns starting with `Cal` and ending with `ppb`
+- `\.quant` → Matches a literal dot (e.g., `Compound1.quant`)
+
+> ⚠**Avoid overlaps** with the IS pattern to ensure correct feature identification.
+
+---
+
+### **🧬 Pattern for Qualifier Transitions**
+
+Defines how **qualifier** transitions are detected.
+
+- Also supports **regular expressions**
+- Matches are determined based on the **prefix** of the corresponding quantifier transition.
+
+#### Prefix Matching Rules:
+- The **prefix** is the string before the first underscore (`_`)
+- Example formats:
+  - `CompoundID_Q1_Q3_CE_quant`
+  - `CompoundID.Q1_Q3_qual`
+
+> If no matching qualifier transitions are found, the **Qualifier/Quantifier Ratio Analysis** tab will be disabled.
+
+---
+
+### **⚖Pattern for IS Transitions**
+
+This pattern identifies **internal standard** transitions in your dataset.
+
+- Supports **regular expressions**
+- Columns matching this pattern:
+  - Are **excluded** from quantification
+  - Are **used** for IS correction, if enabled
+
+> If no IS transitions are detected, IS correction will be disabled automatically and a warning message will appear.
+
+---
+
+![Overview of the Configure Settings graphical output](images/configure_settings_output.png)
 
 
 
-
-
-
-### **Data Upload**
-
-This tab allows users to upload the required data files. Two files must be uploaded (**csv**, **txt**, or **xlsx** format with standard delimiters):
-
-![Screenshot of the **Data Upload** settings](images/data_upload_parameters.png)
-
-- **Peak Table**: Contains peak intensity data (**Peak Areas** or **Peak Heights**) for the compounds of interest. The table must adhere to the following format:
-    - **Sample.Name**: Name of the sample.
-    - **Sample.Type**: Type of sample, which can be:
-        - **Sample**: The sample to be quantified.
-        - **Standard** or **Cal**: Calibration standards for quantification.
-        - **Blank**: Blank samples for background correction.
-        - **QC**: Quality control samples.
-        - **Note:** Correct spelling is required.
-    - **Classification** (optional): Used to segment the sequence into distinct blocks for bracketing analysis. 
-        - Calibration standards must follow the naming convention **Cal n**, where `n` is the calibration level (e.g., **Cal 1**, **Cal 2**).
-        - Sample blocks can be named freely (e.g., **Sample Block 1**, **Sample Block 2**).
-        - **Note**: Calibration levels must start with **Cal 1** and proceed sequentially.
-        - **Note**: If this column is not present, it will be generated automatically. The algorithm searches for multiple Standards (>= 3) that were injected in a row and assumes this is a Calibration Curve. Then it will send everything To a sample block, and repeats it for the next calibration curve. Everything before the first calibration curve will be names `Pre 1`.
-
-**Note**: After upload, error messages might pop up, if any of the required columns are missing, or the setup of these columns is wrong. Also, if there are no IS transitions found with the pattern, a pop up will happen, and it will tell you that you cannot use internal standard correction in this setup and all parameters for IS correction will not be shown in the user interface.
-
-Example datasets are provided in the folder `Example_Datasets/Example1_Drift_Areas.csv`.
-
-![Overview of the Example1 Dataset](images/example1_areas.png)
-
-**Schematic Examples**:
-
-Table: Example Dataset for Peak Table
-
-| Sample.Name  | Sample.Type | Classification | Compound1_quant | Compound1_qual |
-|:------------:|:-----------:|:--------------:|:---------------:|:--------------:|
-|    Blank     |    Blank    |     Pre 1      |      0.00       |     0.0000     |
-|    Blank     |    Blank    |     Pre 1      |      0.00       |     0.0000     |
-|      QC      |     QC      |     Pre 1      |     3443.00     |   1146.9333    |
-|      QC      |     QC      |     Pre 1      |     2973.50     |    990.5333    |
-|      QC      |     QC      |     Pre 1      |     3130.00     |   1042.6667    |
-|    Blank     |    Blank    |     Pre 1      |      0.00       |     0.0000     |
-|  Cal 1 ppm   |  Standard   |     Cal 1      |     1878.00     |    625.6000    |
-|  Cal 3 ppm   |  Standard   |     Cal 1      |     5321.00     |   1772.5333    |
-|  Cal 10 ppm  |  Standard   |     Cal 1      |    16432.50     |   5474.0000    |
-|    Blank     |    Blank    |    Block 1     |      0.00       |     0.0000     |
-|    Blank     |    Blank    |    Block 1     |      0.00       |     0.0000     |
-|      QC      |     QC      |    Block 1     |     3114.35     |   1037.4533    |
-|   Sample 1   |   Sample    |    Block 1     |     2347.50     |    782.0000    |
-|   Sample 2   |   Sample    |    Block 1     |     3912.50     |   1303.3333    |
-|   Sample 3   |   Sample    |    Block 1     |     5477.50     |   1824.6667    |
-|      QC      |     QC      |    Block 1     |     2957.85     |    985.3200    |
-|    Blank     |    Blank    |    Block 1     |      0.00       |     0.0000     |
-|  Cal 1 ppm   |  Standard   |     Cal 2      |     1878.00     |    625.6000    |
-|  Cal 3 ppm   |  Standard   |     Cal 2      |     5321.00     |   1772.5333    |
-|  Cal 10 ppm  |  Standard   |     Cal 2      |    16432.50     |   5474.0000    |
-
-
-- **Retention Time Table**: Contains the Retention Time (RT) data for the compounds of interest. 
-    - Must include a **Sample.Name** column with values identical to those in the Peak Table.
-    - Only transitions present in the Peak Table will be considered for analysis.
-    - Upload the RT Table only after uploading the Peak Table.
-
-Refer to the example dataset `Example_Datasets/Example1_Drift_RT.csv` for the required format.
-![Overview of the Example1 Dataset](images/example1_RT.png)
-
-**Schematic Examples**:
-Table: Example Dataset for Retention Time Table
-
-| Sample.Name  | Compound1_quan | Compound1_qual |
-|:------------:|:--------------:|:--------------:|
-|    Blank     |       NA       |       NA       |
-|    Blank     |       NA       |       NA       |
-|      QC      |    1.496478    |    1.500440    |
-|      QC      |    1.501113    |    1.500998    |
-|      QC      |    1.494299    |    1.492327    |
-|    Blank     |       NA       |       NA       |
-|  Cal 1 ppm   |    1.498587    |    1.499848    |
-|  Cal 3 ppm   |    1.499643    |    1.497129    |
-|  Cal 10 ppm  |    1.497941    |    1.494750    |
-|    Blank     |       NA       |       NA       |
-|    Blank     |       NA       |       NA       |
-|      QC      |    1.496535    |    1.504295    |
-|   Sample 1   |    1.498326    |    1.505902    |
-|   Sample 2   |    1.505464    |    1.497545    |
-|   Sample 3   |    1.501861    |    1.492793    |
-|      QC      |    1.497873    |    1.502696    |
-|    Blank     |       NA       |       NA       |
-|  Cal 1 ppm   |    1.496491    |    1.500002    |
-|  Cal 3 ppm   |    1.501985    |    1.507087    |
-|  Cal 10 ppm  |    1.497683    |    1.496272    |
-
-**Note**: Additional columns are acceptable but will not be processed by the application.
-
-- **Project Name**
-    - The app will generate output during the analysis, this **Project Name** will be used as the folder name where the output will be generated into.
-    - The app will try to save all output in the users **Documents** folder and will generate a folder called **QuantyFey** the porject name folder will be found within this folder.
-
-
-- **Reset the application**
-    - The application can be reset here if needed. This could be due to a wrong datafile being uploaded.
 
 ### **Configure Settings**
 
