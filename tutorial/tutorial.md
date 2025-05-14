@@ -1,11 +1,11 @@
-# **Tutorial**
-This file will serve as a tutorial for the effective use of the **QuantyFey** application.
+## **Tutorial**
+This tutorial provides detailed guidance for effectively using the **QuantyFey** application.
 
-## **Installation**
+### **Installation**
 The standalone version of this application runs on **Windows**, and **Linux**.
 Running the app from your local R, RStuio, or VS Code works also for **Mac**.
 
-### **Prerequisites**
+#### **Prerequisites**
 - **Windows**
     - **RTools**: Version 4.2 must be installed.
         - **Option A**: Use the [official installer](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
@@ -29,20 +29,14 @@ Running the app from your local R, RStuio, or VS Code works also for **Mac**.
       ```
 
 
-### **Standalone Installation**
-- **Windows**
-    - **Download** the current version of [QuantyFey](QuantyFey-Application/releases)
-    - **Unzip** the folder to a destination of your choosing.
-    - **Run** the batch file to execute the App (**Note** approval of the batch file is required)
-    - A console will open and first all dependencies will be installed automatically (this can take up to 20 minutes at first launch).
+#### **Standalone Installation**
 
-- **Linux**
-    - **Download** the current version of [QuantyFey](QuantyFey-Application/releases)
-    - **Unzip** the folder to a destination of your choosing.
-    - **Run** the batch file to execute the App (**Note** approval of the batch file is required)
-    - A console will open and first all dependencies will be installed automatically (this can take up to 20 minutes at first launch).
+- **Download** the current version of [QuantyFey](https://github.com/QuantyFey-Application/releases)
+- **Unzip** the folder to a destination of your choosing.
+- **Run** the batch (Windows) or shell (Linux) file to execute the App (**Note** approval of the batch file is required)
+- A console will open and first all requirec packages will be installed automatically (this can take up to 20 minutes at first launch).
 
-### **Installation for launching the app using RStudio, VS Code etc.**
+#### **Installation for launching the app using RStudio, VS Code etc.**
 - **Download** the GitHub repository.
 - **Unzip** the files to a destination of your choosing.
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/) or [VS Code](https://code.visualstudio.com/download)
@@ -50,9 +44,10 @@ Running the app from your local R, RStuio, or VS Code works also for **Mac**.
 - **Install** prerequisites
 - **Open** the `app.R` file and **run** it's content.
 
-**Note**: At launch there will pop up some error messages in the console - ignore them :)
+---
 
-### **Notes before using it on your own data**
+#### **Notes before using it on your own data**
+
 The application comes with multiple test datasets. These represent published mass spectrometry (**add sources here**)
 Please note that the setup is adjusted for these dataset. This setup includes the **Names** of **Calibration Standards** and their **Concentration**.
 These must be adjusted for your own data **before** launching the app.
@@ -97,6 +92,7 @@ This tab allows users to upload the required data files. Two files must be uploa
 **Note**: After upload, error messages might pop up, if any of the required columns are missing, or the setup of these columns is wrong. Also, if there are no IS transitions found with the pattern, a pop up will happen, and it will tell you that you cannot use internal standard correction in this setup and all parameters for IS correction will not be shown in the user interface.
 
 Example datasets are provided in the folder `Example_Datasets/Example1_Drift_Areas.csv`.
+
 ![Overview of the Example1 Dataset](images/example1_areas.png)
 
 **Schematic Examples**:
