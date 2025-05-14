@@ -1,5 +1,5 @@
 observe_input_file_1 <- function(input, rv, session) {
-
+  
     # Check if the uploaded file contains the required columns and valid separator
     file <- input$file1
     ext <- tools::file_ext(file$datapath)
@@ -46,7 +46,7 @@ observe_input_file_1 <- function(input, rv, session) {
 
     # Update reactive values
     rv$orig <- df_temp
-
+    rv$data <- df_temp
     data_upload <- rv$orig
     data_upload[data_upload == "N/A"] <- 0
     data_upload[data_upload == "N/F"] <- 0
@@ -186,11 +186,5 @@ observe_input_file_1 <- function(input, rv, session) {
     } else {
       rv$setup_cal <- rv$templates[[input$mode]]
     }
-
-    if (is.null(rv$bracketing_table)) {
-            rv$bracketing_table <- create_bracketing_table(rv$data$Classification)
-            rv$selection_table <- create_selection_table(class, input$quantitation_method)
-            rv$selection_table_bracketing <- create_selection_table(unique(rv$data$Classification), "Bracketing")
-        }
 
 }
