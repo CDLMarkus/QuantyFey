@@ -37,26 +37,13 @@ QuantyFey provides:
 ## **Prerequisites**
 ### **Windows**:
 - **RTools**: Version 4.2 must be installed.
-  - **Option A**: Use the [official installer](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
-  - **Option B**: From the included R Portable:
-    - Run `R.exe` in the `R-portable/bin/` folder.
-    - Execute the following commands:
-      ```r
-      install.packages("installr", repos = "https://cloud.r-project.org/")
-      installr::install.Rtools()
-      ```
-    - Follow the installer instructions.
-    - **Note:** An error may occur during finalization. Dismiss the error and proceed with the installation.
  
 ### **Linux**
 
 To make sure `QuantyFey` runs smoothly on Ubuntu, please make sure the following dependencies are installed:
-1. Install `r-base`, `pandoc`, and `cmake` by running the following command in your terminal:
-   ``` bash
-   sudo apt install r-base pandoc cmake
-   ```
-2. Once these dependencies are installed, you can proceed with using or setting up `QuantyFey` as described in the rest of the documentation.
-
+1. r-base
+2. pandoc
+3. cmake
 
 ### **Mac**
 
