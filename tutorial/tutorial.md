@@ -148,6 +148,7 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 | **Peak Table**      | `Sample.Name`, `Sample.Type`             | Optional: `Classification`; supports multiple transitions.  |
 | **RT Table**        | `Sample.Name`, transitions from Peak Table | Must match Peak Table sample names.                         |
 
+---
 
 ## **Configure Settings: Change Patterns**
 
