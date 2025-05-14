@@ -32,7 +32,7 @@ QuantyFey provides:
 - **Automatic Optimization Module** - automatic selection of **linear** or **quadratic** regression model, and selection of appropriate standards.
 
 ---
-# **Getting Started**
+# **Quick Installation Guide**
 
 ## **Prerequisites**
 ### **Windows**:
