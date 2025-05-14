@@ -418,6 +418,13 @@ update_classification_and_quantitation <- function(input, rv, session) {
 }
 
 prepare_calibration_selection <- function(input, rv, session) {
+    if (!all(rv$setup_cal$Cal.Name %in% rv$data$Sample.Name) || 
+        !all(rv$data$Sample.Name[pd_temp(rv) == "Cal"] %in% rv$setup_cal$Cal.Name)) {
+        
+        stop("Calibration samples do not match the data. Please check the calibration samples and the data.")
+    }
+
+
     tryCatch({
         df <- data(input, rv)
         class <- unique(rv$Classification_temp)
