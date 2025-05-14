@@ -1,33 +1,32 @@
-## **Tutorial**
+## Tutorial
 This tutorial provides detailed guidance for effectively using the **QuantyFey** application.
 
-### **Installation**
-The standalone version of this application runs on **Windows**, and **Linux**.
-Running the app from your local R, RStuio, or VS Code works also for **Mac**.
+### Installation
+The standalone version of this applications runs on **Windows** and **Linux**. It can also be run from within **R**, **RStudio**, or **VS Code**, which allows compatibility with **macOS**.
 
-#### **Prerequisites**
-- **Windows**
-    - **RTools**: Version 4.2 must be installed.
-        - **Option A**: Use the [official installer](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
-        - **Option B**: From the included R Portable:
-            - Run `R.exe` in the `R-portable/bin/` folder.
-            - Execute the following commands:
-            
-              ```r
-              install.packages("installr", repos = "https://cloud.r-project.org/")
-              installr::install.Rtools()
-              ```
-          - Follow the installer instructions.
-          - **Note:** An error may occur during finalization. Dismiss the error and proceed with the installation.
+#### Prerequisites
 
-- **Linux**
-    - **Install** all dependencies using the following code:
-      ```{bash}
-      sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev build-essential pkg-config
-
-      sudo R CMD javareconf
+##### Windows
+- **RTools 4.2** is required:
+  - **Option A**: Install from the [official CRAN page](https://cran.r-project.org/bin/windows/Rtools/rtools.html).
+  - **Option B**: Use the included Portable R:
+    - Navigate to `R-portable/bin/` and launch `R.exe`
+    - Run the following in the R console:
+      ```r
+      install.packages("installr", repos = "https://cloud.r-project.org/")
+      installr::install.Rtools()
       ```
+    - Follow the installer steps. You may ignore any non-critical error during finalization.
 
+##### Linux
+Ensure all system dependencies are installed:
+```bash
+sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev \
+libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev \
+build-essential pkg-config
+
+sudo R CMD javareconf
+```
 
 #### **Standalone Installation**
 
@@ -68,6 +67,93 @@ The application is organized into several tabs, each serving a distinct purpose.
 ![Overview of main tabs of the QuantyFey Application](images/main_tab_overview.png)
 
 ---
+## **Data Upload**
+
+The **Data Upload** tab allows users to import the required data files for analysis. Two files must be uploaded in **CSV**, **TXT**, or **XLSX** format using standard delimiters:
+
+![Screenshot of the Data Upload settings](images/data_upload_parameters.png)
+
+---
+
+### **1. Peak Table**
+
+This file should contain **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*) for the compounds of interest. The required structure is as follows:
+
+- **Sample.Name**: Identifier for each sample.
+- **Sample.Type**: Must match one of the following:
+  - `Sample` – Experimental samples.
+  - `Standard` or `Cal` – Calibration standards.
+  - `Blank` – Blank samples for background correction.
+  - `QC` – Quality control samples.
+  - **Note**: Spelling must be exact.
+
+- **Classification** *(optional)*: Defines distinct sequence blocks for **bracketing analysis**.
+  - Calibration standards must follow the pattern `Cal n` (e.g., `Cal 1`, `Cal 2`, ...).
+  - Sample blocks may be named freely (e.g., `Sample Block 1`, `Block A`).
+  - **Note**: If this column is missing, it will be auto-generated:
+    - The algorithm identifies calibration curves (≥3 consecutive standards).
+    - Sample blocks are defined between these curves.
+    - Samples before the first calibration are labeled `Pre 1`.
+
+> **Important:** If required columns are missing or misformatted, an error message will appear.  
+> If **no IS transitions** are detected using the configured pattern, a warning will be shown, and **IS Correction** options will be hidden in the interface.
+
+#### Example Table: Peak Table Format
+
+Example file: `Example_Datasets/Example1_Drift_Areas.csv`
+
+![Overview of the Example1 Dataset](images/example1_areas.png)
+
+
+
+---
+
+### **2. Retention Time Table**
+
+This file provides **retention time (RT)** data for the compounds.
+
+- Must include a **Sample.Name** column identical to that in the Peak Table.
+- Only compounds present in the Peak Table will be considered.
+- Upload the RT Table **after** the Peak Table.
+
+#### Example Table: Retention Time Table Format
+
+Example file: `Example_Datasets/Example1_Drift_RT.csv`
+
+![Overview of the Example1 Dataset](images/example1_RT.png)
+
+> **Note:** Additional columns are allowed but will be ignored by the application.
+
+---
+
+### **3. Project Name**
+
+You may optionally specify a **Project Name**, which will be used to label output folders.
+
+- Output will be saved in the user's **Documents** folder under:  
+  `Documents/QuantyFey/<ProjectName>/`
+
+---
+
+### **4. Reset the Application**
+
+Click **Reset App** to restart the session and clear all uploaded data — useful if the wrong files were selected or you want to begin a new analysis.
+
+---
+
+### ✅ Summary: Minimum Upload Requirements
+
+| File                | Required Columns                        | Notes                                                       |
+|---------------------|------------------------------------------|-------------------------------------------------------------|
+| **Peak Table**      | `Sample.Name`, `Sample.Type`             | Optional: `Classification`; supports multiple transitions.  |
+| **RT Table**        | `Sample.Name`, transitions from Peak Table | Must match Peak Table sample names.                         |
+
+
+
+
+
+
+
 
 ### **Data Upload**
 
