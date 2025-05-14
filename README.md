@@ -78,12 +78,5 @@ Currently not working as standalone application on Mac.
 Discription of the app and tutorials on how to effectively use it can be found in the tutorial folder.
 The app provides the user the tools for versatile and interactive quantification of targeted Mass Spectrometry Data using external calibration. Especially when Intensity Drift is observed during the Measurement, the app provides the user with tools to effectively handle these drift. This app works as an extra software to already integrated mass spectrometry data, and does not provide any integration cabailities, but rather offers the user an interactive tool for efficient quantification.
 
-We hope, this app can help save a lot of nerves during your Quantification efforts!
-
-<p align="left">
-  <img src="images/keep_calm.png" alt="Keep Calm and QuantyFey!" width="300">
-</p>
-
-
 
 
