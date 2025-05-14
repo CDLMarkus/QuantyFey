@@ -60,19 +60,7 @@ To make sure `QuantyFey` runs smoothly on Ubuntu, please make sure the following
 
 ### **Mac**
 
-Install Homebrew (if not already installed): Open a terminal and run:
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Use Homebrew to install the required dependencies:
-
-``` bash
-brew install r pandoc cmake
-```
-Once these dependencies are installed, you can proceed with using or setting up QuantyFey as described in the rest of the documentation.
-**Note:** Does not currently work..!
+Currently not working as standalone application on Mac.
 
 
 ## **Installation**
