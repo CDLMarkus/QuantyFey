@@ -1,30 +1,16 @@
 # Bracketing_module
 
+source("./Modules/Bracketing/bracketing_helper.r")
 
 bracketing_module <- function(input, output, session, rv) {
   # ========= Bracketing Logic =============
 
 observeEvent(input$dtable_cell_edit, {
-  info <- input$dtable_cell_edit  # Get the cell edit info
-
-  # Validate the info object
-  if (!is.null(info) & 
-      info[["row"]] <= nrow(rv$selection_table_bracketing) & 
-      info[["col"]] <= ncol(rv$selection_table_bracketing)) {
-    # Update the reactive value
-    
-
-    rv$selection_table_bracketing[info[["row"]], info[["col"]]] <- ifelse(info[["value"]] == 1, TRUE, FALSE)
-
-
-        try({
-      update_cals(input, rv, session)
-    }, silent = T)
-
-
-  } else {
-    showNotification("Invalid cell edit!", type = "error")
-  }
+  tryCatch({
+    observe_input_cell_edit_bracketing(input, rv, session)
+  }, error = function(e) {
+    showNotification("Error in cell edit: " %||% e$message, type = "error")
+  })
 })
 
 # ------- Output --------

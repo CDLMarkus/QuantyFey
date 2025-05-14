@@ -34,24 +34,16 @@ hook_output <- knitr::knit_hooks$get("output")
 theme_set(theme_bw(base_family = "serif"))
 
 
+
 ```
 
-## Quantitation Summary for `r input_list$Compound`
+## Quantitation Summary for `r input$Compound`
 
-This report shows a summary of the quantification of `r input_list$Compound`. This includes all plots from the overviewiew tap. A summary of the method used for quantification and their individual plots, as well as a summary of all used calibration functions and the used settings.
+This report shows a summary of the quantification of `r input$Compound`. This includes all plots from the overviewiew tap. A summary of the method used for quantification and their individual plots, as well as a summary of all used calibration functions and the used settings.
 
 ```{r, echo = F}
-
-plots <- for_markdown$plots
-
-cals_table <- for_markdown$cals_table
-
-regression_model <- for_markdown$regression_model
-
 table_n = 1
 fig_n = 1
-
-
 ```
 
 # Overview of the data
@@ -66,8 +58,9 @@ suppressWarnings({
   
   fig_n <- fig_n + 1
   
-  p <- plots$RT
-  p <- p + labs(x = "Retention Time", y = "Sample Type")+theme(legend.position = "none")
+  p <- get_plotly_RT(input, rv)
+  p$mapping[["text"]] <- NULL
+  #p <- p + labs(x = "Retention Time", y = "Sample Type")+theme(legend.position = "none")
   
   plot(p)
 
@@ -85,13 +78,14 @@ The following plot shows the ratio of the Quantifier and Qualifier transitions (
 ```{r, echo = F, fig.height = 3, results = "asis"}
 suppressWarnings({
   
-   caption_text <- paste0("Figure ", fig_n, ": ", "overviewiew of Q/Q-Ratio per Sample Type")
+   caption_text <- paste0("Figure ", fig_n, ": ", "overviewiew of ion ratio per Sample Type")
   
   fig_n <- fig_n + 1
   
-  rv_list$p_quan_qual$mapping[["text"]] <- NULL
+  p_quan_qual <- get_plotly_qual_quant(input, rv)
+  p_quan_qual$mapping[["text"]] <- NULL
   
-  p <- rv_list$p_quan_qual + labs(y = "relative Q/Q Ratio", x = "Sample Type")+ theme(legend.position = "none")
+  p <- p_quan_qual + labs(y = "Ion Ratio", x = "Sample Type")+ theme(legend.position = "none")
   p <- p 
   
   })
@@ -116,7 +110,7 @@ suppressWarnings({try({
   
   fig_n <- fig_n + 1
   
-  p <- plots$blank 
+  p <- get_plotly_blank(input, rv)
   p <- p + labs(y = "Blank Ratio", x = "Sample Type")+theme(legend.position = "none") 
   
 })
@@ -132,7 +126,7 @@ suppressWarnings({try({
 
 ## Method for Quantification
 
-For this compound the method `r input_list$quantitation_method` was used. 
+For this compound the method `r input$quantitation_method` was used. 
 
 
 ```{r, echo = F, warning = F, results = "asis", error = F}
@@ -144,8 +138,8 @@ suppressWarnings({
   
 
   
-if(input_list$quantitation_method == "Bracketing"){
-  checkbox_data <- rv_list$selection_table_bracketing
+if(input$quantitation_method == "Bracketing"){
+  checkbox_data <- rv$selection_table_bracketing
   
   latex_table <- function(data) {
   # Create LaTeX table header
@@ -185,15 +179,15 @@ if(input_list$quantitation_method == "Bracketing"){
 # Print LaTeX table
 cat(latex_table(checkbox_data))
   
-}else if(input_list$quantitation_method == "IS Correction"){
+}else if(input$quantitation_method == "IS Correction"){
   cat("The red dots mark the Peak Areas of the Internal Standard compounds and the Bars represent the Peak Areas of the Compound over the whole Measurement Sequence. The lower plot represents the ratios from the respective Sample after each Peak Area from the Compound was divided by the Peak Area from the selected Internal Standard.\\newline \n\n")
   
   # Combine plots using patchwork
 
 tryCatch({
-  combined_plot <- (rv_list$IS_plot[[1]] + 
+  combined_plot <- (rv$IS_plot[[1]] + 
       theme(legend.position = "none")) / 
-      (rv_list$IS_plot[[2]] + 
+      (rv$IS_plot[[2]] + 
       theme(legend.position = "bottom"))  # Stack plots vertically
 
   # Display the combined plot
@@ -209,23 +203,15 @@ tryCatch({
   cat("The following table shows the correction factors used for the specific Sample Types. This is useful if different dilutions were used for the analysis.")
   cat(paste0("\\newline \n Table ", table_n, ": Information about the correction factors for each sample type"))
  
-#  table_n <- table_n + 1
-#  print(kable(rv_list$IS_table, booktabs = T))
+  print(kable(as.data.frame(rv$IS_table), format = "latex", row.names = F, booktabs = T))
 
 
 
-#print(rv$list$IS_table)
-# Render the table in LaTeX format
-#print(kable(rv_list$IS_table, format = "latex", booktabs = TRUE) %>% kable_styling(latex_options = c("striped", "hold_position")))
-  print(kable(as.data.frame(rv_list$IS_table), format = "latex", row.names = F, booktabs = T))
-
-
-
-}else if(input_list$quantitation_method == "Drift Correction"){
+}else if(input$quantitation_method == "Drift Correction"){
   cat("The following plots showcase the Peak Areas for the selected compound from the measured data. The first plot show the Peak Areas as they were processed without any manipulation with red indicated bars showcasing the Samples selected for Drift Correction and the red line indicating the model used for Drift Correction. The second plot shows the manipulated data after Drift Correction.\\newline \n")
   
-  p1 <- rv_list$plot_dc[[1]] + theme(legend.position = "none") 
-  p2 <- rv_list$plot_dc[[2]] + theme(legend.position = "bottom")
+  p1 <- rv$plot_dc[[1]] + theme(legend.position = "none") 
+  p2 <- rv$plot_dc[[2]] + theme(legend.position = "bottom")
 
   legend <- get_legend(p2)
 
@@ -241,10 +227,10 @@ tryCatch({
   cat(caption_text)
   cat("\\newline \n")
   
-}else if(input_list$quantitation_method == "Default"){
+}else if(input$quantitation_method == "Default"){
   
-  df <- rv$data[,c("Sample.Name","Sample.Type", input_list$Compound)]
-  colnames(df)[colnames(df) == input_list$Compound] <- "Peak Area"
+  df <- rv$data[,c("Sample.Name","Sample.Type", input$Compound)]
+  colnames(df)[colnames(df) == input$Compound] <- "Peak Area"
   df$inj <- 1:nrow(df)
   
   p <- ggplot(df, aes(x = inj, y = `Peak Area`, fill = Sample.Type))+geom_bar(stat = "identity", col = "black") + 
@@ -266,21 +252,22 @@ tryCatch({
 
 
 ```{r, echo = F, warnings = F, error= F}
-    quant_data <- for_markdown$results_quant[[1]]
-    mods <- for_markdown$results_quant[[3]]
+    quantitate_data <- quantitate(input, rv)
+    quant_data <- quantitate_data[[1]]
+    mods <- quantitate_data[[3]]
                
     
                                
     plots_quant <- list()
-    for(block_name in names(cals_table)){
+    for(block_name in names(rv$selection_cals_table)){
     
     mod <- mods[[block_name]]
 
-    cals_data_block <- cals_table[[block_name]]
+    cals_data_block <- rv$selection_cals_table[[block_name]]
      quant_data_block <- quant_data[quant_data$Classification == block_name,]
      quant_data_not_block <- quant_data[!quant_data$Classification == block_name,]
 
-     p <- generate_quantitate_ggplot(data = cals_data_block, regression_model = mod, regression_method = regression_model)
+     p <- generate_quantitate_ggplot(data = cals_data_block, regression_model = mod, regression_method = input$regression_model)
     
     p <- p + theme(plot.title = element_blank())
 
@@ -297,22 +284,22 @@ tryCatch({
 suppressWarnings({
   
 
-    mods <- for_markdown$results_quant[[3]]
+    mods <- quantitate_data[[3]]
     
     results_acc <- list()
     
-    for(block in names(cals_table)){
+    for(block in names(rv$selection_cals_table)){
       
       
       
-      df <- for_markdown$results_quant[[1]] 
+      df <- quantitate_data[[1]] 
     
     mod_temp <- mods[[block]]
-    used_cals <- unique(cals_table[[block]]$Classification)
+    used_cals <- unique(rv$selection_cals_table[[block]]$Classification)
 
     
     #print(used_cals)
-    pd <- for_markdown$pd
+    pd <- pd_temp(rv)
 
     df <- df[(df$Classification %in% used_cals) | ((df$Classification == block) & (pd == "Cal")),]
 
@@ -322,27 +309,12 @@ suppressWarnings({
           return(concentration[i])
         }
       }
-    }, label = for_markdown$template$Cal.Names,
-    concentration = for_markdown$template$concentration)
+    }, label = rv$setup_cal$Cal.Name,
+    concentration = rv$setup_cal$Concentration)
 
     
 
-
-    if(for_markdown$regression_model == "linear"){
-      k <- mod_temp$coefficients[2]
-      d <- mod_temp$coefficients[1]
-
-      df$pred <- (df$PeakArea - d) / k
-    }else{
-      a <- mod_temp$coefficients[3]
-      b <- mod_temp$coefficients[2]
-      c <- mod_temp$coefficients[1]
-
-      df$pred <- sapply(df$PeakArea, function(x){
-        return((-b + sqrt(b^2 - 4*a*(c - x))) / (2*a))
-      })
-
-    }
+    df$pred <- predict_concentrations(data = df, model = mod_temp ,method = input$regression_model)
 
     df$pred <- signif(df$pred, digits = 3)
 
@@ -382,12 +354,15 @@ auto_set_format <- function() {
    } 
  }
 
+ 
+
  escape_md <- function(text) {
   # Escape special Markdown characters
   gsub("([\\*_\\[\\](){}<>`#\\+\\-!|])", "\\\\\\1", text, perl = TRUE)
 }
 
-comment_escaped <- escape_md(input_list$Comment)
+
+comment_escaped <- escape_md(input$Comment)
 
 auto_set_format()
 
@@ -426,15 +401,15 @@ auto_set_format()
     cat("\\newline \n")
   
      # Generate specific settings for the quantitation method
-     quantitation_method_specifific <- sapply(input_list$quantitation_method, FUN = function(x) {
+     quantitation_method_specifific <- sapply(input$quantitation_method, FUN = function(x) {
        if (x == "Drift Correction") {
          return(paste0(
-           "Model for Drift Correction: ", ifelse(input_list$model_drift == "lm", "linear", "LOESS"), "\\newline \n",
-           "File for Drift Correction: ", input_list$files_for_correction, 
-           ifelse(input_list$model_drift != "lm", paste0("\\newline \n", "Span Width: ", input_list$span_width), "")
+           "Model for Drift Correction: ", ifelse(input$model_drift == "lm", "linear", "LOESS"), "\\newline \n",
+           "File for Drift Correction: ", input$files_for_correction, 
+           ifelse(input$model_drift != "lm", paste0("\\newline \n", "Span Width: ", input$span_width), "")
          ))
        } else if (x == "IS Correction") {
-         compound_IS <- input_list$Compound_IS %>% gsub("_", "-", .)
+         compound_IS <- input$Compound_IS %>% gsub("_", "-", .)
          return(paste0("IS Compound for Correction:\\newline \n", compound_IS))
        } else {
          return(c(""))
@@ -446,7 +421,7 @@ auto_set_format()
   
      # Add a table for concentration levels
      cat(paste0("Table ", table_n, ": ", "Concentration levels ", "\\newline"))
-     print(kable(rv_list$setup_cal, booktabs = T))
+     print(kable(rv$setup_cal, booktabs = T))
      table_n <- table_n + 1
   
      # Add a column break for the second column
@@ -456,10 +431,10 @@ auto_set_format()
      cat("\\textbf{Summary of Settings:}\\newline")
      cat(paste0(
        "\\newline \n",
-       "Model used: ", regression_model, "\\newline \n",
-       "Quantitation Method used: ", input_list$quantitation_method, "\\newline \n",
-       "Lower Limit of Quantification: ", rv_list$LLOQs[[i]], "\\newline \n",
-       "Weighting Method: ", input_list$weight_method, "\\newline \n",
+       "Model used: ", input$regression_model, "\\newline \n",
+       "Quantitation Method used: ", input$quantitation_method, "\\newline \n",
+       "Lower Limit of Quantification: ", rv$LLOQs[[i]], "\\newline \n",
+       "Weighting Method: ", input$weight_method, "\\newline \n",
        quantitation_method_specifific, "\\newline \n",
        "Comment added to this Compound:\\newline \n  ", comment_escaped, "\\newline \n", "\\newline \n"
      ))
