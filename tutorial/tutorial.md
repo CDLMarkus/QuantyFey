@@ -201,11 +201,11 @@ This pattern identifies **quantifier** transitions from Peak Table column names.
 - `^Cal.*ppb$` → Columns starting with `Cal` and ending with `ppb`
 - `\.quant` → Matches a literal dot (e.g., `Compound1.quant`)
 
-> ⚠**Avoid overlaps** with the IS pattern to ensure correct feature identification.
+> **Avoid overlaps** with the IS pattern to ensure correct feature identification.
 
 ---
 
-### **🧬 Pattern for Qualifier Transitions**
+### **Pattern for Qualifier Transitions**
 
 Defines how **qualifier** transitions are detected.
 
@@ -216,13 +216,13 @@ Defines how **qualifier** transitions are detected.
 - The **prefix** is the string before the first underscore (`_`)
 - Example formats:
   - `CompoundID_Q1_Q3_CE_quant`
-  - `CompoundID.Q1_Q3_qual`
+  - `CompoundID.Q1_Q3_CE_qual`
 
 > If no matching qualifier transitions are found, the **Qualifier/Quantifier Ratio Analysis** tab will be disabled.
 
 ---
 
-### **⚖Pattern for IS Transitions**
+### **Pattern for IS Transitions**
 
 This pattern identifies **internal standard** transitions in your dataset.
 
@@ -239,76 +239,6 @@ This pattern identifies **internal standard** transitions in your dataset.
 
 
 
-
-### **Configure Settings**
-
-The **Configure Settings** tab allows users to define parameters for the quantification analysis. These parameters include:
-
-![Screenshot of the **Configure Settings Parameters**](images/configure_settings_parameters.png)
-
-- **Template**:
-    - Select the template for the 
-    - Each **sheet** represents an available template for the app.
-    - Two example templates are provided by default.
-    - Two styles are supported:
-        - **Uniform concentration for all standards**: Requires two columns:
-            - **Cal.Name**: Names of the calibration standards.
-            - **Concentration**: Concentration values of the calibration standards.
-        - **Variable concentrations for each standard**: Requires one column for **Cal.Name** and columns for **each transition** in the Peak Table:
-            - **Cal.Name**: Names of the calibration standards.
-            - **Additional columns**: Concentration values for each transition.
-            - **Note**: All transitions in the Peak Table **must** be present in the template.
-        - **Note:** Standards with a concentration of **0** will be excluded from the calibration function.
-    - Ensure the template is configured before launching the app, as the **Templates.xlsx** file is read only at startup.
-    - Verify spelling consistency to avoid errors.
-
-#### **Change Patterns**
-The app attempts to find quantifier, qualifier and internal standard transition by searching for patterns in the column names of the Peak Table. These patterns can be adjusted.
-**Note:** The default patterns can be changed in the `defaults_settings.R`file by renaming the respective variable.
-
-```{r}
-## Setup Default Settings for QuantyFey
-
-# Default Template name
-Template_name = "Example1" ## Change Example1 to new default tempalte
-# Pattern for Quant Transition:
-quant_pattern = "_quant" ## Change _quant to new quant pattern
-# Pattern for Qual Transition:
-qual_pattern = "_qual" ## Change _qual to new qual pattern
-# Pattern for IS Transition:
-IS_pattern = "IS" ## Change IS to new IS pattern
-
-```
-The default values can easily be changed by changing e.g., `Template_name = "Example1"` to `Template_name = "Example2"`.
-**Note:** All of these values can be changed also within the app, but this might optimize utilization of the app by adjusting it to the users data.
-
-- **Pattern for Quant Transition**: Defines the pattern to identify quantifier transitions in the Peak Table column names.
-    - Supports regular expressions.
-    - Examples:
-        - `^Compound1_`: Matches column names starting with "Compound1_".
-        - `_quant$`: Matches column names ending with "_quant".
-        - `Compound[0-9]+_`: Matches column names containing "Compound" followed by digits and an underscore.
-        - `.*_qual`: Matches column names containing "_qual".
-        - `^Cal.*ppb$`: Matches column names starting with "Cal" and ending with "ppb".
-    - **Note**: Use `\.` to match a literal dot (e.g., `\.quant` for "Compound1.quant").
-    - **Important** Only columns that match this pattern, and **do not** match the IS pattern, will be useable for quantification!
-
-- **Pattern for Qual Transition**: Defines the pattern to identify qualifier transitions in the Peak Table column names.
-    - Supports regular expressions.
-    - Qualifier transitions are matched to quantifier transitions based on their **prefix**.
-        - **Prefix** is considered the first position before the first **underscore** ("_").
-        - Therefore, transitions should have the following structure: **CompoundID**\_*additional*\_*information*\_**qual/quant/IS pattern**.
-        - *Additional information* could be Q1 and Q3 mass, collision energy, etc.
-        - **Note** if no qual transitions are found, or matched to the quant transition, Qualifier-Quantifier Ratio Analysis will not be available.
-
-
-
-- **Pattern for IS Transitions**: Defines the pattern to identify internal standard transitions in the Peak Table column names.
-    - Supports regular expressions.
-    - If no matches are found, internal standard correction will be unavailable (a message will be displayed).
-    - Columns matching this pattern will not be used for quantification.
-
-![Overview of the Configure Settings graphical output](images/configure_settings_output.png)
 
 ---
 
