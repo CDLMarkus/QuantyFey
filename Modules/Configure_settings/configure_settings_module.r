@@ -64,8 +64,6 @@ configure_settings_module <- function(input, output, session, rv) {
     is_cols <- colnames(rv$data)[grepl(input$IS_indicator, colnames(rv$data))]
     df_IS <- data.frame(IS.Names = is_cols, stringsAsFactors = FALSE)
 
-    message(str(df_IS))
-
     if(nrow(df_IS) == 0 | is.null(df_IS)) {
       showNotification("No IS columns found.")
       NULL

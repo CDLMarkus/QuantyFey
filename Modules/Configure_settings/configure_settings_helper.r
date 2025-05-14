@@ -139,6 +139,7 @@ observe_input_mode <- function(input, rv, session) {
 
 get_qq_table <- function(input, rv) {
     quant_cols <- colnames(rv$data)[grepl(input$quant_indicator, colnames(rv$data))]
+    quant_cols <- quant_cols[!grepl(input$IS_indicator, quant_cols)]
 
     if(length(quant_cols) == 0 || all(is.null(quant_cols)) || all(is.na(quant_cols))) {
       showNotification("No quant columns found. Please adjust the patterns accordingly!", type = "warning")

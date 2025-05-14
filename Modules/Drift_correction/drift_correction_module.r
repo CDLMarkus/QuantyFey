@@ -7,7 +7,9 @@ drift_correction_module <- function(input, output, session, rv) {
       update_dc_data(input, rv)
     }, silent = T)
     
-    update_sel_cal_areas(input, rv)
+    try({
+      update_sel_cal_areas(input, rv)
+    }, silent = T)
   })
 
   observeEvent(input$files_for_correction, {
