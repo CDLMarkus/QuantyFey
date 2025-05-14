@@ -65,7 +65,7 @@ Currently not working as standalone application on Mac.
 
 ## **Installation**
 
-1. Download the zip file download [QuantyFey.zip]([release/v0.0.1windows](https://github.com/CDLMarkus/QuantyFey/releases/v.1.0.0)) (or for [linux version](release/v0.0.1linux))
+1. Download the zip file download [QuantyFey.zip](https://github.com/CDLMarkus/QuantyFey/releases/v.1.0.0) (or for [linux version](release/v0.0.1linux))
 2. Extract the folder to a desired location.
 3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (approval may be required).
 4. The console will open, and all required packages will be installed automatically (this process may take up to 20 minutes).
