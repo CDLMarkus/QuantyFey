@@ -1,48 +1,41 @@
-# **Tutorial**
-This file will serve as a tutorial for the effective use of the **QuantyFey** application.
+## Tutorial
+This tutorial provides detailed guidance for effectively using the **QuantyFey** application.
 
-## **Installation**
-The standalone version of this application runs on **Windows**, and **Linux**.
-Running the app from your local R, RStuio, or VS Code works also for **Mac**.
+### Installation
+The standalone version of this applications runs on **Windows** and **Linux**. It can also be run from within **R**, **RStudio**, or **VS Code**, which allows compatibility with **macOS**.
 
-### **Prerequisites**
-- **Windows**
-    - **RTools**: Version 4.2 must be installed.
-        - **Option A**: Use the [official installer](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
-        - **Option B**: From the included R Portable:
-            - Run `R.exe` in the `R-portable/bin/` folder.
-            - Execute the following commands:
-            
-              ```r
-              install.packages("installr", repos = "https://cloud.r-project.org/")
-              installr::install.Rtools()
-              ```
-          - Follow the installer instructions.
-          - **Note:** An error may occur during finalization. Dismiss the error and proceed with the installation.
+#### Prerequisites
 
-- **Linux**
-    - **Install** all dependencies using the following code:
-      ```{bash}
-      sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev build-essential pkg-config
-
-      sudo R CMD javareconf
+##### Windows
+- **RTools 4.2** is required:
+  - **Option A**: Install from the [official CRAN page](https://cran.r-project.org/bin/windows/Rtools/rtools.html).
+  - **Option B**: Use the included Portable R:
+    - Navigate to `R-portable/bin/` and launch `R.exe`
+    - Run the following in the R console:
+      ```r
+      install.packages("installr", repos = "https://cloud.r-project.org/")
+      installr::install.Rtools()
       ```
+    - Follow the installer steps. You may ignore any non-critical error during finalization.
 
+##### Linux
+Ensure all system dependencies are installed:
+```bash
+sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev \
+libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev \
+build-essential pkg-config
 
-### **Standalone Installation**
-- **Windows**
-    - **Download** the current version of [QuantyFey](QuantyFey-Application/releases)
-    - **Unzip** the folder to a destination of your choosing.
-    - **Run** the batch file to execute the App (**Note** approval of the batch file is required)
-    - A console will open and first all dependencies will be installed automatically (this can take up to 20 minutes at first launch).
+sudo R CMD javareconf
+```
 
-- **Linux**
-    - **Download** the current version of [QuantyFey](QuantyFey-Application/releases)
-    - **Unzip** the folder to a destination of your choosing.
-    - **Run** the batch file to execute the App (**Note** approval of the batch file is required)
-    - A console will open and first all dependencies will be installed automatically (this can take up to 20 minutes at first launch).
+#### **Standalone Installation**
 
-### **Installation for launching the app using RStudio, VS Code etc.**
+- **Download** the current version of [QuantyFey](https://github.com/QuantyFey-Application/releases)
+- **Unzip** the folder to a destination of your choosing.
+- **Run** the batch (Windows) or shell (Linux) file to execute the App (**Note** approval of the batch file is required)
+- A console will open and first all requirec packages will be installed automatically (this can take up to 20 minutes at first launch).
+
+#### **Installation for launching the app using RStudio, VS Code etc.**
 - **Download** the GitHub repository.
 - **Unzip** the files to a destination of your choosing.
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/) or [VS Code](https://code.visualstudio.com/download)
@@ -50,9 +43,10 @@ Running the app from your local R, RStuio, or VS Code works also for **Mac**.
 - **Install** prerequisites
 - **Open** the `app.R` file and **run** it's content.
 
-**Note**: At launch there will pop up some error messages in the console - ignore them :)
+---
 
-### **Notes before using it on your own data**
+#### **Notes before using it on your own data**
+
 The application comes with multiple test datasets. These represent published mass spectrometry (**add sources here**)
 Please note that the setup is adjusted for these dataset. This setup includes the **Names** of **Calibration Standards** and their **Concentration**.
 These must be adjusted for your own data **before** launching the app.
@@ -73,173 +67,178 @@ The application is organized into several tabs, each serving a distinct purpose.
 ![Overview of main tabs of the QuantyFey Application](images/main_tab_overview.png)
 
 ---
+## **Data Upload**
 
-### **Data Upload**
+The **Data Upload** tab allows users to import the required data files for analysis. Two files must be uploaded in **CSV**, **TXT**, or **XLSX** format using standard delimiters:
 
-This tab allows users to upload the required data files. Two files must be uploaded (**csv**, **txt**, or **xlsx** format with standard delimiters):
+![Screenshot of the Data Upload settings](images/data_upload_parameters.png)
 
-![Screenshot of the **Data Upload** settings](images/data_upload_parameters.png)
+---
 
-- **Peak Table**: Contains peak intensity data (**Peak Areas** or **Peak Heights**) for the compounds of interest. The table must adhere to the following format:
-    - **Sample.Name**: Name of the sample.
-    - **Sample.Type**: Type of sample, which can be:
-        - **Sample**: The sample to be quantified.
-        - **Standard** or **Cal**: Calibration standards for quantification.
-        - **Blank**: Blank samples for background correction.
-        - **QC**: Quality control samples.
-        - **Note:** Correct spelling is required.
-    - **Classification** (optional): Used to segment the sequence into distinct blocks for bracketing analysis. 
-        - Calibration standards must follow the naming convention **Cal n**, where `n` is the calibration level (e.g., **Cal 1**, **Cal 2**).
-        - Sample blocks can be named freely (e.g., **Sample Block 1**, **Sample Block 2**).
-        - **Note**: Calibration levels must start with **Cal 1** and proceed sequentially.
-        - **Note**: If this column is not present, it will be generated automatically. The algorithm searches for multiple Standards (>= 3) that were injected in a row and assumes this is a Calibration Curve. Then it will send everything To a sample block, and repeats it for the next calibration curve. Everything before the first calibration curve will be names `Pre 1`.
+### **1. Peak Table**
 
-**Note**: After upload, error messages might pop up, if any of the required columns are missing, or the setup of these columns is wrong. Also, if there are no IS transitions found with the pattern, a pop up will happen, and it will tell you that you cannot use internal standard correction in this setup and all parameters for IS correction will not be shown in the user interface.
+This file should contain **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*) for the compounds of interest. The required structure is as follows:
 
-Example datasets are provided in the folder `Example_Datasets/Example1_Drift_Areas.csv`.
+- **Sample.Name**: Identifier for each sample.
+- **Sample.Type**: Must match one of the following:
+  - `Sample` – Experimental samples.
+  - `Standard` or `Cal` – Calibration standards.
+  - `Blank` – Blank samples for background correction.
+  - `QC` – Quality control samples.
+  - **Note**: Spelling must be exact.
+
+- **Classification** *(optional)*: Defines distinct sequence blocks for **bracketing analysis**.
+  - Calibration standards must follow the pattern `Cal n` (e.g., `Cal 1`, `Cal 2`, ...).
+  - Sample blocks may be named freely (e.g., `Sample Block 1`, `Block A`).
+  - **Note**: If this column is missing, it will be auto-generated:
+    - The algorithm identifies calibration curves (≥3 consecutive standards).
+    - Sample blocks are defined between these curves.
+    - Samples before the first calibration are labeled `Pre 1`.
+
+> **Important:** If required columns are missing or misformatted, an error message will appear.  
+> If **no IS transitions** are detected using the configured pattern, a warning will be shown, and **IS Correction** options will be hidden in the interface.
+
+#### Example Table: Peak Table Format
+
+Example file: `Example_Datasets/Example1_Drift_Areas.csv`
+
 ![Overview of the Example1 Dataset](images/example1_areas.png)
 
-**Schematic Examples**:
-
-Table: Example Dataset for Peak Table
-
-| Sample.Name  | Sample.Type | Classification | Compound1_quant | Compound1_qual |
-|:------------:|:-----------:|:--------------:|:---------------:|:--------------:|
-|    Blank     |    Blank    |     Pre 1      |      0.00       |     0.0000     |
-|    Blank     |    Blank    |     Pre 1      |      0.00       |     0.0000     |
-|      QC      |     QC      |     Pre 1      |     3443.00     |   1146.9333    |
-|      QC      |     QC      |     Pre 1      |     2973.50     |    990.5333    |
-|      QC      |     QC      |     Pre 1      |     3130.00     |   1042.6667    |
-|    Blank     |    Blank    |     Pre 1      |      0.00       |     0.0000     |
-|  Cal 1 ppm   |  Standard   |     Cal 1      |     1878.00     |    625.6000    |
-|  Cal 3 ppm   |  Standard   |     Cal 1      |     5321.00     |   1772.5333    |
-|  Cal 10 ppm  |  Standard   |     Cal 1      |    16432.50     |   5474.0000    |
-|    Blank     |    Blank    |    Block 1     |      0.00       |     0.0000     |
-|    Blank     |    Blank    |    Block 1     |      0.00       |     0.0000     |
-|      QC      |     QC      |    Block 1     |     3114.35     |   1037.4533    |
-|   Sample 1   |   Sample    |    Block 1     |     2347.50     |    782.0000    |
-|   Sample 2   |   Sample    |    Block 1     |     3912.50     |   1303.3333    |
-|   Sample 3   |   Sample    |    Block 1     |     5477.50     |   1824.6667    |
-|      QC      |     QC      |    Block 1     |     2957.85     |    985.3200    |
-|    Blank     |    Blank    |    Block 1     |      0.00       |     0.0000     |
-|  Cal 1 ppm   |  Standard   |     Cal 2      |     1878.00     |    625.6000    |
-|  Cal 3 ppm   |  Standard   |     Cal 2      |     5321.00     |   1772.5333    |
-|  Cal 10 ppm  |  Standard   |     Cal 2      |    16432.50     |   5474.0000    |
 
 
-- **Retention Time Table**: Contains the Retention Time (RT) data for the compounds of interest. 
-    - Must include a **Sample.Name** column with values identical to those in the Peak Table.
-    - Only transitions present in the Peak Table will be considered for analysis.
-    - Upload the RT Table only after uploading the Peak Table.
+---
 
-Refer to the example dataset `Example_Datasets/Example1_Drift_RT.csv` for the required format.
+### **2. Retention Time Table**
+
+This file provides **retention time (RT)** data for the compounds.
+
+- Must include a **Sample.Name** column identical to that in the Peak Table.
+- Only compounds present in the Peak Table will be considered.
+- Upload the RT Table **after** the Peak Table.
+
+#### Example Table: Retention Time Table Format
+
+Example file: `Example_Datasets/Example1_Drift_RT.csv`
+
 ![Overview of the Example1 Dataset](images/example1_RT.png)
 
-**Schematic Examples**:
-Table: Example Dataset for Retention Time Table
+> **Note:** Additional columns are allowed but will be ignored by the application.
 
-| Sample.Name  | Compound1_quan | Compound1_qual |
-|:------------:|:--------------:|:--------------:|
-|    Blank     |       NA       |       NA       |
-|    Blank     |       NA       |       NA       |
-|      QC      |    1.496478    |    1.500440    |
-|      QC      |    1.501113    |    1.500998    |
-|      QC      |    1.494299    |    1.492327    |
-|    Blank     |       NA       |       NA       |
-|  Cal 1 ppm   |    1.498587    |    1.499848    |
-|  Cal 3 ppm   |    1.499643    |    1.497129    |
-|  Cal 10 ppm  |    1.497941    |    1.494750    |
-|    Blank     |       NA       |       NA       |
-|    Blank     |       NA       |       NA       |
-|      QC      |    1.496535    |    1.504295    |
-|   Sample 1   |    1.498326    |    1.505902    |
-|   Sample 2   |    1.505464    |    1.497545    |
-|   Sample 3   |    1.501861    |    1.492793    |
-|      QC      |    1.497873    |    1.502696    |
-|    Blank     |       NA       |       NA       |
-|  Cal 1 ppm   |    1.496491    |    1.500002    |
-|  Cal 3 ppm   |    1.501985    |    1.507087    |
-|  Cal 10 ppm  |    1.497683    |    1.496272    |
+---
 
-**Note**: Additional columns are acceptable but will not be processed by the application.
+### **3. Project Name**
 
-- **Project Name**
-    - The app will generate output during the analysis, this **Project Name** will be used as the folder name where the output will be generated into.
-    - The app will try to save all output in the users **Documents** folder and will generate a folder called **QuantyFey** the porject name folder will be found within this folder.
+You may optionally specify a **Project Name**, which will be used to label output folders.
 
+- Output will be saved in the user's **Documents** folder under:  
+  `Documents/QuantyFey/<ProjectName>/`
 
-- **Reset the application**
-    - The application can be reset here if needed. This could be due to a wrong datafile being uploaded.
+---
 
-### **Configure Settings**
+### **4. Reset the Application**
 
-The **Configure Settings** tab allows users to define parameters for the quantification analysis. These parameters include:
+Click **Reset App** to restart the session and clear all uploaded data — useful if the wrong files were selected or you want to begin a new analysis.
 
-![Screenshot of the **Configure Settings Parameters**](images/configure_settings_parameters.png)
+---
 
-- **Template**:
-    - Select the template for the 
-    - Each **sheet** represents an available template for the app.
-    - Two example templates are provided by default.
-    - Two styles are supported:
-        - **Uniform concentration for all standards**: Requires two columns:
-            - **Cal.Name**: Names of the calibration standards.
-            - **Concentration**: Concentration values of the calibration standards.
-        - **Variable concentrations for each standard**: Requires one column for **Cal.Name** and columns for **each transition** in the Peak Table:
-            - **Cal.Name**: Names of the calibration standards.
-            - **Additional columns**: Concentration values for each transition.
-            - **Note**: All transitions in the Peak Table **must** be present in the template.
-        - **Note:** Standards with a concentration of **0** will be excluded from the calibration function.
-    - Ensure the template is configured before launching the app, as the **Templates.xlsx** file is read only at startup.
-    - Verify spelling consistency to avoid errors.
+### Summary: Minimum Upload Requirements
 
-#### **Change Patterns**
-The app attempts to find quantifier, qualifier and internal standard transition by searching for patterns in the column names of the Peak Table. These patterns can be adjusted.
-**Note:** The default patterns can be changed in the `defaults_settings.R`file by renaming the respective variable.
+| File                | Required Columns                        | Notes                                                       |
+|---------------------|------------------------------------------|-------------------------------------------------------------|
+| **Peak Table**      | `Sample.Name`, `Sample.Type`             | Optional: `Classification`; supports multiple transitions.  |
+| **RT Table**        | `Sample.Name`, transitions from Peak Table | Must match Peak Table sample names.                         |
 
-```{r}
+---
+
+## **Configure Settings: Change Patterns**
+
+The application automatically identifies **Quantifier**, **Qualifier**, and **Internal Standard (IS)** transitions by searching for patterns in the column names of your Peak Table. These patterns can be customized to match your dataset structure.
+
+> **Tip:** You can set default values by modifying the `default_settings.R` file, or override them directly within the app interface.
+
+---
+
+### **Default Pattern Setup (in `default_settings.R`)**
+
+```r
 ## Setup Default Settings for QuantyFey
 
 # Default Template name
-Template_name = "Example1" ## Change Example1 to new default tempalte
+Template_name = "Example1" 
 # Pattern for Quant Transition:
-quant_pattern = "_quant" ## Change _quant to new quant pattern
+quant_pattern = "_quant"
 # Pattern for Qual Transition:
-qual_pattern = "_qual" ## Change _qual to new qual pattern
+qual_pattern = "_qual"
 # Pattern for IS Transition:
-IS_pattern = "IS" ## Change IS to new IS pattern
+IS_pattern = "IS"
 
+#### ---- Units ---- ####
+# Set to NULL if you don't want to show the unit in the plot
+# Concentration 
+conc_unit = "µg/mL"
+# Intensity Unit
+int_unit = "counts*s"
+# RT Unit
+rt_unit = "min"
 ```
-The default values can easily be changed by changing e.g., `Template_name = "Example1"` to `Template_name = "Example2"`.
-**Note:** All of these values can be changed also within the app, but this might optimize utilization of the app by adjusting it to the users data.
 
-- **Pattern for Quant Transition**: Defines the pattern to identify quantifier transitions in the Peak Table column names.
-    - Supports regular expressions.
-    - Examples:
-        - `^Compound1_`: Matches column names starting with "Compound1_".
-        - `_quant$`: Matches column names ending with "_quant".
-        - `Compound[0-9]+_`: Matches column names containing "Compound" followed by digits and an underscore.
-        - `.*_qual`: Matches column names containing "_qual".
-        - `^Cal.*ppb$`: Matches column names starting with "Cal" and ending with "ppb".
-    - **Note**: Use `\.` to match a literal dot (e.g., `\.quant` for "Compound1.quant").
-    - **Important** Only columns that match this pattern, and **do not** match the IS pattern, will be useable for quantification!
+> **Note:** Updating the units helps ensure consistency between your dataset and the visualization/output displays in the app.
 
-- **Pattern for Qual Transition**: Defines the pattern to identify qualifier transitions in the Peak Table column names.
-    - Supports regular expressions.
-    - Qualifier transitions are matched to quantifier transitions based on their **prefix**.
-        - **Prefix** is considered the first position before the first **underscore** ("_").
-        - Therefore, transitions should have the following structure: **CompoundID**\_*additional*\_*information*\_**qual/quant/IS pattern**.
-        - *Additional information* could be Q1 and Q3 mass, collision energy, etc.
-        - **Note** if no qual transitions are found, or matched to the quant transition, Qualifier-Quantifier Ratio Analysis will not be available.
+---
 
+### **Pattern for Quantifier Transitions**
 
+This pattern identifies **quantifier** transitions from Peak Table column names.
 
-- **Pattern for IS Transitions**: Defines the pattern to identify internal standard transitions in the Peak Table column names.
-    - Supports regular expressions.
-    - If no matches are found, internal standard correction will be unavailable (a message will be displayed).
-    - Columns matching this pattern will not be used for quantification.
+- Supports **regular expressions**
+- Only columns matching this pattern (and **not** matching the IS pattern) will be used for quantification.
+
+#### Examples:
+- `^Compound1_` → Columns starting with `Compound1_`
+- `_quant$` → Columns ending with `_quant`
+- `Compound[0-9]+_` → Matches names like `Compound1_`, `Compound2_`, etc.
+- `.*_qual` → Columns containing `_qual`
+- `^Cal.*ppb$` → Columns starting with `Cal` and ending with `ppb`
+- `\.quant` → Matches a literal dot (e.g., `Compound1.quant`)
+
+> **Avoid overlaps** with the IS pattern to ensure correct feature identification.
+
+---
+
+### **Pattern for Qualifier Transitions**
+
+Defines how **qualifier** transitions are detected.
+
+- Also supports **regular expressions**
+- Matches are determined based on the **prefix** of the corresponding quantifier transition.
+
+#### Prefix Matching Rules:
+- The **prefix** is the string before the first underscore (`_`)
+- Example formats:
+  - `CompoundID_Q1_Q3_CE_quant`
+  - `CompoundID.Q1_Q3_CE_qual`
+
+> If no matching qualifier transitions are found, the **Qualifier/Quantifier Ratio Analysis** tab will be disabled.
+
+---
+
+### **Pattern for IS Transitions**
+
+This pattern identifies **internal standard** transitions in your dataset.
+
+- Supports **regular expressions**
+- Columns matching this pattern:
+  - Are **excluded** from quantification
+  - Are **used** for IS correction, if enabled
+
+> If no IS transitions are detected, IS correction will be disabled automatically and a warning message will appear.
+
+---
 
 ![Overview of the Configure Settings graphical output](images/configure_settings_output.png)
+
+
+
 
 ---
 

@@ -32,52 +32,27 @@ QuantyFey provides:
 - **Automatic Optimization Module** - automatic selection of **linear** or **quadratic** regression model, and selection of appropriate standards.
 
 ---
-# **Getting Started**
+# **Quick Installation Guide**
 
 ## **Prerequisites**
 ### **Windows**:
 - **RTools**: Version 4.2 must be installed.
-  - **Option A**: Use the [official installer](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
-  - **Option B**: From the included R Portable:
-    - Run `R.exe` in the `R-portable/bin/` folder.
-    - Execute the following commands:
-      ```r
-      install.packages("installr", repos = "https://cloud.r-project.org/")
-      installr::install.Rtools()
-      ```
-    - Follow the installer instructions.
-    - **Note:** An error may occur during finalization. Dismiss the error and proceed with the installation.
  
 ### **Linux**
 
 To make sure `QuantyFey` runs smoothly on Ubuntu, please make sure the following dependencies are installed:
-1. Install `r-base`, `pandoc`, and `cmake` by running the following command in your terminal:
-   ``` bash
-   sudo apt install r-base pandoc cmake
-   ```
-2. Once these dependencies are installed, you can proceed with using or setting up `QuantyFey` as described in the rest of the documentation.
-
+1. **r-base**
+2. **pandoc**
+3. **cmake**
 
 ### **Mac**
 
-Install Homebrew (if not already installed): Open a terminal and run:
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Use Homebrew to install the required dependencies:
-
-``` bash
-brew install r pandoc cmake
-```
-Once these dependencies are installed, you can proceed with using or setting up QuantyFey as described in the rest of the documentation.
-**Note:** Does not currently work..!
+Currently not working as standalone application on Mac.
 
 
 ## **Installation**
 
-1. Download the zip file download [QuantyFey.zip](release/v0.0.1windows) (or for [mac version](release/v0.0.1mac) or [linux version](release/v0.0.1linux))
+1. Download the zip file download [QuantyFey.zip](https://github.com/CDLMarkus/QuantyFey/releases/v1.0.0) (or for [linux version](release/v0.0.1linux))
 2. Extract the folder to a desired location.
 3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (approval may be required).
 4. The console will open, and all required packages will be installed automatically (this process may take up to 20 minutes).
@@ -89,13 +64,6 @@ Once these dependencies are installed, you can proceed with using or setting up 
 
 Discription of the app and tutorials on how to effectively use it can be found in the tutorial folder.
 The app provides the user the tools for versatile and interactive quantification of targeted Mass Spectrometry Data using external calibration. Especially when Intensity Drift is observed during the Measurement, the app provides the user with tools to effectively handle these drift. This app works as an extra software to already integrated mass spectrometry data, and does not provide any integration cabailities, but rather offers the user an interactive tool for efficient quantification.
-
-We hope, this app can help save a lot of nerves during your Quantification efforts!
-
-<p align="left">
-  <img src="images/keep_calm.png" alt="Keep Calm and QuantyFey!" width="300">
-</p>
-
 
 
 
