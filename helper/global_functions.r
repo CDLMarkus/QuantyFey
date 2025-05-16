@@ -1039,6 +1039,8 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
         data <- read.csv(file_name, sep = valid_sep)
         }
+
+        colnames(data) <- gsub("[^a-zA-Z0-9._]", ".", colnames(data))
         
       
       return(data)

@@ -9,8 +9,16 @@ observe_input_file_1 <- function(input, rv, session) {
 
     req(df_temp)
 
-    if (!is.null(rv$data)) {
-      if (!all(colnames(rv$data) %in% colnames(df_temp))) {
+
+      
+
+      if (!is.null(rv$data)) {
+        data_prev <- rv$data
+
+      if("none" %in% colnames(data_prev)){
+        data_prev <- data_prev[, !grepl("none", colnames(data_prev))]
+      }
+      if (!all(colnames(data_prev) %in% colnames(df_temp))) {
         showModal(modalDialog(
           title = "Reset Session",
           "It appears that you want to upload a different dataset. Please reset the app before proceeding to prevent a crash. Would you like to reset now?",
@@ -23,6 +31,9 @@ observe_input_file_1 <- function(input, rv, session) {
         df_temp <- NULL
       }
     }
+
+
+    
 
     req(df_temp)
 
@@ -79,8 +90,10 @@ observe_input_file_1 <- function(input, rv, session) {
       }
     }
 
-    validate(need(all(data_upload$Sample.Type %in% c("Cal", "Sample", "Blank", "QC")),
-                  "The 'Sample.Type' column contains invalid entries."))
+    if (!all(data_upload$Sample.Type %in% 
+             c("Cal", "Sample", "Standard", "Blank", "QC"))) {
+      stop("The 'Sample.Type' column contains invalid entries. Ensure it only contains 'Cal', 'Sample', 'Standard', 'Blank', or 'QC'.")
+    }
 
     rv$data <- data_upload[, !(colnames(data_upload) %in% col_rm)]
 

@@ -70,7 +70,8 @@ quantification_module <- function(input, output, session, rv) {
   })
 
   observeEvent(input$Block, {
-    LOQ <- rv$LLOQs[[input$Block]]
+    tryCatch({
+      LOQ <- rv$LLOQs[[input$Block]]
 
     suppressWarnings({
       LOQ_min <- min(rv$setup_cal$Concentration)
@@ -78,6 +79,10 @@ quantification_module <- function(input, output, session, rv) {
     })
     
     updateNumericInput(session, inputId = "LOQ", value = LOQ, min = ifelse(is.finite(LOQ_min), LOQ_min, 0), max = ifelse(is.finite(LOQ_max), LOQ_max, 0), step = LOQ_min)
+    
+    }, error = function(e) {
+      showNotificatoin(paste("An error occurred:", e$message), type = "error")
+    })
     
   })
 

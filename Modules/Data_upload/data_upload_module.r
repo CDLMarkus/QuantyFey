@@ -10,7 +10,7 @@ data_upload_module <- function(input, output, session, rv) {
     tryCatch({
       observe_input_file_1(input, rv, session)
     }, error = function(e) {
-      showNotification("Error reading file: " %||% e$message, type = "error")
+      showNotification(paste("Error reading file: ", e$message), type = "error")
     })
 
   })

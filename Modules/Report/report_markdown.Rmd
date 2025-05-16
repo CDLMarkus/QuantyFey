@@ -355,10 +355,9 @@ auto_set_format <- function() {
  }
 
  
-
- escape_md <- function(text) {
-  # Escape special Markdown characters
-  gsub("([\\*_\\[\\](){}<>`#\\+\\-!|])", "\\\\\\1", text, perl = TRUE)
+escape_md <- function(text) {
+  # Escape special Markdown characters, including '+'
+  gsub("([\\*\\_\\[\\]\\(\\)\\{\\}<>`#\\+\\-!|])", "\\\\\\1", text, perl = TRUE)
 }
 
 
