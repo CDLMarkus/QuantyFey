@@ -164,7 +164,7 @@ navset_pill(
             page_sidebar(
               sidebar = sidebar(
                 fileInput("file1", "Upload Peak Area Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv", ".xlsx")),
-                fileInput("file_RT", "Upload Retention Time Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv")),
+                fileInput("file_RT", "Upload Retention Time Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv", ".xlsx")),
                 checkboxInput("change_project_name", "Use Project Name", value = F),
                 conditionalPanel(condition = 'input.change_project_name == true',
                   textInput("project_name", label = "Project Name:", value = paste0("Results_", format(Sys.Date(), "%Y%m%d")))  
@@ -244,7 +244,7 @@ navset_pill(
                       label    = "Compound:",
                       choices  = ""
                     )),
-                    conditionalPanel(condition = "input.Compound_IS != 'none' && input.Compound_IS != ''",
+                    conditionalPanel(condition = "input.Compound_IS != 'none' && input.Compound_IS != '' && input.quantitation_method == 'IS Correction'",
                 div(class = "my-special-select",
                     
                       selectInput(
@@ -253,6 +253,18 @@ navset_pill(
                       choices  = ""
                       )
                   )),
+                  conditionalPanel(condition = "input.quantitation_method == 'Drift Correction'",
+
+                  
+                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess")),
+                      selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
+                      conditionalPanel(condition = "input.model_drift == 'loess'",
+                        numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75))
+                      
+                  
+                  
+                  
+                  ),
                 textInput("Comment", "Comment:"),
                 actionButton("save_compound", label = "Save", class = "btn-primary"),
                 checkboxInput(inputId = "generate_report", label = "Generate Report", value = FALSE)
@@ -304,16 +316,8 @@ navset_pill(
                   title = "Drift Correction",
                   icon = bs_icon("graph-down"),
                   layout_columns(
-                    card(
-                      "Settings",
-                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess")),
-                      selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
-                      conditionalPanel(condition = "input.model_drift == 'loess'",
-                        numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75)
-                      )
-                    ),
-                    card("Plot", plotlyOutput("drift_output", height = "800px")),
-                    col_widths = c(2, 10)
+                    card("Plot", plotlyOutput("drift_output", height = "800px"))
+                    
                   )
                 ),
                 accordion_panel("Bracketing",

@@ -119,9 +119,9 @@ observeEvent(event_data("plotly_doubleclick", source = "acc"), {
 
 output$p_acc <- renderPlotly({ 
   tryCatch({
-     try({
+     
       p <- get_plotly_acc(rv)
-    }, silent = TRUE)
+    
     
 
     suppressWarnings({
@@ -174,7 +174,9 @@ output$p_acc <- renderPlotly({
   
       p
     })
-  }, error = function(e) NULL)
+  }, error = function(e) {
+    message(e$message)
+  })
    
 })
 
@@ -251,17 +253,22 @@ observeEvent(event_data("plotly_click", source = "acc"), {
 output$acc_table <- renderDT({
   tryCatch({
     df <- get_acc_table(input, rv)
+    
+  }, error = function(e) {
+    showNotification(paste("An error occurred:", e$message), type = "error")
+  })
+
+  if(!is.null(df)){
     datatable(df, options = list(
       dom = "tp",
       lengthMenu = list(c(10, 25, 50, -1), c("10", "25", "50", "All")),
       pageLength = -1,  # Show all rows by default
       columnDefs = list(list(className = 'dt-center', targets = which(names(df) == "used")))
     ))
-  }, error = function(e) {
-    showNotification(paste("An error occurred:", e$message), type = "error")
-  })
-  }, error = function(e) {
-    showNotification(paste("An error occurred:", e$message), type = "error")
+  }
+
+  
+
   })
 
 

@@ -29,6 +29,7 @@ observeEvent(input$span_width, {
 
   try({
     update_dc_data(input, rv)
+    update_cals(input, rv, session)
   }, silent = T)
 
 })

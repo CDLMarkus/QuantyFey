@@ -1555,6 +1555,8 @@ reset_app <- function(session, rv) {
 
 
 get_plotly_acc <- function(rv) {
+
+  req(rv$acc_table)
   # Check if the required data is available
   if (is.null(rv$acc_table) || is.null(rv$setup_cal$Cal.Name)) {
     stop("Error: Required data (acc_table or setup_cal$Cal.Name) is missing.")
@@ -1570,7 +1572,7 @@ get_plotly_acc <- function(rv) {
   }
 
   # Ensure Sample.Name is a factor with levels from setup_cal$Cal.Name
-  df$Sample.Name <- factor(df$Sample.Name, levels = rv$setup_cal$Cal.Name)
+  df$Sample.Name <- factor(df$Sample.Name, levels = unique(rv$setup_cal$Cal.Name))
 
   # Add accuracy classification
   df$accuracy <- factor(ifelse(between(df$Accuracy, 70, 130), "70 - 130 %", "< 70 & > 130 %"))
@@ -1791,16 +1793,17 @@ get_acc_table <- function(input, rv)  {
 
 
 
-
   quantitate_object <- quantitate(input, rv)
   mod_temp <- quantitate_object[[3]][[input$Block]]
   sel_cal_table$pred <- predict_concentrations(data = sel_cal_table, model = mod_temp, method = rv$regression_model)
   sel_cal_table$Accuracy <- sel_cal_table$pred / sel_cal_table$Concentration * 100
+
+
 suppressWarnings({
-  if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block)){
+  if(any(pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block & rv$data$Sample.Name %in% rv$setup_cal$Cal.Name[rv$setup_cal$Concentration != 0])){
   Standard_QC <- quantitate_object[[1]][pd_temp(rv) == "Cal" & rv$Classification_temp == input$Block, ]
 
-  
+   Standard_QC <- Standard_QC[Standard_QC$Sample.Name %in% rv$setup_cal$Cal.Name[rv$setup_cal$Concentration != 0], ]
     conc_temp <- concentrations(rv)[labels(rv) == Standard_QC$Sample.Name]
     sel_cal_table <- rbind(sel_cal_table, data.frame(Sample.Name = Standard_QC$Sample.Name, Classification = Standard_QC$Classification, PeakArea  = Standard_QC$PeakArea, Concentration = conc_temp, weights = 0, used = FALSE, pred = Standard_QC$pred, Accuracy = Standard_QC$pred / conc_temp * 100))
 
@@ -1808,7 +1811,7 @@ suppressWarnings({
 
 })
 
-
+  
 
   rv$acc_table <- sel_cal_table
 

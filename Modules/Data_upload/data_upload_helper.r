@@ -5,39 +5,19 @@ observe_input_file_1 <- function(input, rv, session) {
     ext <- tools::file_ext(file$datapath)
 
     # Read the file with different separators to determine the correct one
-    df_temp <- read_file_safe(file$datapath)
+    tryCatch({
+      df_temp <- read_file_safe(file$datapath) %>% as.data.frame()
+    }, error = function(e) {
+      showNotification("Error reading the file. Please check the file format and content.", type = "error")
+      return(NULL)
+    })
 
-    req(df_temp)
-
-
-      
-
-      if (!is.null(rv$data)) {
-        data_prev <- rv$data
-
-      if("none" %in% colnames(data_prev)){
-        data_prev <- data_prev[, !grepl("none", colnames(data_prev))]
-      }
-      if (!all(colnames(data_prev) %in% colnames(df_temp))) {
-        showModal(modalDialog(
-          title = "Reset Session",
-          "It appears that you want to upload a different dataset. Please reset the app before proceeding to prevent a crash. Would you like to reset now?",
-          footer = tagList(
-            modalButton("Cancel"),
-            actionButton("confirm_reset", "Yes, reset", class = "btn-danger")
-          ),
-          easyClose = TRUE
-        ))
-        df_temp <- NULL
-      }
-    }
-
-
+    
     
 
     req(df_temp)
 
-    # Check if required columns are present
+        # Check if required columns are present
     validate(need("Sample.Name" %in% colnames(df_temp), "The file must contain the 'Sample.Name' column."))
     validate(need("Sample.Type" %in% colnames(df_temp), "The file must contain the 'Sample.Type' column."))
 
@@ -55,13 +35,66 @@ observe_input_file_1 <- function(input, rv, session) {
     other_columns <- setdiff(colnames(df_temp), required_columns)
     df_temp <- df_temp[, c(required_columns, other_columns)]
 
+
+
+      
+
+      if (!is.null(rv$data)) {
+        data_prev <- rv$data
+
+        # Check if all columns from df_temp are present in rv$orig
+        if (!all(colnames(df_temp) %in% colnames(data_prev))) {
+        showModal(modalDialog(
+          title = "Reset Session",
+          "It appears that you want to upload a different dataset. Please reset the app before proceeding to prevent a crash. Would you like to reset now?",
+          footer = tagList(
+            modalButton("Cancel"),
+            actionButton("confirm_reset", "Yes, reset", class = "btn-danger")
+          ),
+          easyClose = TRUE
+        ))
+        df_temp <- NULL
+      } else {
+    # Add any missing columns to df_temp (from rv$data), to ensure bind_rows doesn't fail
+    missing_cols <- setdiff(colnames(data_prev), colnames(df_temp))
+    for (col in missing_cols) {
+      df_temp[[col]] <- NA
+    }
+
+    # Append the new rows
+    combined_data <- cbind(df_temp, data_prev[, !(colnames(data_prev) %in% colnames(df_temp))])
+
+    # Reorder columns to match the original rv$data column order
+    combined_data <- combined_data[, colnames(data_prev)]
+
+    # Append df_temp to rv$data
+    df_temp <- combined_data
+  }
+
+     
+
+    }  
+
+
+     
+     #stop("Works until here")
+
+
+    
+
+    req(df_temp)
+
+
     # Update reactive values
+    
+
     rv$orig <- df_temp
-    rv$data <- df_temp
     data_upload <- rv$orig
     data_upload[data_upload == "N/A"] <- 0
     data_upload[data_upload == "N/F"] <- 0
     data_upload[is.na(data_upload)] <- 0
+
+    
 
     data_upload$Sample.Type[data_upload$Sample.Type == "Standard"] <- "Cal"
     data_upload <- as.list(data_upload)
@@ -77,6 +110,8 @@ observe_input_file_1 <- function(input, rv, session) {
     })
 
     data_upload <- as.data.frame(data_upload)
+
+    
 
     # Remove columns if standards are missing
     col_rm <- c()
@@ -95,6 +130,7 @@ observe_input_file_1 <- function(input, rv, session) {
       stop("The 'Sample.Type' column contains invalid entries. Ensure it only contains 'Cal', 'Sample', 'Standard', 'Blank', or 'QC'.")
     }
 
+    
     rv$data <- data_upload[, !(colnames(data_upload) %in% col_rm)]
 
     if (length(col_rm) > 0) {
@@ -136,6 +172,8 @@ observe_input_file_1 <- function(input, rv, session) {
     }
 
     rv$Classification_temp <- Class_temp
+
+    
 
     # Update selection inputs
     unique_sample_names <- unique(rv$data$Sample.Name[rv$data$Sample.Type != "Blank"])

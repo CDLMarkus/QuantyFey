@@ -105,12 +105,12 @@ observe_input_mode <- function(input, rv, session) {
       compound_exists <- has_compound && input$Compound %in% colnames(rv$specific_setup)
 
       if (compound_exists) {
-        rv$setup_cal <- data.frame(
+        setup_cal <- data.frame(
           Cal.Name = rv$specific_setup$Cal.Name,
           Concentration = as.numeric(rv$specific_setup[[input$Compound]])
         )
       } else {
-        rv$setup_cal <- data.frame(
+        setup_cal <- data.frame(
           Cal.Name = rv$specific_setup$Cal.Name,
           Concentration = rep(NA, nrow(rv$specific_setup)))
 
@@ -118,21 +118,29 @@ observe_input_mode <- function(input, rv, session) {
         
       }
     } else if (ncol(template) == 2 && all(c("Cal.Name", "Concentration") %in% colnames(template))) {
-      rv$setup_cal <- template
+      setup_cal <- template
     } else {
-      rv$setup_cal <- data.frame(
+      setup_cal <- data.frame(
         Cal.Name = template$Cal.Name,
         Concentration = rep(NA, nrow(template))
       )
       showNotification("The selected template does not contain the detected compound names. Please check the template or the quant transition pattern!", type = "warning")
     }
 
+    if(any(!(rv$data$Sample.Name[pd_temp(rv) == "Cal"] %in% setup_cal$Cal.Name))) {
+      setup_cal <- cbind(setup_cal, data.frame(Cal.Name = rv$data$Sample.Name[!(pd_temp(rv) %in% setup_cal$Cal.Name)], Concentration = c(0)))
+    }
+
+    rv$setup_cal <- setup_cal
+
+
+
     try({
       update_cals(input, rv, session)
     }, silent = TRUE)
 
     }, error = function(e) {
-      stop("Error in observe_input_mode: ", e$message)
+      message("Error in observe_input_mode: ", e$message)
     })
     
 }

@@ -36,6 +36,7 @@ configure_settings_module <- function(input, output, session, rv) {
       observe_input_mode(input, rv, session)
     }, error = function(e) {
       showNotification("Error", "Error in observe_input_mode: ", e$message, type = "error")
+      
     })
   })
 
