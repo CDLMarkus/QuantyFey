@@ -159,7 +159,10 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 ### **Configure Settings:**
 
 #### **Selecting Quantification Template**
-As mentioned earlier, 
+To perform quantification, you need to select the appropriate template. Use the dropdown menu in the app to chosse from available sheets in teh `templates.xlsx`file. Each sheet represents a separate template.
+When selected, the left pane will be updated with the respective template. If the template encompasses all transition names, it will show the concentrations of the selected compound.
+
+ > *Make sure the correct template is selected - quantification will not work if the template does not match your data or the wrong sheet is chosen.
 
 
 #### **Change patterns**
@@ -184,7 +187,7 @@ Below are the default settings used by the app. You can change them in the `defa
 | `rt_unit`\*     | `min`         | Unit used for retention time                               |
 | `Template_name` | `Example1`    | Default name of the template used for quantification setup |
 
-> * These unit values can only be adjusted in the default_settings.R file and are not editable from within the app interface.
+> \* These unit values can only be adjusted in the default_settings.R file and are not editable from within the app interface.
 
 
 ##### Code (as seen in `default_settings.R`)
@@ -255,8 +258,6 @@ Defines how **qualifier** transitions are detected.
 
 > If no matching qualifier transitions are found, the **Qualifier/Quantifier Ratio Analysis** tab will be hidden.
 
----
-
 ### **Pattern for IS Transitions**
 
 This pattern identifies **internal standard** transitions.
@@ -268,15 +269,11 @@ This pattern identifies **internal standard** transitions.
 
 > If no IS transitions are detected, IS correction will be disabled automatically and a warning message will appear.
 
----
-
 ![Overview of the Configure Settings graphical output](images/configure_settings_output.png)
-
 
 ---
 
 ### **Compound Quantification**
-
 The **Compound Quantification** tab is the primary interface for **visualization**, **drift correction**, **model optimization**, and **quantification**. 
 
 #### **Setup**
