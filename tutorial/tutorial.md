@@ -1,8 +1,8 @@
 ## Tutorial
-This tutorial provides detailed guidance for effectively using the **QuantyFey** application.
+This tutorials explains how to use the **QuantyFey** application, step by step. It covers everything you need to get started and use it efficiently. QuantyFey is designed to quantify targeted LC-MS/MS data using external calibration, but can also be used with other data formats that include intensity and retention time values.
 
 ### Installation
-The standalone version of this applications runs on **Windows** and **Linux**. It can also be run from within **R**, **RStudio**, or **VS Code**, which allows compatibility with **macOS**.
+The standalone version of this application runs on **Windows** and **Linux**. You can also run it directly from **R**, **RStudio**, or **VS Code**, which makes it compatible with **macOS** as well.
 
 #### Prerequisites
 
@@ -16,10 +16,11 @@ The standalone version of this applications runs on **Windows** and **Linux**. I
       install.packages("installr", repos = "https://cloud.r-project.org/")
       installr::install.Rtools()
       ```
-    - Follow the installer steps. You may ignore any non-critical error during finalization.
+    - Do not update the R version if prompted.
+    - Follow the installer instructions. You can ignore any non-critical error during the final steps.
 
 ##### Linux
-Ensure all system dependencies are installed:
+Make sure all system dependencies are installed:
 ```bash
 sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev \
 libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev \
@@ -30,93 +31,104 @@ sudo R CMD javareconf
 
 #### **Standalone Installation**
 
-- **Download** the current version of [QuantyFey](https://github.com/QuantyFey-Application/releases)
-- **Unzip** the folder to a destination of your choosing.
-- **Run** the batch (Windows) or shell (Linux) file to execute the App (**Note** approval of the batch file is required)
-- A console will open and first all requirec packages will be installed automatically (this can take up to 20 minutes at first launch).
+- **Download** the latest version of [QuantyFey](https://github.com/QuantyFey-Application/releases)
+- **Unzip** the folder to a destination of your choice.
+- **Run** the batch (Windows) or shell (Linux) file to start the App
+    *Note: you may need to approve the execution of the script on Windows*
+- A console will open and first all requirec packages will be installed automatically
+
 
 #### **Installation for launching the app using RStudio, VS Code etc.**
 - **Download** the GitHub repository.
 - **Unzip** the files to a destination of your choosing.
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/) or [VS Code](https://code.visualstudio.com/download)
 - **Install** [pandoc](https://pandoc.org/installing.html)
-- **Install** prerequisites
-- **Open** the `app.R` file and **run** it's content.
+- **Install** prerequisites as mentioned above.
+- **Open** `app.R` and **run** run the script
+
+
+> *Note: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.*
 
 ---
 
 #### **Notes before using it on your own data**
 
-The application comes with multiple test datasets. These represent published mass spectrometry (**add sources here**)
-Please note that the setup is adjusted for these dataset. This setup includes the **Names** of **Calibration Standards** and their **Concentration**.
-These must be adjusted for your own data **before** launching the app.
-To adjust the setup go to `Dependencies/tempaltes.xlsx`.
-There you can add a template for your own analysis.
-The templates **must** follow the following structure:
-- **Cal.Name:** The first column name must be Cal.Name (spelling is important) with the **Names** of the Calibration Standards within your Sequence.
-- **Concentration:** The next column must have the **Concentration** of each of those Calibration Standards. Alternatively, each transition can be added to have different Concentrations for each Transition
-    - **Note:** If Transitions are used, every single transition name **must** be present! For all quantifier **and** qualifier transition.
+The application comes with several test datasets based on LC-MS/MS data. These are included to help you get started and explore the app's features.
+
+> **!! Important:** The app is preconfigured to work with these test datasets. This includes predefined **Calibration Standard Names** and their **Concentrations**. Before using your own data, you'll need to update this setup.
+
+To adjust the configuration:
+1. open the file at `Dependencies/templates.xlsx`
+2. Add a new sheet or edit an existig one to define your own analysis setup.
+
+**Template Structure Requirements**
+The template must follow this structure exactly:
+- `Cal.Name`: The first column must be named `Cal.Name` (spelling and case-sensitive). It should list the **names of the Calibration Standards** used in your sequence.
+- `Concentration`: The second column should specify the **concentration** for each corresponding **Calibration Standard**.
+You may also define concentrations at the **transition level** (e.g., different concentrations for every single transition). In that case:
+- Every individual **transition name must be included in the template**.
+
+The app uses this file to **map the concentrations** of the Calibration standards to their corresponding names in the dataset. The concentrations are used for compound quantification.
+
+> *Note: Standard names in the template must exactly match those in the sequence (case-sensitive).*
+> *Note: if any standard that is defined in your data (Sample.Type column) is not included in this template, it will be appended with a concentration of 0 - but will not be included in the quantification process.*
 
 ![Overview of the structure of the concentration templates](images/concentration_template.png)
 
 
 ## **Application Structure**
 
-The application is organized into several tabs, each serving a distinct purpose. These tabs include:
+The app is divided into multiple tabs, each with a specific function. This layout helps guide users through the analysis process step by step.
 
-![Overview of main tabs of the QuantyFey Application](images/main_tab_overview.png)
+![Overview of main tabs of the QuantyFey Application](images/overview_workflow.png)
 
 ---
-## **Data Upload**
+### **Data Upload**
 
-The **Data Upload** tab allows users to import the required data files for analysis. Two files must be uploaded in **CSV**, **TXT**, or **XLSX** format using standard delimiters:
+The **Data Upload** tab lets you import the two required data files for analysis. Two files must be uploaded in **CSV**, **TXT**, or **XLSX** format using standard delimiters (`,`, `;`, `:`, or tab `\t`):
 
 ![Screenshot of the Data Upload settings](images/data_upload_parameters.png)
 
----
 
-### **1. Peak Table**
+#### **1. Peak Table**
 
-This file should contain **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*) for the compounds of interest. The required structure is as follows:
+This file contains **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*) for the compounds of interest. The required structure is as follows:
 
-- **Sample.Name**: Identifier for each sample.
-- **Sample.Type**: Must match one of the following:
+- `Sample.Name`: Identifier for each sample.
+- `Sample.Type`: Must be one of the following (case-sensitive):
   - `Sample` – Experimental samples.
   - `Standard` or `Cal` – Calibration standards.
   - `Blank` – Blank samples for background correction.
   - `QC` – Quality control samples.
-  - **Note**: Spelling must be exact.
-
-- **Classification** *(optional)*: Defines distinct sequence blocks for **bracketing analysis**.
+- `Classification` *(optional)*: Defines distinct sequence blocks for **custom bracketing analysis**.
   - Calibration standards must follow the pattern `Cal n` (e.g., `Cal 1`, `Cal 2`, ...).
   - Sample blocks may be named freely (e.g., `Sample Block 1`, `Block A`).
   - **Note**: If this column is missing, it will be auto-generated:
-    - The algorithm identifies calibration curves (≥3 consecutive standards).
+    - Calibration curves are identified as three or more consecutive standards.
     - Sample blocks are defined between these curves.
     - Samples before the first calibration are labeled `Pre 1`.
 
-> **Important:** If required columns are missing or misformatted, an error message will appear.  
-> If **no IS transitions** are detected using the configured pattern, a warning will be shown, and **IS Correction** options will be hidden in the interface.
+> **!! Important**
+> - Missing or incorrectly formatted columns will lead to an error massege and upload will be halted.
+> - If internal standards are not recognized by the default pattern, a warning message will appear and internal standard correction features will be disabled.
+>   By updating the internal standard pattern these features can be restored.
 
-#### Example Table: Peak Table Format
+##### Example Table: Peak Table Format
 
 Example file: `Example_Datasets/Example1_Drift_Areas.csv`
 
 ![Overview of the Example1 Dataset](images/example1_areas.png)
 
-
-
----
-
-### **2. Retention Time Table**
+#### **2. Retention Time Table**
 
 This file provides **retention time (RT)** data for the compounds.
 
-- Must include a **Sample.Name** column identical to that in the Peak Table.
+- Must include a `Sample.Name` column identical to that in the Peak Table.
 - Only compounds present in the Peak Table will be considered.
 - Upload the RT Table **after** the Peak Table.
+> *Note: the app will ignore any additional columns that aren't needed.
 
-#### Example Table: Retention Time Table Format
+##### Example Table: Retention Time Table Format
 
 Example file: `Example_Datasets/Example1_Drift_RT.csv`
 
@@ -124,24 +136,18 @@ Example file: `Example_Datasets/Example1_Drift_RT.csv`
 
 > **Note:** Additional columns are allowed but will be ignored by the application.
 
----
+#### **3. Project Name (optional)**
 
-### **3. Project Name**
-
-You may optionally specify a **Project Name**, which will be used to label output folders.
+You may optionally enter a **Project Name**, which will be used to label output folders.
 
 - Output will be saved in the user's **Documents** folder under:  
   `Documents/QuantyFey/<ProjectName>/`
 
----
-
-### **4. Reset the Application**
+#### **4. Reset the Application**
 
 Click **Reset App** to restart the session and clear all uploaded data — useful if the wrong files were selected or you want to begin a new analysis.
 
----
-
-### Summary: Minimum Upload Requirements
+#### Summary: Minimum Upload Requirements
 
 | File                | Required Columns                        | Notes                                                       |
 |---------------------|------------------------------------------|-------------------------------------------------------------|
@@ -150,15 +156,41 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 
 ---
 
-## **Configure Settings: Change Patterns**
+### **Configure Settings:**
 
-The application automatically identifies **Quantifier**, **Qualifier**, and **Internal Standard (IS)** transitions by searching for patterns in the column names of your Peak Table. These patterns can be customized to match your dataset structure.
+#### **Selecting Quantification Template**
+To perform quantification, you need to select the appropriate template. Use the dropdown menu in the app to chosse from available sheets in teh `templates.xlsx`file. Each sheet represents a separate template.
+When selected, the left pane will be updated with the respective template. If the template encompasses all transition names, it will show the concentrations of the selected compound.
+
+ > *Make sure the correct template is selected - quantification will not work if the template does not match your data or the wrong sheet is chosen.
+
+
+#### **Change patterns**
+QuantyFey automatically detects **Quantifier**, **Qualifier**, and **Internal Standard (IS)** transitions by searching for predefined patterns in the column names of the Peak Table. These patterns can be customized to match your dataset's naming.
+Patterns can be changed by selecting the `Change Patterns` Checkbox. Then three inputs will be shown, that can be adjusted.
 
 > **Tip:** You can set default values by modifying the `default_settings.R` file, or override them directly within the app interface.
 
 ---
 
-### **Default Pattern Setup (in `default_settings.R`)**
+#### **Default Pattern Setup (in `default_settings.R`)**
+
+Below are the default settings used by the app. You can change them in the `default_settings.R` file.
+
+| Setting         | Default Value | Description                                                |
+| --------------- | ------------- | ---------------------------------------------------------- |
+| `quant_pattern` | `_quant`      | Identifies quantifier transition columns                   |
+| `qual_pattern`  | `_qual`       | Identifies qualifier transition columns                    |
+| `IS_pattern`    | `IS`          | Identifies internal standard transition columns            |
+| `conc_unit`\*   | `µg/mL`       | Unit used for concentration in plots and tables            |
+| `int_unit`\*    | `counts`      | Unit used for intensity values in outputs                  |
+| `rt_unit`\*     | `min`         | Unit used for retention time                               |
+| `Template_name` | `Example1`    | Default name of the template used for quantification setup |
+
+> \* These unit values can only be adjusted in the default_settings.R file and are not editable from within the app interface.
+
+
+##### Code (as seen in `default_settings.R`)
 
 ```r
 ## Setup Default Settings for QuantyFey
@@ -177,12 +209,12 @@ IS_pattern = "IS"
 # Concentration 
 conc_unit = "µg/mL"
 # Intensity Unit
-int_unit = "counts*s"
+int_unit = "counts"
 # RT Unit
 rt_unit = "min"
 ```
 
-> **Note:** Updating the units helps ensure consistency between your dataset and the visualization/output displays in the app.
+> *Note: Updating the units helps ensure consistency between your dataset and the visualization/output displays in the app.*
 
 ---
 
@@ -190,7 +222,7 @@ rt_unit = "min"
 
 This pattern identifies **quantifier** transitions from Peak Table column names.
 
-- Supports **regular expressions**
+- Supports **regular expressions** (*Regex*)
 - Only columns matching this pattern (and **not** matching the IS pattern) will be used for quantification.
 
 #### Examples:
@@ -199,51 +231,49 @@ This pattern identifies **quantifier** transitions from Peak Table column names.
 - `Compound[0-9]+_` → Matches names like `Compound1_`, `Compound2_`, etc.
 - `.*_qual` → Columns containing `_qual`
 - `^Cal.*ppb$` → Columns starting with `Cal` and ending with `ppb`
-- `\.quant` → Matches a literal dot (e.g., `Compound1.quant`)
 
-> **Avoid overlaps** with the IS pattern to ensure correct feature identification.
 
----
+> **!! Important: Understanding Regular Expressions**
+> - `.` matches any single character.
+> - `*` means zero or more of the previous character.
+> - `^` anchors the match to the start of the text.
+> - `$` anchors the match to the end of the text.
+> - `.*` matches any number of any character.
+> - To match a literal `.` or `*`, escape it with a backlash: `\.` or `\*`.
+> - For more information check out this (Regex Quick Reference)[https://hypebright.nl/en/r-en/ultimate-cheatsheet-for-regex-in-r-2/]
+
 
 ### **Pattern for Qualifier Transitions**
 
 Defines how **qualifier** transitions are detected.
 
-- Also supports **regular expressions**
+- Also uses **regular expressions**
 - Matches are determined based on the **prefix** of the corresponding quantifier transition.
 
-#### Prefix Matching Rules:
+#### Prefix Matching Logic:
 - The **prefix** is the string before the first underscore (`_`)
 - Example formats:
   - `CompoundID_Q1_Q3_CE_quant`
   - `CompoundID.Q1_Q3_CE_qual`
 
-> If no matching qualifier transitions are found, the **Qualifier/Quantifier Ratio Analysis** tab will be disabled.
-
----
+> If no matching qualifier transitions are found, the **Qualifier/Quantifier Ratio Analysis** tab will be hidden.
 
 ### **Pattern for IS Transitions**
 
-This pattern identifies **internal standard** transitions in your dataset.
+This pattern identifies **internal standard** transitions.
 
 - Supports **regular expressions**
-- Columns matching this pattern:
-  - Are **excluded** from quantification
-  - Are **used** for IS correction, if enabled
+- Matching columns will:
+  - be **excluded** from quantification
+  - be **used** for IS correction (if enabled)
 
 > If no IS transitions are detected, IS correction will be disabled automatically and a warning message will appear.
 
----
-
 ![Overview of the Configure Settings graphical output](images/configure_settings_output.png)
-
-
-
 
 ---
 
 ### **Compound Quantification**
-
 The **Compound Quantification** tab is the primary interface for **visualization**, **drift correction**, **model optimization**, and **quantification**. 
 
 #### **Setup**
