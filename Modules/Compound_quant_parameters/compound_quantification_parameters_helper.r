@@ -376,7 +376,7 @@ observe_input_compound <- function(input, rv, session) {
 
 
     # Update LOQ input
-    min_LOQ <- suppressWarnings(min(rv$setup_cal$Concentration, na.rm = TRUE))
+    min_LOQ <- suppressWarnings(min(rv$setup_cal$Concentration[rv$setup_cal$Concentration != 0], na.rm = TRUE))
     max_LOQ <- suppressWarnings(max(rv$setup_cal$Concentration, na.rm = TRUE))
 
   #cat("Updating LOQ input. Block:", input$Block, 
@@ -477,6 +477,11 @@ if (is.null(rv$bracketing_table)) {
     updateTextInput(session, "Comment", value = "")
 
     # If compound was analyzed before, restore settings
+
+    try({
+      update_cals(input, rv, session)
+    }, silent = TRUE)
+    
        
 
   }, error = function(e) {

@@ -113,7 +113,7 @@ output$drift_output <- renderPlotly({
     showlegend = TRUE,
     yaxis = list(title = ylab),  
     yaxis2 = list(title = ylab_corr),
-    xaxis2 = list(title = "Injection Sequence")
+    xaxis2 = list(title = "Number of injection")
   )
 
   if(!is.null(rv$current_layout_dc)){

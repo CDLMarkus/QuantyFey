@@ -95,6 +95,21 @@ observe_input_mode <- function(input, rv, session) {
       template <- rv$templates[[input$mode]]
     req(is.data.frame(template))
 
+    
+
+    if(any(!(rv$data$Sample.Name[pd_temp(rv) == "Cal"] %in% template$Cal.Name))) {
+      cal_names_in_data <- unique(rv$data$Sample.Name[pd_temp(rv) == "Cal"])
+      cal_missing <- setdiff(cal_names_in_data, template$Cal.Name)
+
+
+
+      # Ensure the new rows have the same columns as template (except Cal.Name)
+      new_rows <- as.data.frame(matrix(0, nrow = length(cal_missing), ncol = ncol(template)))
+      colnames(new_rows) <- colnames(template)
+      new_rows$Cal.Name <- cal_missing
+      template <- rbind(template, new_rows) %>% as.data.frame()
+    }
+
     template_cols <- setdiff(colnames(template), "Cal.Name")
     data_cols <- colnames(rv$data)
 
@@ -112,7 +127,7 @@ observe_input_mode <- function(input, rv, session) {
       } else {
         setup_cal <- data.frame(
           Cal.Name = rv$specific_setup$Cal.Name,
-          Concentration = rep(NA, nrow(rv$specific_setup)))
+          Concentration = rep(0, nrow(rv$specific_setup)))
 
           showNotification("The selected template does not contain the detected compound names. Please check the template or the quant transition pattern!", type = "warning")
         
@@ -127,9 +142,10 @@ observe_input_mode <- function(input, rv, session) {
       showNotification("The selected template does not contain the detected compound names. Please check the template or the quant transition pattern!", type = "warning")
     }
 
-    if(any(!(rv$data$Sample.Name[pd_temp(rv) == "Cal"] %in% setup_cal$Cal.Name))) {
-      setup_cal <- cbind(setup_cal, data.frame(Cal.Name = rv$data$Sample.Name[!(pd_temp(rv) %in% setup_cal$Cal.Name)], Concentration = c(0)))
-    }
+    
+
+    
+
 
     rv$setup_cal <- setup_cal
 
