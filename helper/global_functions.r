@@ -609,7 +609,7 @@ update_sel_cal_areas <- function(input, rv){
     df <- data.frame(Sample.Name = rv$data$Sample.Name, Classification = rv$Classification_temp)
     
     df$Area <- sapply(input$quantitation_method, FUN = function(x) {
-      if (x == "Bracketing" | x == "Default") {
+      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Individual Bracketing") {
         return(rv$Area)
       } else if (x == "IS Correction") {
         return(rv$IS_ratio)
@@ -703,7 +703,7 @@ labels <- function(rv){
     req(input$file1)
 
 
-    if (input$quantitation_method == "Bracketing") {
+    if (input$quantitation_method == "Custom Bracketing") {
       selection <- rv$selection_table_bracketing
 
       
@@ -716,7 +716,20 @@ labels <- function(rv){
 
       updateSelectInput(session, inputId = "Block", choices = selection$Class)
 
-    } else if (input$quantitation_method == "Default") {
+    } else if (input$quantitation_method == "Individual Bracketing"){
+      rv$Classification_temp <- update_Classification_ind(rv)
+      selection <- data.frame(Class = unique(rv$Classification_temp))
+      for(i in unique(rv$Classification_temp[grepl("Cal", rv$Classification_temp)])){
+        selection <- cbind(selection, new = rep(T, nrow(selection)))
+        colnames(selection)[colnames(selection) == "new"] <- i
+      }
+      selection[selection == FALSE] <- TRUE
+
+      rv$selection_cals_table <- list()
+
+      updateSelectInput(session, inputId = "Block", choices = rv$Classification_temp)
+
+    } else if (input$quantitation_method == "Default Bracketing") {
       selection <- rv$selection_table
       selection[selection == FALSE] <- TRUE
 
@@ -759,7 +772,7 @@ labels <- function(rv){
     df <- data.frame(Sample.Name = rv$data$Sample.Name, Classification = rv$Classification_temp)
 
     df$PeakArea <- sapply(input$quantitation_method, FUN = function(x) {
-      if (x == "Bracketing" | x == "Default") {
+      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Individual Bracketing") {
         return(rv$Area)
       } else if (x == "Drift Correction") {
         return(rv$dc_area)
@@ -808,6 +821,9 @@ labels <- function(rv){
 
         rv$selection_cals_table[[selection$Class[i]]] <- cals_temp
       }
+
+      #print(str(rv$selection_cals_table))
+
     }
 
   })
@@ -817,12 +833,16 @@ labels <- function(rv){
     req(all_present)
     req(input$file1)
 
-    selection_cals_table <- rv$selection_cals_table
+    
+
+    selection_cals_table <- update_weights_ind(input, rv)
+
+    
 
     df <- data.frame(Sample.Name = rv$data$Sample.Name, Classification = rv$Classification_temp)
 
     df$PeakArea <- sapply(input$quantitation_method, FUN = function(method) {
-      if (method == "Bracketing" | method == "Default") {
+      if (method == "Custom Bracketing" | method == "Default Bracketing" | method == "Individual Bracketing") {
         return(rv$Area)
       } else if (method == "Drift Correction") {
         return(rv$dc_area)
@@ -866,7 +886,7 @@ labels <- function(rv){
   }
 areas <- function(input, reactive){
   areas <- sapply(input$quantitation_method, FUN = function(x) {
-      if (x == "Bracketing" | x == "Default") {
+      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Individual Bracketing") {
         return(rv$Area)
       } else if (x == "IS Correction") {
         return(rv$IS_ratio)
@@ -980,8 +1000,9 @@ update_select_plots <- function(rv) {
 
 get_peak_area_by_method <- function(method, rv) {
   switch(method,
-         "Bracketing" = rv$Area,
-         "Default" = rv$Area,
+         "Custom Bracketing" = rv$Area,
+         "Default Bracketing" = rv$Area,
+         "Individual Bracketing" = rv$Area,
          "IS Correction" = rv$IS_ratio,
          "Drift Correction" = rv$dc_area,
          rep(NA, nrow(rv$data))
@@ -1053,7 +1074,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
   get_plotly_blank <- function(input, rv){
     req(input$file1)
 
-    df <- data.frame(`Peak.Area` = get_peak_area_by_method(method = "Default", rv), Classification = rv$Classification_temp, Sample.Name = rv$data$Sample.Name)
+    df <- data.frame(`Peak.Area` = get_peak_area_by_method(method = "Default Bracketing", rv), Classification = rv$Classification_temp, Sample.Name = rv$data$Sample.Name)
 
     pd <- rv$data$Sample.Type
 
@@ -1495,6 +1516,7 @@ reset_app <- function(session, rv) {
   
   updateRadioButtons(session, "model_drift", selected = "lm")
   updateSelectInput(session, "files_for_correction", selected = NULL)
+  updateSelectInput(session, "file_for_bracketing", selected = NULL)
   updateNumericInput(session, "span_width", value = 0.75)
 
   updateCheckboxInput(session, "use_correction", value = FALSE)
@@ -1681,7 +1703,7 @@ get_plotly_quant <- function(input, rv) {
 
   p <- p + {
     if (input$log_scale) {
-      scale_y_log10() + labs(x = "Concentration", y = "Peak Area (log)")
+      scale_y_log10() + labs(x = xlab, y = "Peak Area (log)")
     } else {
       labs(x = xlab, y = ylab)
     }
@@ -1840,7 +1862,7 @@ suppressWarnings({
 
 build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
   
-    if(input$quantitation_method == "Bracketing"){
+    if(input$quantitation_method == "Custom Bracketing"){
         res_df$PeakArea <- rv$data[, cpt_name]
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
         res_df$Concentration <- signif(quant$pred, 3)
@@ -1966,7 +1988,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
 
 
-    } else if (input$quantitation_method == "Default") {
+    } else if (input$quantitation_method == "Default Bracketing") {
 
         res_df$PeakArea <- rv$data[, cpt_name]
 
@@ -1999,7 +2021,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
         res_df$info_value[2] <- unique(unlist(rv$LLOQs))
     }
 
-    if(input$quantitation_method != "Bracketing"){
+    if(input$quantitation_method != "Custom Bracketing"){
       acc_table <- get_acc_table(input, rv)
    
     # Add two empty columns to res_df before combining

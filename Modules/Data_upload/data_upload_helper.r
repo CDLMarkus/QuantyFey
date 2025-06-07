@@ -167,7 +167,7 @@ observe_input_file_1 <- function(input, rv, session) {
 
     Class_temp <- rv$data$Classification
 
-    if (input$quantitation_method != "Bracketing") {
+    if (input$quantitation_method != "Custom Bracketing" | input$quantitation_method != "Individual Bracketing") {
       Class_temp[!grepl("Cal", Class_temp)] <- "all"
     }
 
@@ -183,6 +183,8 @@ observe_input_file_1 <- function(input, rv, session) {
     display_choices <- paste(unique_sample_names, "(", sample_name_counts, ")", sep = "")
 
     updateSelectInput(session, inputId = "files_for_correction", choices = setNames(unique_sample_names, display_choices))
+    updateSelectInput(session, inputId = "file_for_bracketing", choices = setNames(unique_sample_names, display_choices))
+    
     updateCheckboxGroupInput(session, inputId = "RT_groups", choices = unique(rv$data$Sample.Type))
     updateCheckboxGroupInput(session, inputId = "IS_groups", choices = unique(rv$data$Sample.Type))
 
@@ -201,12 +203,12 @@ observe_input_file_1 <- function(input, rv, session) {
     if (length(is_columns) == 0 || all(is.null(is_columns)) || all(is.na(is_columns))) {
       shinyalert("Warning", "No Internal Standard Transitions observed.", type = "warning")
       updateSelectInput(session, inputId = "quantitation_method", label = "Method for Quantification",
-        choices = c("Drift Correction", "Bracketing", "Default"), selected = "Drift Correction")
+        choices = c("Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing"), selected = "Drift Correction")
       rv$data <- add_column(rv$data, !!"none" := 1)
       is_columns <- "none"
     } else {
       updateSelectInput(session, inputId = "quantitation_method", label = "Method for Quantification",
-        choices = c("IS Correction", "Drift Correction", "Bracketing", "Default"), selected = "IS Correction")
+        choices = c("IS Correction", "Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing"), selected = "IS Correction")
     }
 
     if (!"none" %in% colnames(rv$data)) {

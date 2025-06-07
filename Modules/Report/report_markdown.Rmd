@@ -138,7 +138,7 @@ suppressWarnings({
   
 
   
-if(input$quantitation_method == "Bracketing"){
+if(input$quantitation_method == "Custom Bracketing"){
   checkbox_data <- rv$selection_table_bracketing
   
   latex_table <- function(data) {
@@ -227,7 +227,7 @@ tryCatch({
   cat(caption_text)
   cat("\\newline \n")
   
-}else if(input$quantitation_method == "Default"){
+}else if(input$quantitation_method == "Default Bracketing"){
   
   df <- rv$data[,c("Sample.Name","Sample.Type", input$Compound)]
   colnames(df)[colnames(df) == input$Compound] <- "Peak Area"

@@ -34,9 +34,9 @@ optimize_save_compounds <- function(input, rv, session) {
         cpt
       )
       updateSelectInput(session, "Compound_IS", choices = cpts_IS, selected = IS_name)
-      meths <- c("IS Correction", "Drift Correction", "Bracketing", "Default")
+      meths <- c("IS Correction", "Drift Correction", "Custom Bracketing", "Default Bracketing", "Individual Bracketing")
     } else {
-      meths <- c("Drift Correction", "Bracketing", "Default")
+      meths <- c("Drift Correction", "Custom Bracketing", "Default Bracketing", "Individual Bracketing")
     }
 
     run_for_method <- function(j) {

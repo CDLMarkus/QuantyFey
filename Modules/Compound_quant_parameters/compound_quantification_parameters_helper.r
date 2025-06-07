@@ -259,6 +259,7 @@ update_compound_analysis_state <- function(input, rv, cpt_name, session) {
         rv$compounds_analyzed <- c(rv$compounds_analyzed, cpt_name)
         rv$settings_used[[cpt_name]] <- list(
             file_for_correction = input$files_for_correction,
+            file_for_bracketing = input$file_for_bracketing,
             selection_table = rv$selection_cals_table,
             LLOQ = rv$LLOQs,
             regression_model = rv$regression_model,
@@ -350,8 +351,12 @@ observe_input_compound <- function(input, rv, session) {
     }, error = function(e) NA)
 
     # Classification logic
-    if (input$quantitation_method == "Bracketing") {
+    if (input$quantitation_method == "Custom Bracketing") {
       rv$Classification_temp <- rv$data$Classification
+    } else if (input$quantitation_method == "Individual Bracketing") {
+      rv$Classification_temp <- update_Classification_ind(rv)
+      
+
     } else {
       Classification_temp <- rv$data$Classification
       Classification_temp[!grepl("Cal", Classification_temp)] <- "all"
@@ -416,16 +421,17 @@ if (is.null(rv$bracketing_table)) {
         names(selection_table_bracketing)[i + 1] <- paste("Cal", i, sep = " ")
       }
 
-      if (input$quantitation_method != "Bracketing") {
+      if (input$quantitation_method != "Custom Bracketing") {
         selection_table[selection_table == F] <- T
       }
 
+    
       rv$selection_table <- selection_table
       rv$bracketing_table <- bracketing_table
       rv$selection_table_bracketing <- selection_table_bracketing
     }
 
-    selection_table <- if (input$quantitation_method == "Bracketing") {
+    selection_table <- if (input$quantitation_method == "Custom Bracketing") {
       rv$selection_table_bracketing
     } else {
       rv$selection_table
@@ -441,8 +447,9 @@ if (is.null(rv$bracketing_table)) {
 
     df_for_sel_cal_tab$PeakArea <- switch(
       input$quantitation_method,
-      "Bracketing" = rv$Area,
-      "Default" = rv$Area,
+      "Custom Bracketing" = rv$Area,
+      "Default Bracketing" = rv$Area,
+      "Individual Bracketing" = rv$Area,
       "IS Correction" = rv$IS_ratio,
       "Drift Correction" = rv$dc_area,
       rv$Area
@@ -519,15 +526,16 @@ update_if_analyzed <- function(input, rv, session) {
       rv$selection_cals_table <- settings$selection_table
       
       if(input$Compound_IS == "none" | is.na(input$Compound_IS) | is.null(input$Compound_IS) | input$Compound_IS == ""){
-        updateSelectInput(session, "quantitation_method", choices = c("Drift Correction", "Bracketing", "Default"), selected = settings$quantitation_method)
+        updateSelectInput(session, "quantitation_method", choices = c("Drift Correction", "Individual Bracketing","Custom Bracketing", "Default Bracketing"), selected = settings$quantitation_method)
       } else {
-        updateSelectInput(session, "quantitation_method", choices = c("IS Correction", "Drift Correction", "Bracketing", "Default"), selected = settings$quantitation_method)
+        updateSelectInput(session, "quantitation_method", choices = c("IS Correction", "Drift Correction","Individual Bracketing", "Custom Bracketing", "Default Bracketing"), selected = settings$quantitation_method)
       }
 
 
       updateTextInput(session, "Comment", value = settings$comment)
       updateRadioButtons(session, "model_drift", choices = c("lm", "loess"), selected = settings$model)
       updateSelectInput(session, "files_for_correction", choices = unique(rv$data$Sample.Name), selected = settings$file_for_correction)
+      updateSelectInput(session, "file_for_bracketing", choices = unique(rv$data$Sample.Name), selected = settings$file_for_correction)
       updateNumericInput(session, "span_width", value = settings$span_width, min = 0.4, max = 2, step = 0.05)
 
       rv$IS_table <- settings$IS_table

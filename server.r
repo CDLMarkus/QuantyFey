@@ -75,6 +75,9 @@ server <- function(input, output, session){
     current_layout_acc = NULL,
     current_layout_dc = NULL,
     current_layout_IS = NULL,
+    weights = NULL,
+    mod_ind = NULL,
+    Class_ind = NULL,
 
 
     ## Plots
@@ -114,6 +117,11 @@ server <- function(input, output, session){
   # ========= Bracketing =============
 
   bracketing_module(input, output, session, rv)
+
+
+  # ========= Individual Bracketing =============
+
+  individual_bracketing_module(session, input, output, rv)
 
   # ============ Quantitate ===============
 

@@ -60,7 +60,7 @@ observe_input_IS_indicator <- function(input, rv, session) {
         updateSelectInput(session, "Compound_IS", choices = character(0), selected = NULL)
         updateSelectInput(session, "quantitation_method",
           label = "Method for Quantification",
-          choices = c("Drift Correction", "Bracketing", "Default"),
+          choices = c("Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing"),
           selected = "Drift Correction"
         )
 
@@ -76,7 +76,7 @@ observe_input_IS_indicator <- function(input, rv, session) {
 
         updateSelectInput(session, "quantitation_method",
           label = "Method for Quantification",
-          choices = c("IS Correction", "Drift Correction", "Bracketing", "Default"),
+          choices = c("IS Correction", "Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing"),
           selected = "IS Correction"
         )
 

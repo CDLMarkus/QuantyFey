@@ -440,7 +440,7 @@ selected <- event_data("plotly_selected", source = "quant")
   observeEvent(input$quantitation_method, {
     tryCatch({
       all_present <- all(rv$setup_cal$Cal.Name %in% rv$data$Sample.Name)
-    if (input$quantitation_method == "Bracketing") {
+    if (input$quantitation_method == "Custom Bracketing") {
     if (any(rowSums(rv$selection_table_bracketing[, -1]) == 0)) {
       shinyalert("Error in Bracketing Table", "Each Block in the bracketing table must have at least one Cal assigned to it.", type = "error")
       return(NULL)
@@ -451,9 +451,9 @@ selected <- event_data("plotly_selected", source = "quant")
     req(all_present)
 
     req(input$file1)
-    try({
+    tryCatch({
       update_cals(input, rv, session)
-    }, silent = T)
+    }, error = function(e) {message(e$message)})
     
 
 

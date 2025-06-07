@@ -268,8 +268,8 @@ navset_pill(
                 textInput("Comment", "Comment:"),
                 actionButton("save_compound", label = "Save", class = "btn-primary"),
                 checkboxInput(inputId = "generate_report", label = "Generate Report", value = FALSE),
-                checkboxInput(inputId = "show_dev", label = "Show Development Options", value = FALSE),
-                conditionalPanel(condition = "input.show_dev == true",
+                # checkboxInput(inputId = "show_dev", label = "Show Development Options", value = FALSE),
+                conditionalPanel(condition = "false",
                   actionButton(inputId = "optimize_save", label = "Optimize and Save all Compounds")
               )),
               accordion(
@@ -323,12 +323,48 @@ navset_pill(
                     
                   )
                 ),
-                accordion_panel("Bracketing",
+                accordion_panel("Custom Bracketing",
                   icon = bsicons::bs_icon("crop"),
                   card(
                   DTOutput("dtable", width = "800px"),
                   height = "800px"
                   )
+                ),
+                accordion_panel("Individual Bracketing",
+                  icon = bsicons::bs_icon("graph-down"),
+                  layout_columns(card(
+                  selectInput(inputId = "model_for_ind_bracketing", "Select Model for bracketing weighting:", choices = c("linear", "non linear over QC"), selected = "linear"),
+                  conditionalPanel(condition = "input.model_for_ind_bracketing == 'non linear over QC'",
+                                   selectInput(inputId = "file_for_bracketing", label = "Select file for trend prediction", choices = NULL),
+                                   selectInput(inputId = "model_bracketing", "Select Model:", choices = c("loess", "spline")),
+
+
+  # Loess-specific file input
+    conditionalPanel(
+      condition = "input.model_bracketing == 'loess'",
+      numericInput(
+        inputId = "span_width_bracketing",
+        label = "Span Width:",
+        min = 0.4, max = 10, step = 0.05, value = 0.75
+      )
+    ),
+
+    # Optional smoothing parameter or model tuning inputs (placeholders for now)
+    conditionalPanel(
+      condition = "input.model_bracketing == 'spline'",
+      numericInput(
+        inputId = "spline_df",
+        label = "Degrees of freedom for spline:",
+        value = 4,
+        min = 2,
+        max = 20,
+        step = 1
+      )
+    ),
+
+                  
+                  )),
+                  card(plotlyOutput("bracketing_model_plot")), col_widths = c(2, 10))
                 ),
                 accordion_panel(
                   title = "Quantitation",
@@ -338,10 +374,10 @@ navset_pill(
                       selectInput(inputId = "regression_model", label = "Regression Model:", choices = c("linear", "quadratic"), selected = "linear"),
                       numericInput(inputId = "LOQ", label = "Limit of Quantification", value = NULL),
                       selectInput(inputId = "weight_method", "Method for Weighing:", choices = c("none", "1/x", "1/x2", "1/y", "1/y2", "1/x force 0", "1/y force 0"), selected = "1/x"),
-                      selectInput(inputId = "quantitation_method", "Method for Quantification", choices = c("IS Correction", "Drift Correction", "Bracketing", "Default")),
+                      selectInput(inputId = "quantitation_method", "Method for Quantification", choices = c("IS Correction", "Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing")),
                       checkboxInput(inputId = "show_samples", label = "Show Samples", value = T),
                       conditionalPanel(
-                      condition = "input.quantitation_method == 'Bracketing'",
+                      condition = "input.quantitation_method == 'Custom Bracketing' | input.quantitation_method == 'Individual Bracketing'",
                       fluidRow(
                       column(
                       12,
