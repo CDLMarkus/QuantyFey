@@ -123,6 +123,7 @@ server <- function(input, output, session){
 
   results_module(input, output, session, rv)
 
+
   # ========= Session End Function ========
 
   session$onSessionEnded(function() {

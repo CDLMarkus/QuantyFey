@@ -267,8 +267,11 @@ navset_pill(
                   ),
                 textInput("Comment", "Comment:"),
                 actionButton("save_compound", label = "Save", class = "btn-primary"),
-                checkboxInput(inputId = "generate_report", label = "Generate Report", value = FALSE)
-              ),
+                checkboxInput(inputId = "generate_report", label = "Generate Report", value = FALSE),
+                checkboxInput(inputId = "show_dev", label = "Show Development Options", value = FALSE),
+                conditionalPanel(condition = "input.show_dev == true",
+                  actionButton(inputId = "optimize_save", label = "Optimize and Save all Compounds")
+              )),
               accordion(
                 accordion_panel(
                   title = "Data Visualization",

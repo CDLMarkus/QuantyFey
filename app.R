@@ -61,6 +61,7 @@ suppressPackageStartupMessages({
 
 
 source("./helper/global_functions.R")
+source("./helper/dev_functions.r")
 source("default_settings.R")
 
 # Check if the file exists in the current working directory

@@ -15,6 +15,6 @@ IS_pattern = "IS"
 # Concentration 
 conc_unit = "µg/mL"
 # Intensity Unit
-int_unit = "counts"
+int_unit = NULL
 # RT Unit
 rt_unit = "min"

@@ -4,6 +4,17 @@ source("./Modules/Compound_quant_parameters/compound_quantification_parameters_h
 
 compound_quantification_parameters_module <- function(input, output, session, rv){
 
+
+  observeEvent(input$optimize_save, {
+
+    optimize_save_compounds(input, rv, session)
+
+  })
+
+
+
+
+
   observeEvent(input$Compound_IS, {
     req(input$file1)
     req(input$Compound != "")
