@@ -144,6 +144,8 @@ weights_ind <- function(input, rv){
         }
       }
 
+      rv$mod_ind <- list(data.frame(Sample.Name = rv$data$Sample.Name, PeakArea = rv$Area, inj = 1:nrow(rv$data), Classification = rv$Classification_temp))
+
     } else if (input$model_for_ind_bracketing == "non linear over QC") {
         
       if (!is.null(input$file_for_bracketing)) {
@@ -183,7 +185,7 @@ weights_ind <- function(input, rv){
 
                 df$pred <- predict(mod, df)
 
-                rv$mod_ind <- list(mod, df)
+                rv$mod_ind <- list(df)
           
            
 

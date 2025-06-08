@@ -23,50 +23,75 @@ output$bracketing_model_plot <- renderPlotly({
 
 
 
-    mod <- rv$mod_ind[[1]]
-    df <- rv$mod_ind[[2]]
-    df$pred <- predict(mod, df)
+    
+    df <- rv$mod_ind[[1]]
+    #df$pred <- predict(mod, df)
 
     df <- cbind(df, select(df_weight, -Classification))
     print(df)
  
 
-    p <- ggplot() + geom_bar(data = df, aes(x = inj, y = PeakArea), stat = "identity")+geom_line(data = df, aes(x  = inj, y = pred))
-    names(df) <- gsub(pattern = " ", replacement = "_", names(df))
-    cal_cols <- grep("Cal", names(df), value = TRUE)
 
-    print(df)
-    # Assign a unique color to each calibration column
-    colors <- scales::hue_pal()(length(cal_cols))
-    # Use ggplot2's sec.axis for a secondary y-axis
-    # We'll need to reshape the data for easier plotting
-    library(tidyr)
-    if (length(cal_cols) > 0) {
-        df_long <- pivot_longer(df, cols = all_of(cal_cols), names_to = "Calibration", values_to = "CalValue")
-        p <- ggplot() +
-            geom_bar(data = df, aes(x = inj, y = PeakArea), stat = "identity") +
-            geom_line(data = df, aes(x = inj, y = pred)) +
-            geom_line(
-                data = df_long,
-                aes(x = inj, y = CalValue, color = Calibration),
-                linetype = "dashed",
-                size = 1
-            ) +
-            scale_y_continuous(
-                name = "PeakArea / pred",
-                sec.axis = sec_axis(~ ., name = "Calibration Values")
-            ) +
-            scale_color_manual(values = colors)
-    }
+# Ensure column names are safe
+names(df) <- gsub(" ", "_", names(df))
 
+# Identify calibration weight columns
+cal_cols <- grep("Cal", names(df), value = TRUE)
 
+# Prepare weights in long format
+if (length(cal_cols) > 0) {
+  df_long <- pivot_longer(df, cols = all_of(cal_cols), names_to = "Calibration", values_to = "Weight")
 
- 
+  # Manual color palette (colorblind-friendly, professional)
+# Define a base palette (can be extended)
+base_palette <- c(
+  "#1b9e77", "#d95f02", "#7570b3", "#e7298a",
+  "#66a61e", "#e6ab02", "#a6761d", "#666666"
+)
 
-    p <- ggplotly(p)
+# Repeat or trim the palette to match the number of cal_cols
+color_palette <- rep(base_palette, length.out = length(cal_cols))
 
-    p
+  # Build base plot
+  p <- ggplot() +
+    # Raw intensities as bars
+    geom_bar(data = df, aes(x = inj, y = PeakArea), stat = "identity", fill = "grey80", alpha = 0.7) +
 
+    # Model prediction as line
+    #geom_line(data = df, aes(x = inj, y = pred), color = "black", linewidth = 1) +
+
+    # Calibrant weights on secondary axis (0–1 scale)
+    geom_line(
+      data = df_long,
+      aes(x = inj, y = Weight * max(df$PeakArea, na.rm = TRUE), color = Calibration),  # scale to match y
+      linetype = "dashed",
+      linewidth = 1
+    ) +
+
+    # Y axes
+    scale_y_continuous(
+      name = "Peak Area / Model Prediction",
+      sec.axis = sec_axis(~ . / max(df$PeakArea, na.rm = TRUE), name = "Calibration Weights (0–1)")
+    ) +
+
+    # X-axis
+    scale_x_continuous(name = "Injection Order") +
+
+    # Color for calibrants
+    scale_color_manual(values = color_palette) +
+
+    # Clean, minimal theme
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.title.y.right = element_text(color = "steelblue"),
+      axis.title.y.left = element_text(color = "black"),
+      legend.position = "top",
+      legend.title = element_blank()
+    )
+}
+
+# Convert to interactive plot
+p <- ggplotly(p)
 
 
 
