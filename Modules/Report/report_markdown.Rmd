@@ -371,8 +371,8 @@ auto_set_format()
    # Loop through each block in the calibration plots
    for (i in names(plots_quant)) {
   
-     # Skip blocks that contain "Cal" in their name
-     if (grepl("Cal", i)) {
+     # Skip blocks that contain "^Cal" in their name
+     if (grepl("^Cal", i)) {
        next
      }
   

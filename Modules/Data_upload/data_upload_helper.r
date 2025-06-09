@@ -119,7 +119,7 @@ observe_input_file_1 <- function(input, rv, session) {
 
     for (i in 1:ncol(data_upload)) {
       if (!grepl(input$quant_indicator, colnames(data_upload)[i])) next
-      col_temp <- data_upload[grepl("Cal", data_upload$Classification), i]
+      col_temp <- data_upload[grepl("^Cal", data_upload$Classification), i]
       if (sum(is.na(col_temp)) / length(col_temp) > 1) {
         col_rm <- c(col_rm, colnames(data_upload)[i])
       }
@@ -168,7 +168,7 @@ observe_input_file_1 <- function(input, rv, session) {
     Class_temp <- rv$data$Classification
 
     if (input$quantitation_method != "Custom Bracketing" | input$quantitation_method != "Individual Bracketing") {
-      Class_temp[!grepl("Cal", Class_temp)] <- "all"
+      Class_temp[!grepl("^Cal", Class_temp)] <- "all"
     }
 
     rv$Classification_temp <- Class_temp

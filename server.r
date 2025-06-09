@@ -78,6 +78,7 @@ server <- function(input, output, session){
     weights = NULL,
     mod_ind = NULL,
     Class_ind = NULL,
+    weights_ind = NULL,
 
 
     ## Plots

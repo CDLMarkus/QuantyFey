@@ -491,7 +491,7 @@ classify_samples <- function(df) {
     current <- df$Sample.Type[i]
     xnext <- df$Sample.Type[i + 1]
     
-    # Check if all three are "Cal" or "Standard"
+    # Check if all three are "^Cal" or "Standard"
     if (all(c(prior, current, xnext) %in% c("Cal", "Standard"))) {
       if(!first_block){
         sample_counter <- sample_counter + 1
@@ -719,7 +719,7 @@ labels <- function(rv){
     } else if (input$quantitation_method == "Individual Bracketing"){
       rv$Classification_temp <- update_Classification_ind(rv)
       selection <- data.frame(Class = unique(rv$Classification_temp))
-      for(i in unique(rv$Classification_temp[grepl("Cal", rv$Classification_temp)])){
+      for(i in unique(rv$Classification_temp[grepl("^Cal", rv$Classification_temp)])){
         selection <- cbind(selection, new = rep(T, nrow(selection)))
         colnames(selection)[colnames(selection) == "new"] <- i
       }
@@ -733,7 +733,7 @@ labels <- function(rv){
       selection <- rv$selection_table
       selection[selection == FALSE] <- TRUE
 
-      rv$Classification_temp[!grepl("Cal", rv$Classification_temp)] <- "all"
+      rv$Classification_temp[!grepl("^Cal", rv$Classification_temp)] <- "all"
 
       rv$selection_cals_table <- list()
 
@@ -742,7 +742,7 @@ labels <- function(rv){
       selection <- rv$selection_table
       selection[selection == FALSE] <- TRUE
 
-      rv$Classification_temp[!grepl("Cal", rv$Classification_temp)] <- "all"
+      rv$Classification_temp[!grepl("^Cal", rv$Classification_temp)] <- "all"
 
       rv$selection_cals_table <- list()
 
@@ -751,7 +751,7 @@ labels <- function(rv){
       selection <- rv$selection_table
       selection[selection == FALSE] <- TRUE
 
-      rv$Classification_temp[!grepl("Cal", rv$Classification_temp)] <- "all"
+      rv$Classification_temp[!grepl("^Cal", rv$Classification_temp)] <- "all"
 
       rv$selection_cals_table <- list()
 
@@ -1891,6 +1891,12 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
             }
         })
 
+        res_df$R2 <- sapply(res_df$Classification, FUN = function(x) {
+            model <- res_list[["models"]][[x]]
+            return(summary(model)$r.squared)
+            
+        })
+
         res_df$Cals_used <- sapply(res_df$Classification, FUN = function(x){
             temp <- rv$selection_cals_table[[x]]
             cals_used <- unique(temp$Classification[temp$used])
@@ -1917,7 +1923,8 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
         res_df$info_value <- rep("", nrow(res_df))
 
         res_df$info_label[1] <- "Function"
-        res_df$info_label[2] <- "LLOQ"
+        res_df$info_label[2] <- "R2"
+        res_df$info_label[3] <- "LLOQ"
 
         coef <- signif(unique(res_list[["models"]])[[1]]$coefficients, 7)
         if (rv$regression_model == "linear") {
@@ -1933,13 +1940,14 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
         }
 
         res_df$info_value[1] <- coeficients
-        res_df$info_value[2] <- unique(unlist(rv$LLOQs))
+        res_df$info_value[2] <- summary(unique(res_list[["models"]])[[1]])$r.squared
+        res_df$info_value[3] <- unique(unlist(rv$LLOQs))
 
-        res_df$info_label[3] <- "IS Compound"
-        res_df$info_label[4] <- "Correction Factors"
+        res_df$info_label[4] <- "IS Compound"
+        res_df$info_label[5] <- "Correction Factors"
         
-        res_df$info_value[3] <- input$Compound_IS
-        res_df$info_value[4] <- paste(rv$IS_table$Sample.Type, rv$IS_table$Correction.Factors, sep = " = ", collapse = ", ")
+        res_df$info_value[4] <- input$Compound_IS
+        res_df$info_value[5] <- paste(rv$IS_table$Sample.Type, rv$IS_table$Correction.Factors, sep = " = ", collapse = ", ")
 
     } else if (input$quantitation_method == "Drift Correction") {
         res_df$PeakArea <- rv$data[, cpt_name]
@@ -1956,7 +1964,8 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
         res_df$info_value <- rep("", nrow(res_df))
 
         res_df$info_label[1] <- "Function"
-        res_df$info_label[2] <- "LLOQ"
+        res_df$info_label[2] <- "R2"
+        res_df$info_label[3] <- "LLOQ"
 
         
         coef <- signif(unique(res_list[["models"]])[[1]]$coefficients, 7)
@@ -1974,17 +1983,18 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
 
         res_df$info_value[1] <- coeficients
-        res_df$info_value[2] <- unique(unlist(rv$LLOQs))
+        res_df$info_value[2] <- summary(unique(res_list[["models"]])[[1]])$r.squared
+        res_df$info_value[3] <- unique(unlist(rv$LLOQs))
 
 
 
-        res_df$info_label[3] <- "Drift Model"
-        res_df$info_label[4] <- "Span Width"
-        res_df$info_label[5] <- "Files for Correction"
+        res_df$info_label[4] <- "Drift Model"
+        res_df$info_label[5] <- "Span Width"
+        res_df$info_label[6] <- "Files for Correction"
         
-        res_df$info_value[3] <- input$model_drift
-        res_df$info_value[4] <- input$span_width
-        res_df$info_value[5] <- input$files_for_correction
+        res_df$info_value[4] <- input$model_drift
+        res_df$info_value[5] <- input$span_width
+        res_df$info_value[6] <- input$files_for_correction
 
 
 
@@ -2003,6 +2013,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
         res_df$info_label[1] <- "Function"
         res_df$info_label[2] <- "LLOQ"
+        res_df$info_label[2] <- "R2"
 
         coef <- signif(unique(res_list[["models"]])[[1]]$coefficients, 7)
         if (rv$regression_model == "linear") {
@@ -2019,6 +2030,57 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
         res_df$info_value[1] <- coeficients
         res_df$info_value[2] <- unique(unlist(rv$LLOQs))
+        res_df$info_value[3] <- summary(unique(res_list[["models"]])[[1]])$r.squared
+    } else if(input$quantitation_method == "Individual Bracketing") {
+      res_df$PeakArea <- rv$data[, cpt_name]
+        res_df$RetentionTime <- rv$data_RT[, cpt_name]
+        res_df$Concentration <- signif(quant$pred, 3)
+        
+        res_df$LLOQ <- sapply(res_df$Classification, FUN = function(x) {
+            for (i in 1:length(rv$LLOQs)) {
+            if (names(rv$LLOQs)[i] == x) {
+                return(rv$LLOQs[[i]])
+            }
+            }
+        })
+
+        res_df$Function <- sapply(res_df$Classification, FUN = function(x) {
+            model <- res_list[["models"]][[x]]
+            coef <- signif(model$coefficients, 7)
+            if (rv$regression_model == "linear") {
+                paste0("y = ", coef[2], " * x + ", coef[1])
+            } else if (rv$regression_model == "quadratic") {
+                paste0("y = ", coef[1], " + ", coef[2], " * x + ", coef[3], " * x^2")
+            } else if (rv$regression_model == "power") {
+                paste0("y = ", exp(coef[1]), " * x^", coef[2])
+            } else if (rv$regression_model == "exponential") {
+                paste0("y = ", exp(coef[1]), " * e^(", coef[2], " * x)")
+            } else if (rv$regression_model == "log(y)") {
+                paste0("log(y) = ", coef[2], " * x + ", coef[1])
+            }
+        })
+
+        res_df$R2 <- sapply(res_df$Classification, FUN = function(x) {
+            model <- res_list[["models"]][[x]]
+            return(summary(model)$r.squared)
+            
+        })
+
+        res_df$Cals_used <- sapply(res_df$Classification, FUN = function(x){
+            temp <- rv$selection_cals_table[[x]]
+            cals_used <- unique(temp$Classification[temp$used])
+            cals_used <- paste(cals_used, collapse = ", ")
+            return(cals_used)
+        }, USE.NAMES = F)
+
+        res_df$Levels_used <- sapply(res_df$Classification, FUN = function(x){
+            temp <- rv$selection_cals_table[[x]]
+            cals_used <- temp$Sample.Name[temp$used]
+            cals_used <- paste(cals_used, collapse = ", ")
+            return(cals_used)
+        }, USE.NAMES = F)
+
+
     }
 
     if(input$quantitation_method != "Custom Bracketing"){

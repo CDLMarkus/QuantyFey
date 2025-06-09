@@ -411,7 +411,7 @@ if (is.null(rv$bracketing_table)) {
       selection_table_bracketing <- data.frame(Class = unique(rv$data$Classification))
       selection_table <- data.frame(Class = class)
 
-      for (i in 1:length(class[grepl("Cal", class)])) {
+      for (i in 1:length(class[grepl("^Cal", class)])) {
         bracketing_table <- cbind(bracketing_table, checkboxColumn(len = nrow(bracketing_table), col = i + 1))
         selection_table_bracketing <- cbind(selection_table_bracketing, rep(FALSE, nrow(selection_table_bracketing)))
         selection_table <- cbind(selection_table, rep(FALSE, nrow(selection_table)))

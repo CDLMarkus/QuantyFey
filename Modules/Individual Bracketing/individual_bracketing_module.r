@@ -9,7 +9,12 @@ individual_bracketing_module <- function(session, input, output, rv) {
 
 output$bracketing_model_plot <- renderPlotly({
 
-    weights <- weights_ind(input, rv)
+
+
+
+
+    weights <- weights_ind_for_plot(input, rv)
+    
     class <- update_Classification_ind(rv)
 
     df_weight <- data.frame(Classification = class)
@@ -28,7 +33,6 @@ output$bracketing_model_plot <- renderPlotly({
     #df$pred <- predict(mod, df)
 
     df <- cbind(df, select(df_weight, -Classification))
-    print(df)
  
 
 
@@ -97,6 +101,8 @@ p <- ggplotly(p)
 
 
 })
+
+
 
 
 
