@@ -74,12 +74,12 @@ color_palette <- rep(base_palette, length.out = length(cal_cols))
 
     # Y axes
     scale_y_continuous(
-      name = "Peak Area / Model Prediction",
+      name = "Peak Area",
       sec.axis = sec_axis(~ . / max(df$PeakArea, na.rm = TRUE), name = "Calibration Weights (0–1)")
     ) +
 
     # X-axis
-    scale_x_continuous(name = "Injection Order") +
+    scale_x_continuous(name = "Number of injection") +
 
     # Color for calibrants
     scale_color_manual(values = color_palette) +

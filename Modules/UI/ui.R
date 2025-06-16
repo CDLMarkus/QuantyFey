@@ -244,27 +244,6 @@ navset_pill(
                       label    = "Compound:",
                       choices  = ""
                     )),
-                    conditionalPanel(condition = "input.Compound_IS != 'none' && input.Compound_IS != '' && input.quantitation_method == 'IS Correction'",
-                div(class = "my-special-select",
-                    
-                      selectInput(
-                      inputId  = "Compound_IS",
-                      label    = "Internal Standard:",
-                      choices  = ""
-                      )
-                  )),
-                  conditionalPanel(condition = "input.quantitation_method == 'Drift Correction'",
-
-                  
-                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess")),
-                      selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
-                      conditionalPanel(condition = "input.model_drift == 'loess'",
-                        numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75))
-                      
-                  
-                  
-                  
-                  ),
                 textInput("Comment", "Comment:"),
                 actionButton("save_compound", label = "Save", class = "btn-primary"),
                 checkboxInput(inputId = "generate_report", label = "Generate Report", value = FALSE),
@@ -299,6 +278,17 @@ navset_pill(
                   icon = bs_icon("columns"),
                   layout_columns(
                     card(
+                div(class = "my-special-select",
+                    
+                      selectInput(
+                      inputId  = "Compound_IS",
+                      label    = "Internal Standard:",
+                      choices  = ""
+                      )
+                  ),
+
+                    ),
+                    card(
                     title = "IS Analysis Plot",
                     plotlyOutput("IS_plot", height = "800px")
                   ),
@@ -312,14 +302,24 @@ navset_pill(
                     )
                   ),
                   
-                  col_widths = c(12, 4)
+                  col_widths = c(2, 10, 4)
                   )
                 ),
                 accordion_panel(
                   title = "Drift Correction",
                   icon = bs_icon("graph-down"),
                   layout_columns(
-                    card("Plot", plotlyOutput("drift_output", height = "800px"))
+                    card("Settings",
+                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess", "spline")),
+                      selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
+                      conditionalPanel(condition = "input.model_drift == 'loess'",
+                        numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75)),
+                        conditionalPanel(condition = "input.model_drift == 'spline'",
+                        numericInput("spline_df", "Degrees of Freedom for Spline", value = 4, min = 1, max = 20)
+
+                      
+                  )),
+                    card("Plot", plotlyOutput("drift_output", height = "800px")), col_widths = c(2, 10)
                     
                   )
                 ),

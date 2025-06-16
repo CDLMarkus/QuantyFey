@@ -952,6 +952,18 @@ update_select_plots <- function(rv) {
             mod_temp <- lm(formula = PeakArea ~ inj, data = df_cals)
           } else if (input$model_drift == "loess") {
             mod_temp <- loess(formula = PeakArea ~ inj, data = df_cals, span = input$span_width)
+          } else if(input$model_drift == "spline") {
+            
+            if (!"splines" %in% .packages(all.available = TRUE)) {
+              install.packages("splines")
+            }
+            library(splines)
+
+            #print(ns(inj, df = input$spline_df))
+            #print(df_cals)
+
+            mod_temp <- lm(formula = PeakArea ~ ns(inj, df = input$spline_df), data = df_cals)
+            
           }
 
           df$pred.PeakArea <- predict(mod_temp, df)
@@ -1275,7 +1287,26 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, span_width = input$span_width, col = "red3", se = F)
       } else if(input$model_drift == "lm") {
         p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, col = "red3", se = F)
-      }
+      } else if (input$model_drift == "spline") {
+  library(splines)
+  
+  df_sub <- df[df$Sample.Name == cal_dc, ]
+  
+  # Fit spline model
+  spline_mod <- lm(PeakArea ~ ns(inj, df = input$spline_df), data = df_sub)
+  
+  # Create new data for prediction (for smooth line)
+  inj_seq <- seq(min(df_sub$inj, na.rm = TRUE), max(df_sub$inj, na.rm = TRUE), length.out = 200)
+  pred_df <- data.frame(inj = inj_seq)
+  pred_df$PeakArea <- predict(spline_mod, newdata = pred_df)
+  
+  # Add fitted spline line
+  p1 <- p1 + geom_line(
+    data = pred_df,
+    aes(x = inj, y = PeakArea),
+    col = "red3"
+  )
+}
       
 
 
