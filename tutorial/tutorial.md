@@ -274,18 +274,32 @@ This pattern identifies **internal standard** transitions.
 ---
 
 ### **Compound Quantification**
-The **Compound Quantification** tab is the primary interface for **visualization**, **drift correction**, **model optimization**, and **quantification**. 
+The **Compound Quantification** tab is the main workspace for **visualization**, **drift correction**, **regression model optimization**, and **quantification**. 
 
 #### **Setup**
 
 ![Parameters for the **Compound Quantification** Tab](images/compound_quantification_parameters.png)
 
-On the left panel, users can configure the following:
+In the left-side panel, users can configure the following:
 - **Compound**: Select the quantification transition.
-- **Internal Standard**: Choose the internal standard transition for correction. (This will only be shown if IS transitions were found in the data).
 - **Comment**: Add notes for the quantification process.
-- **Save**: Save the quantification results for the selected transition.
-- **Generate Report**: Optional checkbox - will generate a pdf report with all generated plots, and data summarizing the quantified transition.
+- **Save**:
+    - Ouput is saved to users **Documents** folder
+    - If the default path fails (e.g., due to permissions), results are saved to the local QuantyFey directory.
+    - Files are placed inside a folder names `Results_<date>` unless a different name is specified in the **Data Upload** tab.
+    - Two output files are created and updated with each save:
+    -   A **concentration table** (`Results_quant.csv`) per compound.
+    -   A **summary file**  (`Quant_summary.xlsx`) listing all parameters and settings, with one sheet per save.
+
+- **Generate Report**: Optional checkbox. If enabled, a PDF report will be created containing all plots and a summary of the quantification.
+
+> Not on File Management:
+> To avoid overfitting while limiting file clutter:
+> - Concentration tables: The app checks for differences between the existing file and the new data. If all data from the existing file matches data from the new data, the file is overwritten. If differences exist, a new file is created with a time stamp.
+> - Summary File: With every save, data is appended to the file.
+> - PDF Report: Reports may be overwritten if the app is restarted and outputs are saved to the same directory.
+> Suggestion: After launching the app, create a new output folder by renaming the project name in the **Data Upload** tab. This helps prevent conflicts and ensures all outputs are saved cleanly.
+
 
 #### **Main Tabs**
 
@@ -293,7 +307,7 @@ The main panel contains five tabs:
 
 ![Screenshot of the five main tabs](images/compound_quantification_overview_2.png)
 
-Each tab will be explained in more detail in the following section.
+Each tab will be explained in  detail in the following section.
 
 ---
 
@@ -302,44 +316,22 @@ Each tab will be explained in more detail in the following section.
 
 ![Overview of the **Data Visualization** Tab showing the **Qualifyer Quantifyer** Ratio Plot](images/compound_quantification_visualization.png)
 
-This tab provides an overview of the data for the selected transitions, including **Retention Time (RT)**, **Qual/Quant Analysis**, and **Blank Analysis**.
+This tab provides an overview of the data for the selected transitions, including **Retention Time (RT)**, **Ion Ratio Analysis**, and **Blank Analysis**.
 
-- **Retention Time**: Interactive plot of RT values for selected sample types. Hovering over points displays sample details.
-- **Qual/Quant Analysis**: Interactive plot of Qual/Quant ratios for selected sample types. Hovering over points displays sample details. (This tab will not show, if no Qualifier was matched to the chosen Quantifier transition)
-- **Blank Analysis**: Boxplots comparing blank and sample signal ratios, aiding in differentiating between background signals and actual signals.
+- **Retention Time**: Interactive plot of RT values for selected sample types. Hover over any point to view sample-specific details.
+- **Ion Ratio Analysis**: Interactive plot of Qualifier-to-Quantifier Ion ratios for selected sample types. Hover over any point to view sample-specific details.
+  > Note: This section is only visible if a matching Qulaifier was found for the selected Quantifier transition.
+- **Blank Analysis**: Boxplots comparing blank and sample signal ratios.
+  Blank ratios are calculated as: `sample intensity / mean blank intensity`
+  This helps distinguish background noise from true signals.
 
-This tab should allow the user to validate the current compound by comparing RT, Qual/Quant Ratio from Samples to Standards, and compare signal intensity from Samples to Blanks to ensure correct identity and meaningful quantification results.
-
----
-
-### **Drift Handling**
-
-The following three tabs are for the setup of the three drift handling strategies. For optimal usage, it is advised to setup all methods before quantifying the transitions. IS Correction will only show meaningful plots if IS transitions were found in the data. If not, this tab will be hidden.
-
-#### **Drift Correction**
-
-This tab applies statistical drift correction to the selected transition.
-
-![Overview of the **Drift Correction** Parameters](images/compound_quantification_drift_correction.png)
-
-- **Models**: 
-    - **Linear Model (lm)**: Simple linear regression.
-    - **Loess**: Non-linear locally estimated scatterplot smoothing.
-- **Sample for Drift Correction**: Select a sample (e.g., QC) injected regularly throughout the sequence.
-    - Only samples that were injected more than 3 times over the whole sequence will be shown, and samples indicated as blanks will be removed from the options.
-    - **Note**: Loess models cannot extrapolate; edge corrections use the nearest available factor.
-- **Span Width**: Adjustable for loess models. (Will only be shown if loess was used for the drift model).
-
-The main panel displays:
-
-- **Raw Intensity Plot**: Intensity values before correction.
-- **Corrected Intensity Plot**: Intensity values after drift correction.
-
-This tab works interacitvely in seeing how the model changes the actual intensity values. 
-**Note** span width needs to be higher than 0.4: however, going smaller can lead to problems in the model generation. If an error message appears here, try to update the model before using it, to ensure no flawed models were used for drift correction!
-**Note** The span width will only be updated after clicking outside of the input box!
+This visualization tab is designed to help **verify compound identity** by comparing **RT**, and **Ion Ratios** between Samples and Standards and to compare signal intensities from Samples to Blanks to assess **carry over** and **background signals**.
 
 ---
+
+### **Correcting for Intensity Drift**
+
+The following four tabs are for the setup of the three drift handling strategies. For optimal usage, it is advised to setup all methods before quantifying the transitions. IS Correction will only show meaningful plots if IS transitions were found in the data. If not, this tab will be hidden.
 
 #### **IS Correction**
 
@@ -356,9 +348,36 @@ This tab performs internal standard (IS) correction for the selected transition.
 
 ---
 
-#### **Bracketing**
+#### **Drift Correction**
 
-This tab configures the bracketing analysis.
+This tab applies statistical drift correction to the selected transition.
+
+![Overview of the **Drift Correction** Parameters](images/compound_quantification_drift_correction.png)
+
+- **Models**: 
+    - **Linear Model (lm)**: Simple linear regression.
+    - **Loess**: Non-linear locally estimated scatterplot smoothing.
+    - **Spline**: non-linear spline based regression.
+- **Sample for Drift Correction**: Select a sample (e.g., QC) injected regularly throughout the sequence.
+    - Only samples that were injected more than 3 times over the whole sequence will be shown, and samples indicated as blanks will be removed from the options.
+    - **Note**: Loess models cannot extrapolate; edge corrections use the nearest available factor.
+- **Span Width**: Adjustable for loess models. (Will only be shown if loess was used for the drift model).
+- **Degree**: Degree of splines for spline regression (Will only be shown if splie is used for drift model).
+
+The main panel displays:
+
+- **Raw Intensity Plot**: Intensity values before correction.
+- **Corrected Intensity Plot**: Intensity values after drift correction.
+
+This tab works interacitvely in seeing how the model changes the actual intensity values. 
+**Note** span width needs to be higher than 0.4: however, going smaller can lead to problems in the model generation. If an error message appears here, try to update the model before using it, to ensure no flawed models were used for drift correction!
+**Note** The span width will only be updated after clicking outside of the input box!
+
+---
+
+#### **Custom Bracketing**
+
+This tab configures the custom bracketing analysis.
 
 ##### **Bracketing Table**:
 This table displays all **unique blocks** from the **Classification** column in the **Peak Table**.
@@ -369,6 +388,19 @@ By toggling the checkmarks, each **Block** can be assigned to its corresponding 
 
 **Note**: Each class must include at least one calibration block for bracketing to function.
 
+---
+
+#### **Weighted Bracketing**
+
+This tab configures the weighted backeting analyis.
+
+Settings:
+Model: 
+- linear:
+- non-linear: using QC-samples or other technical replicates
+  - loess
+  - spline
+    
 ### **Quantitation**
 
 This tab facilitates the quantification of the selected transition. Key parameters and settings can be adjusted on the left panel.
