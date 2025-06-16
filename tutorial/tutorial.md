@@ -329,78 +329,103 @@ This visualization tab is designed to help **verify compound identity** by compa
 
 ---
 
-### **Correcting for Intensity Drift**
+### ** Correcting for Intensity Drift**
 
-The following four tabs are for the setup of the three drift handling strategies. For optimal usage, it is advised to setup all methods before quantifying the transitions. IS Correction will only show meaningful plots if IS transitions were found in the data. If not, this tab will be hidden.
+The following four tabs are used to set up different drift correction strategies. For best results, it's recommended to configure all applicable methods **before** performing quantification.
+
 
 #### **IS Correction**
 
-This tab performs internal standard (IS) correction for the selected transition.
+This module performs internal standard correction by calculating intensity ratios:
+> **IS ratio = Peak Area of Quantifier / Peak Area of IS**
+
+These ratios are then used instead of raw intensities for both the regression model and concentration calculations.
 
 ![Overview of the **Correction Factors Table** for the IS Correction](images/compound_quantification_IS.png)
 
-- **Correction Factors**: Adjustable for sample types with varying IS concentrations.
-- **Plots**:
-    - **Raw Intensity**: Light blue bars represent raw intensities; red dots indicate IS intensities.
-    - **Corrected Ratios**: Displays IS-corrected intensity ratios.
+- **Plots:**
+-   **Raw Intensity**: Bars indicate raw intensities; red dots indicate IS intensities.
+-   **IS Ratios**: Displayes IS ratios.
 
-**Note**: IS values below 0.1% of the median are treated as absent and set to 0.
+**Note**: For IS intensites falling below 0.1 % of the median value, the median value is used for correction.
 
 ---
 
 #### **Drift Correction**
 
-This tab applies statistical drift correction to the selected transition.
+
+This module corrects signal drift based on QC samples or other repeated injections. It builds a model based on the injection order and intensity values. This model is used to correct for intensity drift by normalizing intensities to the model. 
+
 
 ![Overview of the **Drift Correction** Parameters](images/compound_quantification_drift_correction.png)
 
 - **Models**: 
     - **Linear Model (lm)**: Simple linear regression.
     - **Loess**: Non-linear locally estimated scatterplot smoothing.
-    - **Spline**: non-linear spline based regression.
-- **Sample for Drift Correction**: Select a sample (e.g., QC) injected regularly throughout the sequence.
-    - Only samples that were injected more than 3 times over the whole sequence will be shown, and samples indicated as blanks will be removed from the options.
-    - **Note**: Loess models cannot extrapolate; edge corrections use the nearest available factor.
-- **Span Width**: Adjustable for loess models. (Will only be shown if loess was used for the drift model).
-- **Degree**: Degree of splines for spline regression (Will only be shown if splie is used for drift model).
+    - **Spline**: Flexible non-linear regression using spline curves.
+- **Sample for Drift Correction**:
+-     Select a sample (e.g., QC) injected regularly throughout the sequence. Only non-blank samples injected **3+ times** can be selected.
+- **Span Width** (for loess only): Controls smoothness of the loess fit.
+- **Degree** (for spline only): Specifies the degree of the spline function.
 
 The main panel displays:
 
 - **Raw Intensity Plot**: Intensity values before correction.
 - **Corrected Intensity Plot**: Intensity values after drift correction.
 
-This tab works interacitvely in seeing how the model changes the actual intensity values. 
-**Note** span width needs to be higher than 0.4: however, going smaller can lead to problems in the model generation. If an error message appears here, try to update the model before using it, to ensure no flawed models were used for drift correction!
-**Note** The span width will only be updated after clicking outside of the input box!
+
+> Note:
+> Loess models cannot extrapolate: Edge values are estimated using the nearest available data point.
+> Span width must be above 0.4. Smaller values may cause errors. If an error appears, adjust the parameters and retry.
+> Span width cahnges are only applied after clicking outisde the input box.
 
 ---
 
 #### **Custom Bracketing**
 
-This tab configures the custom bracketing analysis.
-
-##### **Bracketing Table**:
-This table displays all **unique blocks** from the **Classification** column in the **Peak Table**.
-The columns represent the **Calibration Blocks** from the **Classification** column.
-By toggling the checkmarks, each **Block** can be assigned to its corresponding **Calibration Block** for quantification.
+This tab allows you to manually assign **calibration blocks** to specific sections of your sequence. These are derived from the `Classification` column in the **Peak Table**.
 
 ![Overview of the **Bracketing Table**](images/compound_quantification_bracketing_table.png)
 
-**Note**: Each class must include at least one calibration block for bracketing to function.
+##### **Bracketing Table**:
+- Rows = Sample blocks (from `Classification`)
+- Columns = Calibration blocks (also from `Classification`)
+- Checkboxes let you assign calibration blocks to sample blocks.
+
+> **Note**:
+> Every sample block must be linked to **at least one** calibration block for bracketing to be used in quantification.
 
 ---
 
 #### **Weighted Bracketing**
 
-This tab configures the weighted backeting analyis.
+This module builds a separate regression model for **each injection**, based on its position between two calibration blocks. Weights are calculated using either a linear model, or if technical replicates are present, non-linear models.
+
+**Settings**:
+- **Model Type**
+-   `linear` - linear weight increase/decrease
+-   `non-linear` - use of technical replicates.
+-     loess: adjustable **span width**
+-     spline: adjustable **degree**
+
+
+
+This module calculates a regression model for every single injection between two calibration blocks, by decreasing the weight of the injection block at the beginning and increasing the weight of the calibration block at the end. By default, a linear model is used to determine the weights for each injection. Alternatively, if QC samples were injected, non-linear function can be used (loess, or spline) and the derivatives from injection to injections are used to determine the change in the weight of the regression model.
 
 Settings:
 Model: 
 - linear:
 - non-linear: using QC-samples or other technical replicates
+-   file for model:
+-   Model:
   - loess
+  -   Span width
   - spline
-    
+  -   degree
+
+
+
+
 ### **Quantitation**
 
 This tab facilitates the quantification of the selected transition. Key parameters and settings can be adjusted on the left panel.
