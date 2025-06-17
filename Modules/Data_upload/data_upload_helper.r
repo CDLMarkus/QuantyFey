@@ -167,7 +167,7 @@ observe_input_file_1 <- function(input, rv, session) {
 
     Class_temp <- rv$data$Classification
 
-    if (input$quantitation_method != "Custom Bracketing" | input$quantitation_method != "Individual Bracketing") {
+    if (input$quantitation_method != "Custom Bracketing" | input$quantitation_method != "Weighted Bracketing") {
       Class_temp[!grepl("^Cal", Class_temp)] <- "all"
     }
 
@@ -203,12 +203,12 @@ observe_input_file_1 <- function(input, rv, session) {
     if (length(is_columns) == 0 || all(is.null(is_columns)) || all(is.na(is_columns))) {
       shinyalert("Warning", "No Internal Standard Transitions observed.", type = "warning")
       updateSelectInput(session, inputId = "quantitation_method", label = "Method for Quantification",
-        choices = c("Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing"), selected = "Drift Correction")
+        choices = c("Drift Correction", "Custom Bracketing","Weighted Bracketing", "Default Bracketing"), selected = "Drift Correction")
       rv$data <- add_column(rv$data, !!"none" := 1)
       is_columns <- "none"
     } else {
       updateSelectInput(session, inputId = "quantitation_method", label = "Method for Quantification",
-        choices = c("IS Correction", "Drift Correction", "Custom Bracketing","Individual Bracketing", "Default Bracketing"), selected = "IS Correction")
+        choices = c("IS Correction", "Drift Correction", "Custom Bracketing","Weighted Bracketing", "Default Bracketing"), selected = "IS Correction")
     }
 
     if (!"none" %in% colnames(rv$data)) {

@@ -1,9 +1,9 @@
-#### Individual Bracketing Module
+#### Weighted Bracketing Module
 
 
-source("Modules/Individual Bracketing/individual_bracketing_helper.r")
+source("Modules/Weighted Bracketing/weighted_bracketing_helper.r")
 
-individual_bracketing_module <- function(session, input, output, rv) {
+weighted_bracketing_module <- function(session, input, output, rv) {
 
 
 

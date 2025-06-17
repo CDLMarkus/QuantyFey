@@ -224,6 +224,7 @@ save_final_results <- function(input, rv, quant, cpt_name) {
         res_list[["models"]] <- quantitate_output[[3]]
         res_df <- build_quant_results(res_df, input, rv, quant, res_list, cpt_name)
         setwd(results_directory(input))
+        print("error??")
         write_quant_results(res_df, cpt_name)
     }, error = function(e) {
         stop("Failed to save final results: ", e$message)
@@ -264,21 +265,27 @@ update_compound_analysis_state <- function(input, rv, cpt_name, session) {
             LLOQ = rv$LLOQs,
             regression_model = rv$regression_model,
             comment = input$Comment,
-            correction_model = input$model,
+            correction_model = input$model_drift,
             weight_method = input$weight_method,
             quantitation_method = input$quantitation_method,
             IS_compound = input$Compound_IS,
             bracketing_table = rv$bracketing_table,
             span_width = input$span_width,
             IS_table = rv$IS_table,
-            bracketing_sel_table = rv$selection_table_bracketing
+            bracketing_sel_table = rv$selection_table_bracketing,
+            model_for_ind_bracketing = input$model_for_ind_bracketing,
+            model_bracketing = input$model_bracketing,
+            span_width_bracketing = input$span_width_bracketing,
+            spline_df = input$spline_df
+
+
         )
         rv$p_RT <- NULL
         rv$p_quan_qual <- NULL
         rv$p_blank <- NULL
         rv$p_IS_analysis <- NULL
         rv$p_dc <- NULL
-        rv$LLOQs <- NULL
+        #rv$LLOQs <- NULL
         updateSelectInput(session, inputId = "Compound", choices = names(rv$data)[grepl(input$quant_indicator, names(rv$data)) & !grepl(input$IS_indicator, names(rv$data))],
             selected = input$Compound)
     }, error = function(e) {
@@ -353,7 +360,7 @@ observe_input_compound <- function(input, rv, session) {
     # Classification logic
     if (input$quantitation_method == "Custom Bracketing") {
       rv$Classification_temp <- rv$data$Classification
-    } else if (input$quantitation_method == "Individual Bracketing") {
+    } else if (input$quantitation_method == "Weighted Bracketing") {
       rv$Classification_temp <- update_Classification_ind(rv)
       
 
@@ -449,7 +456,7 @@ if (is.null(rv$bracketing_table)) {
       input$quantitation_method,
       "Custom Bracketing" = rv$Area,
       "Default Bracketing" = rv$Area,
-      "Individual Bracketing" = rv$Area,
+      "Weighted Bracketing" = rv$Area,
       "IS Correction" = rv$IS_ratio,
       "Drift Correction" = rv$dc_area,
       rv$Area
@@ -498,6 +505,8 @@ if (is.null(rv$bracketing_table)) {
 
 update_if_analyzed <- function(input, rv, session) {
       settings <- rv$settings_used[[input$Compound]]
+
+      print(str(settings))
       #print(settings)
       updateSelectInput(session, inputId = "regression_model", choices = c("linear", "quadratic"), selected = settings$regression_model)
     
@@ -526,18 +535,62 @@ update_if_analyzed <- function(input, rv, session) {
       rv$selection_cals_table <- settings$selection_table
       
       if(input$Compound_IS == "none" | is.na(input$Compound_IS) | is.null(input$Compound_IS) | input$Compound_IS == ""){
-        updateSelectInput(session, "quantitation_method", choices = c("Drift Correction", "Individual Bracketing","Custom Bracketing", "Default Bracketing"), selected = settings$quantitation_method)
+        updateSelectInput(session, "quantitation_method", choices = c("Drift Correction", "Custom Bracketing","Weighted Bracketing", "Default Bracketing"), selected = settings$quantitation_method)
       } else {
-        updateSelectInput(session, "quantitation_method", choices = c("IS Correction", "Drift Correction","Individual Bracketing", "Custom Bracketing", "Default Bracketing"), selected = settings$quantitation_method)
+        updateSelectInput(session, "quantitation_method", choices = c("IS Correction", "Drift Correction","Custom Bracketing", "Weighted Bracketing", "Default Bracketing"), selected = settings$quantitation_method)
       }
 
 
       updateTextInput(session, "Comment", value = settings$comment)
-      updateRadioButtons(session, "model_drift", choices = c("lm", "loess"), selected = settings$model)
-      updateSelectInput(session, "files_for_correction", choices = unique(rv$data$Sample.Name), selected = settings$file_for_correction)
-      updateSelectInput(session, "file_for_bracketing", choices = unique(rv$data$Sample.Name), selected = settings$file_for_correction)
+      updateRadioButtons(session, "model_drift", choices = c("lm", "loess", "spline"), selected = settings$correction_model)
+
+          # Update selection inputs
+    unique_sample_names <- unique(rv$data$Sample.Name[rv$data$Sample.Type != "Blank"])
+    sample_name_counts <- sapply(unique_sample_names, function(x) sum(rv$data$Sample.Name == x))
+    unique_sample_names <- unique_sample_names[sample_name_counts > 2]
+    sample_name_counts <- sample_name_counts[sample_name_counts > 2]
+    display_choices <- paste(unique_sample_names, "(", sample_name_counts, ")", sep = "")
+
+    updateSelectInput(session, inputId = "files_for_correction", choices = setNames(unique_sample_names, display_choices), selected = settings$file_for_correction)
+    updateSelectInput(session, inputId = "file_for_bracketing", choices = setNames(unique_sample_names, display_choices),
+    selected = settings$file_for_bracketing)
+    
       updateNumericInput(session, "span_width", value = settings$span_width, min = 0.4, max = 2, step = 0.05)
 
       rv$IS_table <- settings$IS_table
+
+
+
+
+updateSelectInput(session, inputId = "model_for_ind_bracketing", "Model for weighting:", choices = c("linear", "non linear (QC)"),
+selected = settings$model_for_ind_bracketing)
+
+ updateSelectInput(session, inputId = "model_bracketing", "Select Model:", choices = c("loess", "spline"), selected = settings$model_bracketing)
+
+                                   
+  # Loess-specific file input
+
+      updateNumericInput(session,
+        inputId = "span_width_bracketing",
+        label = "Span Width:",
+        min = 0.4, max = 10, step = 0.05, value = settings$span_width_bracketing
+      )
+
+
+    # Optional smoothing parameter or model tuning inputs (placeholders for now)
+    
+      updateNumericInput(session,
+        inputId = "spline_df",
+        label = "Degrees of freedom for spline:",
+        value = settings$spline_df,
+        min = 2,
+        max = 20,
+        step = 1
+      )
+
+
+                  
+   
+
      
 }

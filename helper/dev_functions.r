@@ -13,7 +13,10 @@ optimize_save_compounds <- function(input, rv, session) {
     "t4.OH.Pro_deriv_267.1_132_quant",
     "Trp_deriv_340.2_188.03_quant",
     "b.Ala_deriv_225_90.01_quant",
-    "Sarcosine_deriv_225_90_quant"
+    "Sarcosine_deriv_225_90_quant",
+    "Anserine_deriv_376.1_241.03_quant",
+    "Met.SO_deriv_301.2_237_quant",
+    "Met_deriv_285.1_150_quant"
   )
   #cpts <- cpts[1:5]
 
@@ -31,12 +34,15 @@ optimize_save_compounds <- function(input, rv, session) {
         "Trp_deriv_340.2_188.03_quant" = "IS_Tryptophan_348.1_195.1_CE25_quant",
         "b.Ala_deriv_225_90.01_quant" = "IS_Alanine_228.1_93.1_CE15_quant",
         "Sarcosine_deriv_225_90_quant" = "IS_Alanine_228.1_93.1_CE15_quant",
+        "Anserine_deriv_376.1_241.03_quant" = "IS_Alanine_228.1_93.1_CE15_quant",
+        "Met.SO_deriv_301.2_237_quant" = "IS_Methionine_292.1_157.1_CE15_quant",
+        "Met_deriv_285.1_150_quant" = "IS_Methionine_292.1_157.1_CE15_quant",
         cpt
       )
       updateSelectInput(session, "Compound_IS", choices = cpts_IS, selected = IS_name)
-      meths <- c("IS Correction", "Drift Correction", "Custom Bracketing", "Default Bracketing", "Individual Bracketing")
+      meths <- c("IS Correction", "Drift Correction", "Custom Bracketing", "Default Bracketing", "Weighted Bracketing")
     } else {
-      meths <- c("Drift Correction", "Custom Bracketing", "Default Bracketing", "Individual Bracketing")
+      meths <- c("Drift Correction", "Custom Bracketing", "Default Bracketing", "Weighted Bracketing")
     }
 
     run_for_method <- function(j) {
@@ -47,13 +53,13 @@ optimize_save_compounds <- function(input, rv, session) {
       meth <- meths[j]
       updateSelectInput(session, "quantitation_method", choices = meths, selected = meth)
       shinyjs::delay(500, {
-        tryCatch({
-          optimize_model_metrics(input, rv, session)
-        }, error = function(e) {
-          showNotification(paste("An error occurred:", e$message), type = "error")
-        }, finally = {
-          showNotification("Optimization completed successfully.", type = "message")
-        })
+        #tryCatch({
+        #  optimize_model_metrics(input, rv, session)
+        #}, error = function(e) {
+        #  showNotification(paste("An error occurred:", e$message), type = "error")
+        #}, finally = {
+        #  showNotification("Optimization completed successfully.", type = "message")
+        #})
 
         updateTextInput(session, "Comment", label = "Comment:", value = paste(cpt, meth, "autom", sep = "_"))
 

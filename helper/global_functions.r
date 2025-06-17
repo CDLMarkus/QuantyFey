@@ -609,7 +609,7 @@ update_sel_cal_areas <- function(input, rv){
     df <- data.frame(Sample.Name = rv$data$Sample.Name, Classification = rv$Classification_temp)
     
     df$Area <- sapply(input$quantitation_method, FUN = function(x) {
-      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Individual Bracketing") {
+      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Weighted Bracketing") {
         return(rv$Area)
       } else if (x == "IS Correction") {
         return(rv$IS_ratio)
@@ -716,7 +716,7 @@ labels <- function(rv){
 
       updateSelectInput(session, inputId = "Block", choices = selection$Class)
 
-    } else if (input$quantitation_method == "Individual Bracketing"){
+    } else if (input$quantitation_method == "Weighted Bracketing"){
       rv$Classification_temp <- update_Classification_ind(rv)
       selection <- data.frame(Class = unique(rv$Classification_temp))
       for(i in unique(rv$Classification_temp[grepl("^Cal", rv$Classification_temp)])){
@@ -772,7 +772,7 @@ labels <- function(rv){
     df <- data.frame(Sample.Name = rv$data$Sample.Name, Classification = rv$Classification_temp)
 
     df$PeakArea <- sapply(input$quantitation_method, FUN = function(x) {
-      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Individual Bracketing") {
+      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Weighted Bracketing") {
         return(rv$Area)
       } else if (x == "Drift Correction") {
         return(rv$dc_area)
@@ -842,7 +842,7 @@ labels <- function(rv){
     df <- data.frame(Sample.Name = rv$data$Sample.Name, Classification = rv$Classification_temp)
 
     df$PeakArea <- sapply(input$quantitation_method, FUN = function(method) {
-      if (method == "Custom Bracketing" | method == "Default Bracketing" | method == "Individual Bracketing") {
+      if (method == "Custom Bracketing" | method == "Default Bracketing" | method == "Weighted Bracketing") {
         return(rv$Area)
       } else if (method == "Drift Correction") {
         return(rv$dc_area)
@@ -886,7 +886,7 @@ labels <- function(rv){
   }
 areas <- function(input, reactive){
   areas <- sapply(input$quantitation_method, FUN = function(x) {
-      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Individual Bracketing") {
+      if (x == "Custom Bracketing" | x == "Default Bracketing" | x == "Weighted Bracketing") {
         return(rv$Area)
       } else if (x == "IS Correction") {
         return(rv$IS_ratio)
@@ -1014,7 +1014,7 @@ get_peak_area_by_method <- function(method, rv) {
   switch(method,
          "Custom Bracketing" = rv$Area,
          "Default Bracketing" = rv$Area,
-         "Individual Bracketing" = rv$Area,
+         "Weighted Bracketing" = rv$Area,
          "IS Correction" = rv$IS_ratio,
          "Drift Correction" = rv$dc_area,
          rep(NA, nrow(rv$data))
@@ -2063,10 +2063,13 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
         res_df$info_value[1] <- coeficients
         res_df$info_value[2] <- unique(unlist(rv$LLOQs))
         res_df$info_value[3] <- summary(unique(res_list[["models"]])[[1]])$r.squared
-    } else if(input$quantitation_method == "Individual Bracketing") {
+    } else if(input$quantitation_method == "Weighted Bracketing") {
+
+      
       res_df$PeakArea <- rv$data[, cpt_name]
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
         res_df$Concentration <- signif(quant$pred, 3)
+        
         
         res_df$LLOQ <- sapply(res_df$Classification, FUN = function(x) {
             for (i in 1:length(rv$LLOQs)) {
@@ -2075,6 +2078,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
             }
             }
         })
+        
 
         res_df$Function <- sapply(res_df$Classification, FUN = function(x) {
             model <- res_list[["models"]][[x]]
@@ -2091,6 +2095,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
                 paste0("log(y) = ", coef[2], " * x + ", coef[1])
             }
         })
+        
 
         res_df$R2 <- sapply(res_df$Classification, FUN = function(x) {
             model <- res_list[["models"]][[x]]
@@ -2098,24 +2103,47 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
             
         })
 
-        res_df$Cals_used <- sapply(res_df$Classification, FUN = function(x){
-            temp <- rv$selection_cals_table[[x]]
-            cals_used <- unique(temp$Classification[temp$used])
-            cals_used <- paste(cals_used, collapse = ", ")
-            return(cals_used)
-        }, USE.NAMES = F)
 
-        res_df$Levels_used <- sapply(res_df$Classification, FUN = function(x){
-            temp <- rv$selection_cals_table[[x]]
-            cals_used <- temp$Sample.Name[temp$used]
-            cals_used <- paste(cals_used, collapse = ", ")
-            return(cals_used)
-        }, USE.NAMES = F)
+        for (i in 1:ncol(rv$weights)) {
 
+          print(rv$weights)
+
+          if(!grepl("Cal", colnames(rv$weights)[i])){
+            next
+          }
+    
+            weights <- sapply(
+                res_df$Classification,
+                FUN = function(x) rv$weights[rv$weights$Block == x, i],
+                USE.NAMES = FALSE
+            )
+    
+            weights <- data.frame(weights = weights)
+
+            
+            if (ncol(weights) > 0 && length(names(rv$weights)) >= i) {
+                colnames(weights)[1] <- paste(
+                    names(rv$weights)[i],
+                    "weights",
+                    sep = " "
+                )
+            }
+            print(weights)
+    
+            res_df <- cbind(res_df, weights)
+
+
+          
+
+        }
+
+        
+
+        
 
     }
 
-    if(input$quantitation_method != "Custom Bracketing"){
+    if((input$quantitation_method !="Custom Bracketing")){
       acc_table <- get_acc_table(input, rv)
    
     # Add two empty columns to res_df before combining

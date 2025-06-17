@@ -42,7 +42,7 @@ update_weights_ind <- function(input, rv) {
 
 
   # Prevent infinite reactive loops: do not update rv$selection_cals_table inside a reactive context
-  if (input$quantitation_method == "Individual Bracketing") {
+  if (input$quantitation_method == "Weighted Bracketing") {
     weights <- weights_ind(input, rv)
     
     # To avoid infinite reactivity, update rv$selection_cals_table outside of a reactive context
@@ -145,7 +145,7 @@ weights_ind <- function(input, rv){
 
       rv$mod_ind <- list(data.frame(Sample.Name = rv$data$Sample.Name, PeakArea = rv$Area, inj = 1:nrow(rv$data), Classification = rv$Classification_temp))
 
-    } else if (input$model_for_ind_bracketing == "non linear over QC") {
+    } else if (input$model_for_ind_bracketing == "non linear (QC)") {
         
       if (!is.null(input$file_for_bracketing)) {
 
@@ -370,7 +370,7 @@ weights_ind_for_plot <- function(input, rv){
 
       rv$mod_ind <- list(data.frame(Sample.Name = rv$data$Sample.Name, PeakArea = rv$Area, inj = 1:nrow(rv$data), Classification =classification))
 
-    } else if (input$model_for_ind_bracketing == "non linear over QC") {
+    } else if (input$model_for_ind_bracketing == "non linear (QC)") {
         
       if (!is.null(input$file_for_bracketing)) {
 

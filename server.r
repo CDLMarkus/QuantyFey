@@ -120,9 +120,9 @@ server <- function(input, output, session){
   bracketing_module(input, output, session, rv)
 
 
-  # ========= Individual Bracketing =============
+  # ========= Weighted Bracketing =============
 
-  individual_bracketing_module(session, input, output, rv)
+  weighted_bracketing_module(session, input, output, rv)
 
   # ============ Quantitate ===============
 
