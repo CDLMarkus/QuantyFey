@@ -109,10 +109,10 @@ save_compound <- function(input, rv, session) {
 initialize_results <- function(input, rv) {
     if (is.null(rv$results)) {
         setwd(results_directory(input))
-        results_quant_name <- if (file.exists("results_quant.xlsx")) {
+        results_quant_name <- if (file.exists("Quant_summary.xlsx")) {
             paste0("results_quant_", format(Sys.Date(), "%Y%m%d"), ".xlsx")
         } else {
-            "results_quant.xlsx"
+            "Quant_summary.xlsx"
         }
         rv$results <- rv$data[, c("Sample.Name", "Classification")]
         rv$results <- rbind(c("Comment", ""), rv$results)
@@ -176,8 +176,8 @@ overwrite_below_LLOQ <- function(rv, cpt_name) {
 save_interim_results <- function(input, rv) {
     tryCatch({
         setwd(results_directory(input))
-        if ("Results_evaluation_interim.csv" %in% dir()) {
-            interim_files <- list.files(pattern = "Results_evaluation_interim")
+        if ("Results_quant.csv" %in% dir()) {
+            interim_files <- list.files(pattern = "Results_quant")
             interim_files <- sort(interim_files)
             file_matched <- FALSE
             for (file in interim_files) {
@@ -196,17 +196,17 @@ save_interim_results <- function(input, rv) {
             }
             if (!file_matched) {
                 timestamp <- format(Sys.Date(), "%Y%m%d")
-                results_filename <- paste0("Results_evaluation_interim_", timestamp, ".csv")
+                results_filename <- paste0("Results_quant_", timestamp, ".csv")
             } else {
-                results_filename <- "Results_evaluation_interim.csv"
+                results_filename <- "Results_quant.csv"
             }
             write.csv(rv$results, results_filename)
         } else {
-          results_filename <- "Results_evaluation_interim.csv"
+          results_filename <- "Results_quant.csv"
             write.csv(rv$results, results_filename)
         }
         if(is.null(results_filename)){
-            results_filename <- "Results_evaluation_interim.csv"
+            results_filename <- "Results_quant.csv"
         }
 
         return(results_filename)
@@ -294,9 +294,9 @@ show_success_notification <- function(input, cpt_name, output_file, results_file
             "\n\nFiles generated or appended:",
             paste(
                 if (isTRUE(input$generate_report)) {
-                    c(output_file, "results_quant.xlsx", results_filename)
+                    c(output_file, "Quant_summary.xlsx", results_filename)
                 } else {
-                    c("results_quant.xlsx", results_filename)
+                    c("Quant_summary.xlsx", results_filename)
                 },
                 collapse = "\n• "
             ) %>% paste0("• ", .)

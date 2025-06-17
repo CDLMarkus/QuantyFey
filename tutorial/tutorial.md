@@ -369,7 +369,7 @@ By toggling the checkmarks, each **Block** can be assigned to its corresponding 
 
 **Note**: Each class must include at least one calibration block for bracketing to function.
 
-### **Quantitation**
+### **Quantification**
 
 This tab facilitates the quantification of the selected transition. Key parameters and settings can be adjusted on the left panel.
 

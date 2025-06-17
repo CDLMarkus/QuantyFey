@@ -1284,11 +1284,12 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
       #theme(legend.position = "bottom")+
 
       if(input$model_drift == "loess"){
-        p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, span_width = input$span_width, col = "red3", se = F)
+        p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, span = input$span_width, col = "red3", se = F)
       } else if(input$model_drift == "lm") {
         p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, col = "red3", se = F)
       } else if (input$model_drift == "spline") {
   library(splines)
+  
   
   df_sub <- df[df$Sample.Name == cal_dc, ]
   
@@ -2142,13 +2143,13 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
 write_quant_results <- function(res_df, cpt_name){
   suppressWarnings({
-      if (!file.exists("results_quant.xlsx")) {
+      if (!file.exists("Quant_summary.xlsx")) {
       res_df <- list(cpt_name = res_df)
       names(res_df)[which(names(res_df) == "cpt_name")] <- cpt_name
-      writexl::write_xlsx(res_df, "results_quant.xlsx")
+      writexl::write_xlsx(res_df, "Quant_summary.xlsx")
     }else {
       suppressMessages({
-        append_xlsx(existing_file = "results_quant.xlsx", new_data = res_df, sheet_name = cpt_name)
+        append_xlsx(existing_file = "Quant_summary.xlsx", new_data = res_df, sheet_name = cpt_name)
 
       })
         

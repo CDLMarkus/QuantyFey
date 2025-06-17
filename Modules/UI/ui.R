@@ -367,7 +367,7 @@ navset_pill(
                   card(plotlyOutput("bracketing_model_plot")), col_widths = c(2, 10))
                 ),
                 accordion_panel(
-                  title = "Quantitation",
+                  title = "Quantification",
                   icon = bs_icon("stars"),
                   layout_columns(
                     card(
