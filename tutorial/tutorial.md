@@ -126,15 +126,13 @@ This file provides **retention time (RT)** data for the compounds.
 - Must include a `Sample.Name` column identical to that in the Peak Table.
 - Only compounds present in the Peak Table will be considered.
 - Upload the RT Table **after** the Peak Table.
-> *Note: the app will ignore any additional columns that aren't needed.
+> *Note:** the app will ignore any additional columns that aren't needed.
 
 ##### Example Table: Retention Time Table Format
 
 Example file: `Example_Datasets/Example1_Drift_RT.csv`
 
 ![Overview of the Example1 Dataset](images/example1_RT.png)
-
-> **Note:** Additional columns are allowed but will be ignored by the application.
 
 #### **3. Project Name (optional)**
 
@@ -274,18 +272,32 @@ This pattern identifies **internal standard** transitions.
 ---
 
 ### **Compound Quantification**
-The **Compound Quantification** tab is the primary interface for **visualization**, **drift correction**, **model optimization**, and **quantification**. 
+The **Compound Quantification** tab is the main workspace for **visualization**, **drift correction**, **regression model optimization**, and **quantification**. 
 
 #### **Setup**
 
 ![Parameters for the **Compound Quantification** Tab](images/compound_quantification_parameters.png)
 
-On the left panel, users can configure the following:
+In the left-side panel, users can configure the following:
 - **Compound**: Select the quantification transition.
-- **Internal Standard**: Choose the internal standard transition for correction. (This will only be shown if IS transitions were found in the data).
 - **Comment**: Add notes for the quantification process.
-- **Save**: Save the quantification results for the selected transition.
-- **Generate Report**: Optional checkbox - will generate a pdf report with all generated plots, and data summarizing the quantified transition.
+- **Save**:
+    - Ouput is saved to users **Documents** folder
+    - If the default path fails (e.g., due to permissions), results are saved to the local QuantyFey directory.
+    - Files are placed inside a folder names `Results_<date>` unless a different name is specified in the **Data Upload** tab.
+    - Two output files are created and updated with each save:
+    -   A **concentration table** (`Results_quant.csv`) per compound.
+    -   A **summary file**  (`Quant_summary.xlsx`) listing all parameters and settings, with one sheet per save.
+
+- **Generate Report**: Optional checkbox. If enabled, a PDF report will be created containing all plots and a summary of the quantification.
+
+> Not on File Management:
+> To avoid overfitting while limiting file clutter:
+> - Concentration tables: The app checks for differences between the existing file and the new data. If all data from the existing file matches data from the new data, the file is overwritten. If differences exist, a new file is created with a time stamp.
+> - Summary File: With every save, data is appended to the file.
+> - PDF Report: Reports may be overwritten if the app is restarted and outputs are saved to the same directory.
+> Suggestion: After launching the app, create a new output folder by renaming the project name in the **Data Upload** tab. This helps prevent conflicts and ensures all outputs are saved cleanly.
+
 
 #### **Main Tabs**
 
@@ -293,7 +305,7 @@ The main panel contains five tabs:
 
 ![Screenshot of the five main tabs](images/compound_quantification_overview_2.png)
 
-Each tab will be explained in more detail in the following section.
+Each tab will be explained in  detail in the following section.
 
 ---
 
@@ -302,111 +314,153 @@ Each tab will be explained in more detail in the following section.
 
 ![Overview of the **Data Visualization** Tab showing the **Qualifyer Quantifyer** Ratio Plot](images/compound_quantification_visualization.png)
 
-This tab provides an overview of the data for the selected transitions, including **Retention Time (RT)**, **Qual/Quant Analysis**, and **Blank Analysis**.
+This tab provides an overview of the data for the selected transitions, including **Retention Time (RT)**, **Ion Ratio Analysis**, and **Blank Analysis**.
 
-- **Retention Time**: Interactive plot of RT values for selected sample types. Hovering over points displays sample details.
-- **Qual/Quant Analysis**: Interactive plot of Qual/Quant ratios for selected sample types. Hovering over points displays sample details. (This tab will not show, if no Qualifier was matched to the chosen Quantifier transition)
-- **Blank Analysis**: Boxplots comparing blank and sample signal ratios, aiding in differentiating between background signals and actual signals.
+- **Retention Time**: Interactive plot of RT values for selected sample types. Hover over any point to view sample-specific details.
+- **Ion Ratio Analysis**: Interactive plot of Qualifier-to-Quantifier Ion ratios for selected sample types. Hover over any point to view sample-specific details.
+  > Note: This section is only visible if a matching Qulaifier was found for the selected Quantifier transition.
+- **Blank Analysis**: Boxplots comparing blank and sample signal ratios.
+  Blank ratios are calculated as: `sample intensity / mean blank intensity`
+  This helps distinguish background noise from true signals.
 
-This tab should allow the user to validate the current compound by comparing RT, Qual/Quant Ratio from Samples to Standards, and compare signal intensity from Samples to Blanks to ensure correct identity and meaningful quantification results.
+This visualization tab is designed to help **verify compound identity** by comparing **RT**, and **Ion Ratios** between Samples and Standards and to compare signal intensities from Samples to Blanks to assess **carry over** and **background signals**.
 
 ---
 
-### **Drift Handling**
+### ** Correcting for Intensity Drift**
 
-The following three tabs are for the setup of the three drift handling strategies. For optimal usage, it is advised to setup all methods before quantifying the transitions. IS Correction will only show meaningful plots if IS transitions were found in the data. If not, this tab will be hidden.
+The following four tabs are used to set up different drift correction strategies. For best results, it's recommended to configure all applicable methods **before** performing quantification.
+
+
+#### **IS Correction**
+
+This module performs internal standard correction by calculating intensity ratios:
+> **IS ratio = Peak Area of Quantifier / Peak Area of IS**
+
+These ratios are then used instead of raw intensities for both the regression model and concentration calculations.
+
+![Overview of the **Correction Factors Table** for the IS Correction](images/compound_quantification_IS.png)
+
+- **Plots:**
+  - **Raw Intensity**: Bars indicate raw intensities; red dots indicate IS intensities.
+  - **IS Ratios**: Displayes IS ratios.
+
+**Note**: For IS intensites falling below 0.1 % of the median value, the median value is used for correction.
+
+---
 
 #### **Drift Correction**
 
-This tab applies statistical drift correction to the selected transition.
+
+This module corrects signal drift based on QC samples or other repeated injections. It builds a model based on the injection order and intensity values. This model is used to correct for intensity drift by normalizing intensities to the model. 
+
 
 ![Overview of the **Drift Correction** Parameters](images/compound_quantification_drift_correction.png)
 
 - **Models**: 
     - **Linear Model (lm)**: Simple linear regression.
     - **Loess**: Non-linear locally estimated scatterplot smoothing.
-- **Sample for Drift Correction**: Select a sample (e.g., QC) injected regularly throughout the sequence.
-    - Only samples that were injected more than 3 times over the whole sequence will be shown, and samples indicated as blanks will be removed from the options.
-    - **Note**: Loess models cannot extrapolate; edge corrections use the nearest available factor.
-- **Span Width**: Adjustable for loess models. (Will only be shown if loess was used for the drift model).
+    - **Spline**: Flexible non-linear regression using spline curves.
+- **Sample for Drift Correction**:
+    - Select a sample (e.g., QC) injected regularly throughout the sequence. Only non-blank samples injected **3+ times** can be selected.
+- **Span Width** (for loess only): Controls smoothness of the loess fit.
+- **Degree** (for spline only): Specifies the degree of the spline function.
 
 The main panel displays:
 
 - **Raw Intensity Plot**: Intensity values before correction.
 - **Corrected Intensity Plot**: Intensity values after drift correction.
 
-This tab works interacitvely in seeing how the model changes the actual intensity values. 
-**Note** span width needs to be higher than 0.4: however, going smaller can lead to problems in the model generation. If an error message appears here, try to update the model before using it, to ensure no flawed models were used for drift correction!
-**Note** The span width will only be updated after clicking outside of the input box!
+
+> **Note:**
+> Loess models cannot extrapolate: Edge values are estimated using the nearest available data point.
+> Span width must be above 0.4. Smaller values may cause errors. If an error appears, adjust the parameters and retry.
+> Span width cahnges are only applied after clicking outisde the input box.
 
 ---
 
-#### **IS Correction**
+#### **Custom Bracketing**
 
-This tab performs internal standard (IS) correction for the selected transition.
-
-![Overview of the **Correction Factors Table** for the IS Correction](images/compound_quantification_IS.png)
-
-- **Correction Factors**: Adjustable for sample types with varying IS concentrations.
-- **Plots**:
-    - **Raw Intensity**: Light blue bars represent raw intensities; red dots indicate IS intensities.
-    - **Corrected Ratios**: Displays IS-corrected intensity ratios.
-
-**Note**: IS values below 0.1% of the median are treated as absent and set to 0.
-
----
-
-#### **Bracketing**
-
-This tab configures the bracketing analysis.
-
-##### **Bracketing Table**:
-This table displays all **unique blocks** from the **Classification** column in the **Peak Table**.
-The columns represent the **Calibration Blocks** from the **Classification** column.
-By toggling the checkmarks, each **Block** can be assigned to its corresponding **Calibration Block** for quantification.
+This tab allows you to manually assign **calibration blocks** to specific sections of your sequence. These are derived from the `Classification` column in the **Peak Table**.
 
 ![Overview of the **Bracketing Table**](images/compound_quantification_bracketing_table.png)
 
-**Note**: Each class must include at least one calibration block for bracketing to function.
+##### **Bracketing Table**:
+- Rows = Sample blocks (from `Classification`)
+- Columns = Calibration blocks (also from `Classification`)
+- Checkboxes let you assign calibration blocks to sample blocks.
+
+> **Note**:
+> Every sample block must be linked to **at least one** calibration block for bracketing to be used in quantification.
+
+---
+
+#### **Weighted Bracketing**
+
+This module builds a separate **regression model for each injection**, based on its position between two calibration blocks. The weight assigned to each calibration point is determined by the selected model type:
+- In the **linear model**, weights increase or decrease **linearly** across the injection sequence.
+- In the **non-linear models** (requires technical replicates over the sequence), a model is fitted to their intensities over the measurement sequence. The **derivative** of this model is then used to define how the weights change across the sequence.
+
+
+**Settings**:
+- **Model Type**
+  - `linear` - linear weight increase/decrease (*does not require QC samples*)
+  - `non-linear` - use of technical replicates.
+    - loess: adjustable **span width**
+    - spline: adjustable **degree**
+
+!(Overview of weighted brackting in QuantyFey)[images/weighted_bracketing.png]
+
+
+> **Note**:
+> Weights using the linear model are just increasing/decreasing weights from one to the next calibration block. They dont require QC injections
+> Non-linear models require QC samples. 
 
 ### **Quantification**
 
-This tab facilitates the quantification of the selected transition. Key parameters and settings can be adjusted on the left panel.
+The **Quantification** tab is where the actual quantification of the selected transition takes place. The left panel allows configuration of key model parameters, while the main area provides tools for visualization, diagnostics, and results review.
 
 #### **Parameters**
 
 ![Overview **Quantitation Parameters**](images/compound_quantification_quantification_parameters.png)
 
-- **Regression Model**: Currently linear and quadratic models are implemented.
-- **Limit of Quantification (LLOQ)**: Defines the lower quantification limit. Defaults to the smallest calibration standard value but can be adjusted. This setting will not interact with the plot, however it is used to define the threshold by where concentrations should still be reported in the output. 
+- **Regression Model**: Choose between `linear` and `quadratic` regression models.
+- **Limit of Quantification (LLOQ)**: Defines the lower reporting threshold for concentration values.
+    - Defaults to the lowest calibration standard.
+    - Does not affect the plot, but any value below the LLOQ will be marked as "< LLOQ" in the output.
 - **Weighting Method**: Specifies the regression weighting:
-    - **1/x**: Weight = 1 / Concentration.
-    - **1/x2**: Weight = 1 / Concentration².
-    - **1/y**: Weight = 1 / PeakArea
-    - **1/y2**: Weight = 1 / PeakArea²
-    - **1/x force 0**: Weight = 1 / Concentration and goes through 0|0
-    - **1/y force 0**: Weight = 1 / PeakArea and goes through 0|0
-    - **None**: No weighting applied.
-    - **Note**: Values with PeakArea = 0 will automatically hava a weight of 0 and will not be included in the regression.
+    - `1/x`: Weight = 1 / Concentration.
+    - `1/x2`: Weight = 1 / Concentration².
+    - `1/y`: Weight = 1 / PeakArea
+    - `1/y2`: Weight = 1 / PeakArea²
+    - `1/x force 0`: Weight = 1 / Concentration and goes through 0|0
+    - `1/y force 0`: Weight = 1 / PeakArea and goes through 0|0
+    - `None`: No weighting applied.
+      > **Note**:
+      > Values with PeakArea = 0 will automatically hava a weight of 0 and will not be included in the regression.
 - **Quantitation Method**: Selects the quantification approach:
-    - **IS Correction**: Internal standard correction.
-    - **Drift Correction**: Statistical drift correction.
-    - **Bracketing**: Bracketing-based quantification.
-    - **Default**: Calibration function only.
+    - `IS Correction`: One calibration function over all calibration blocks using IS ratios
+    - `Drift Correction`: One calibration function over all calibration blocks using drift corrected peak areas.
+    - `Custom Bracketing`: Individual calibration function assigned to each sample block.
+    - `Weighted Bracketing`: Individual calibration function for all injection weighted according to the position in the sequence.
+    - `Default Bracketing`: One regression function over all calibration blocks.
 - **Show Samples**: Toggles sample visibility in plots.
 
-If **Bracketing** is used for quantification the following settings will appear:
-- **Block to Visualize**: Specifies the block for visualization during bracketing. Ignored for other quantitation methods.
-- **Apply Cal Levels to All**: Applies calibration levels across all blocks (for bracketing).
-    - **Note**: if one calibration standard was removed, clicking will remove all standards of this level from the model.
-- **Apply LLOQ to All**: Applies the LLOQ across all samples (for bracketing).
+##### Bracketing specific settings
+(Visible only if Custom or Weighted Bracketing is selected as the quantitation method)
+- **Block to Visualize**: Select which classification block to display in the plot.
+   **Note**: in Weighted Bracketing, each sample is treated as its own block.
+- **Apply Cal Levels to All**: Apply the currently selected calibration level settings to **all blocks**.
+  > **Note**: If a calibration level has been removed in one block, this action will remove that level across all blocks.
+- **Apply LLOQ to All**: Applies the defined LLOQ settings to all blocks.
 
 An automatic optimization Button allows the user to do a generic optimization of the regression model. 
 - **Optimize Model**: Automates model optimization:
     - Removes higher standards for quadratic models if samples are lower.
     - Removes lower standards if accuracy falls outside 70–130% and samples are higher.
     - Selects linear or quadratic models based on a lack-of-fit test.
-**Note** that this is not valid for every single transition, and can also fail if the data has poor quality!
+
+> **Note**: Optimization may fail or produce poor fits for low-quality data. Always verify the model manually before saving.
 
 ![Optimization Process Flowchart](images/flowchart.png)
 
@@ -415,12 +469,11 @@ An automatic optimization Button allows the user to do a generic optimization of
 - **Toggle Standards**: By using one of the select tools in the upper corner, multiple standards can be removed/added to the model by selecting them and approving the message.
 
 #### **Main Tabs**
-1. **Plots**: Displays the regression plot. Standards can be excluded or restored interactively.
+1. **Plots**: Interactive regression plot. Calibration points can be excluded/restored in real time.
 
 ![Overview of **Quantification Plot**](images/compound_quantification_quantification_plot.png)
 
-2. **Accuracy**: Summarizes regression model accuracy.
-The user can remove also here standards from the model by clicking on or selecting the respective dot(s) in the plot.
+2. **Accuracy**: Visual and numeric summary of model accuracy. Points can also be removed here by clicking on them.
 
 ![Overview of **Accuracy Tab**](images/compound_quantification_accuracy.png)
 
@@ -431,7 +484,7 @@ The user can remove also here standards from the model by clicking on or selecti
     - Scale-Location Plot
     - Residuals vs. Leverage
     - Cook's Distance
-**Note**: For more information please look at the documentation/vignette fo the lindia package.
+> **Note**: For more information please look at the documentation/vignette fo the `lindia` package.
   
 ![Overview of **Model Diagnostics** Tab](images/compound_quantification_model_diagnostics.png)
 
@@ -441,35 +494,27 @@ The user can remove also here standards from the model by clicking on or selecti
 
 #### **Saving Results**
 
-Once the quantitation method is selected, and the model is optimized, results can be saved:
+Once the quantitation method is selected, and the model is optimized, results can be saved by clicking on the `save` button.:
 - **Comment**: Add notes for the compound.
-- **Save**: Saves the data and generates:
-    - **results_quant_interim.csv**: Contains concentrations for all quantified compounds. Values below LLOQ are labeled as "< LLOQ".
-    - **quant_results.xlsx**: Summarizes parameters and results for each compound in separate sheets.
+- **Save**: Saves the data and generates in the documents folder `Documents/QuantyFey/Results_<date>/` (*folder name can be customized by setting a Project Name in the **Data Upload** tab*):
+    - `Results_quant.csv`: Contains concentrations for all quantified compounds. Values below LLOQ are labeled as "< <LLOQ>".
+    - `Quant_summary.xlsx`:Summarizes all parameters and results for each saved compound, with one sheet per quantification.
     - **Generate Report** (optional): Creates a PDF report with relevant plots and details.
 
-**Notes**:
-- To prevent overwriting, files are timestamped if duplicates exist.
-- Reports can be overwritten; rename or move them to avoid conflicts.
-- All files are saved in the "QuantyFey" folder in the user's Documents directory. Ensure all files are consolidated for multi-session projects.
-
-#### **Data generation**
-
-After using **save** the app will automatically generate output in the users **Documents** folder. A **QuantyFey** folder with a subfolder **Results_*date*** will be generated.
-In this folder the following files will be generated:
-- results_quant.xlsx
-- Results_evaluation_interim.csv
-- Report_*QuantTransition*.pdf (**optional**)
+> **Notes**:
+> To prevent overwriting, files are timestamped if duplicates exist.
+> Reports may be overwritten - when the app is restarted with the same project name; rename or move them to avoid conflicts.
+> All files are saved in the "QuantyFey" folder in the user's Documents directory.
 
 ![Overview of the **generated output**](images/save_output.png)
 
-##### **results_quant.xlsx**
+##### **Quant_summary.xlsx**
 
 This excel file contains all information necessary for the repetition of the exact concentrations calculated for the quantified compounds. For each saved transition, a new sheet is apended.
 
 ![Overview **results_quant.xlsx**](images/results_quant.png)
 
-#### **Results_evaluation_interim.csv**
+#### **Results_quant.csv**
 
 This csv file contains the concentrations of all quantified compounds in the current session. It is frequently apended after every save, and is represented by the results tab.
 
@@ -483,21 +528,41 @@ The **report** can be generated by ticking the **generate report** before saving
 
 
 ### **Results**
-This tab becomes functional after at least one compound has been quantified and saved. It provides a summary of all compounds quantified during the current session. The displayed table corresponds to the **results_quant_interim.csv** file.
-**Note** this tab can be manually overwritten. E.g., a comment needs to be adjusted or changed. This will however not automaticially change the generated output. And as the content of the results changes -> a new file will be saved with a timestamp. Also the report will not have the new comment, and also the resaults_quant will not have the overwritten comment. Usually it makes more sense, to save the compound with the same settings but with the new comment, to also have all the generated output up-to-date. When saving one compound multiple times, it will get a prefix **re_n** were n is the number how often the compound was re-saved. This will show up in the report file name, the sheet name of quant_results.xlsx, and a new column in the Results_evaluation_interim.csv file. Make sure that the comment lets you know which one of those you want to actually use if you re-saved a compound multiple times! (Nothing will be overwritten, so all versions of the save will be available, but that can lead to confusion, so try to work carefully).
+This tab becomes active once **at least one compound** has been quantified and saved. It provides the overview of the concentration table and comments for the analysis - it reflects the contents of the `results_quant.csv` file.
+
+> **Note:**
+> You can manually edit cells in this tab - for example, to change a **comment** - but **these changes will only take effect after the next `save`**
+> The update will not appear in the **PDF Report**.
+> If you save a compound twice, it will add a prefix to it, and save it as an additional transition - a new column in `Quant_results.csv` will be added with the new transition tame (e.g., re_1_transition), a new sheet, and a new report with the adjusted name will be generated.
+
+> Recommendation:
+> When saving the same compound multiple times, make sure to use clear, informative comments. This helps you identifying which version you want to keep or report later on.
+> All saved versions are kept - **nothing is overwritten** - but without good labeling, it can get confusing.
+
 
 ![Overview of the Results tab](images/results_pane.png) 
 
 
 #### **Summary**
 
-After configuring the settings, the application facilitates a comprehensive evaluation of data quality. Retention Time (RT) and Qual/Quant ratios can be reviewed to confirm correct compound identification. Blank analysis aids in determining whether sample signals are free from background interference.
+Once all settings are configured, the application supports a full evaluation of data quality and compound identification:
+- **RT** and **Ion Ratios** help verify correct compound identification.
+- **Blank Analysis** helps in distinguishing true signals from background noise.
 
-Drift correction can be applied using statistical drift correction, internal standard correction, or bracketing. These methods must be configured prior to quantification.
+Before quantification, users can apply **drift correction** strategies using the following methods:
+- Internal standard correction
+- QC-based drift correction
+- Custom Bracketing
+- Weighted Bracketing
 
-The app provides an interactive interface for regression model optimization, allowing users to adjust parameters and evaluate models. An automated optimization process is available to suggest suitable models based on the data. Users can manually refine models to achieve satisfactory results. 
+Each method can be configured before quantification, and then methods can be compared, and the most appropriate method can be sued.
+The quantification interface includes tools for **interactive regression model optimization**, allowing users to:
+- Adjust model parameters
+- View diagnostic plots
+- Assess model fit
 
-Results are saved only after successful optimization. Safeguards are implemented to prevent file overwriting; however, users are advised to verify generated files and reports.
+An **automatic optimization feature** is available to suggest a possible regression fit based on a simple algorithm, but revision of the optimization is advised.
+**Overwriting safeguards** are in place to avoid accidental overwriting, while reducing file clutter.
 
 
 ### **Troubleshooting**
