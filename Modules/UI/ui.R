@@ -357,7 +357,7 @@ navset_pill(
     conditionalPanel(
       condition = "input.model_bracketing == 'spline'",
       numericInput(
-        inputId = "spline_df",
+        inputId = "spline_df_dc",
         label = "Degrees of freedom for spline:",
         value = 4,
         min = 2,
