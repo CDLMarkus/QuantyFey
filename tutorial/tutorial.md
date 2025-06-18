@@ -415,7 +415,7 @@ This module builds a separate **regression model for each injection**, based on 
     - loess: adjustable **span width**
     - poly: adjustable **degree**
 
-!(Overview of weighted brackting in QuantyFey)[images/weighted_bracketing.png]
+![Overview of weighted brackting in QuantyFey](images/weighted_bracketing.png)
 
 
 > **Note**:
