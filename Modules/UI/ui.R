@@ -315,7 +315,7 @@ navset_pill(
                       conditionalPanel(condition = "input.model_drift == 'loess'",
                         numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75)),
                         conditionalPanel(condition = "input.model_drift == 'poly'",
-                        numericInput("spline_df", "Degree:", value = 4, min = 1, max = 20)
+                        numericInput("spline_df_dc", "Degree:", value = 4, min = 1, max = 20)
 
                       
                   )),
@@ -353,7 +353,7 @@ navset_pill(
     conditionalPanel(
       condition = "input.model_bracketing == 'poly'",
       numericInput(
-        inputId = "spline_df_dc",
+        inputId = "spline_df",
         label = "Degree:",
         value = 4,
         min = 2,

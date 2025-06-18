@@ -1,38 +1,64 @@
 ## Drift Correction Module
 
 drift_correction_module <- function(input, output, session, rv) {
-
   observeEvent(input$model_drift, {
-    try({
+    req(input$file1)
+    tryCatch({
       update_dc_data(input, rv)
-    }, silent = T)
-    
-    try({
+    }, error = function(e) {
+      showNotification(paste("Error in update_dc_data:", e$message), type = "error")
+    })
+
+    tryCatch({
       update_sel_cal_areas(input, rv)
-    }, silent = T)
+    }, error = function(e) {
+      showNotification(paste("Error in update_sel_cal_areas:", e$message), type = "error")
+    })
   })
 
   observeEvent(input$files_for_correction, {
-    try({
+    req(input$file1)
+    tryCatch({
       update_dc_data(input, rv)
       update_sel_cal_areas(input, rv)
-    }, silent =  T)
+    }, error = function(e) {
+      showNotification(paste("Error in file correction:", e$message), type = "error")
+    })
   })
 
-observeEvent(input$span_width, {
+  observeEvent(input$span_width, {
+    req(input$file1)
+    if (input$span_width < 0.4) {
+      showNotification("Span width must be > 0.4.", type = "warning")
+      # updateNumericInput(session, "span_width", min = 0.4, max = 2, value = 0.75, step = 0.05)
+    }
 
-  if(input$span_width < 0.4){
-    showNotification("Span width must be > 0.4.", type = "warning")
-    #updateNumericInput(session, "span_width", min = 0.4, max = 2, value = 0.75, step = 0.05)
-
-  }
-
-  try({
-    update_dc_data(input, rv)
+    tryCatch({
+      
+      update_dc_data(input, rv)
+     
+      
+    }, error = function(e) {
+      showNotification(paste("Error in span width update:", e$message), type = "error")
+      return(NULL)
+    })
     update_cals(input, rv, session)
-  }, silent = T)
+  })
 
-})
+  observeEvent(input$spline_df_dc, {
+    req(input$file1)
+
+    tryCatch({
+      update_dc_data(input,rv)
+    }, error = function(e){
+      showNotification(type = "error", paste("An error occurred while updating the degree of freedom:", e$message, ". Please ensure that the degree is less than the number of available data points (files)."))
+    })
+    try({
+      update_cals(inpt, rv, session)
+    }, silent = T)
+    
+
+  })
 
 # ------- Output ------
 
@@ -65,13 +91,15 @@ observeEvent(event_data("plotly_doubleclick", source = "dc"), {
   rv$current_layout_dc <- NULL
 })
 
+
+
 output$drift_output <- renderPlotly({
 
   suppressWarnings({
       tryCatch({
       update_dc_data(input, rv)
     }, error = function (e) {
-       shinyalert("Error", "The model could not be generated. Please adjust the model or use a different Quantification Method!", type = "error")
+       return(NULL)
           
     })
     

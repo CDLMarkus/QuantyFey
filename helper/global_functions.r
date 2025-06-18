@@ -918,92 +918,78 @@ update_select_plots <- function(rv) {
   }
 
     
-  update_dc_data <- function(input, rv){
+  update_dc_data <- function(input, rv) {
+  
     req(input$file1)
-    
+  
     input_not_blank <- input$Compound != ""
     req(input_not_blank)
-
+  
     input_numeric <- all(sapply(rv$data[, input$Compound], is.numeric))
     req(input_numeric)
-
-
-    df <- data.frame(Sample.Name = rv$data$Sample.Name, PeakArea = rv$data[, input$Compound])
-
-    df$inj <- 1:nrow(df) %>% as.numeric()
-    pd <- rv$data$Sample.Type
-
+  
+    df <- data.frame(
+      Sample.Name = rv$data$Sample.Name,
+      PeakArea = rv$data[, input$Compound]
+    )
+  
+    df$inj <- seq_len(nrow(df)) %>% as.numeric()
+    # pd <- rv$data$Sample.Type # pd is not used
+  
     if (!all(is.na(df$PeakArea))) {
       df_cals <- df
-
+  
       cal_dc <- input$files_for_correction
-
+  
       df_cals <- df_cals[df_cals$Sample.Name == cal_dc, ]
-      cal_cd <- input$files_for_correction
-      suppressWarnings(
-        {rm(mod_temp)}
-      )
-      
-
-      tryCatch(
-        {
-          suppressWarnings({
-            if (input$model_drift == "lm") {
+      # cal_cd <- input$files_for_correction # not used, removed
+  
+      suppressWarnings(rm(mod_temp))
+  
+      tryCatch({
+        suppressWarnings({
+          if (input$model_drift == "lm") {
             mod_temp <- lm(formula = PeakArea ~ inj, data = df_cals)
           } else if (input$model_drift == "loess") {
             mod_temp <- loess(formula = PeakArea ~ inj, data = df_cals, span = input$span_width)
-          } else if(input$model_drift == "poly") {
-            
-    
-
+          } else if (input$model_drift == "poly") {
             mod_temp <- lm(formula = PeakArea ~ poly(inj, degree = input$spline_df_dc), data = df_cals)
-
-            
-            
-          }
-
-          df$pred.PeakArea <- predict(mod_temp, df)
-
-          
-          
-      req(mod_temp)
-
-      mean_temp <- mean(df$pred.PeakArea, na.rm = T)
-      start_pa <- na.omit(df)$pred.PeakArea[1]
-      end_pa <- na.omit(df)$pred.PeakArea[length(na.omit(df)$pred.PeakArea)]
-
-      start <- T
-      for (i in 1:nrow(df)) {
-        if (is.na(df$pred.PeakArea[i])) {
-          if (start) {
-            df$pred.PeakArea[i] <- start_pa
           } else {
-            df$pred.PeakArea[i] <- end_pa
+            stop("Unknown model_drift type.")
           }
-        } else {
-          start <- F
-        }
-      }
-      df$corrected.PeakArea <- df$PeakArea / df$pred.PeakArea * mean_temp
-
-      rv$drift_corrected_data_temp <- df
-
-      rv$dc_area <- df$corrected.PeakArea
-
+  
+          if (is.null(mod_temp)) stop("Model could not be generated.")
+  
+          df$pred.PeakArea <- predict(mod_temp, df)
+  
+          mean_temp <- mean(df$pred.PeakArea, na.rm = TRUE)
+          start_pa <- na.omit(df)$pred.PeakArea[1]
+          end_pa <- na.omit(df)$pred.PeakArea[length(na.omit(df)$pred.PeakArea)]
+  
+          start <- TRUE
+          for (i in seq_len(nrow(df))) {
+            if (is.na(df$pred.PeakArea[i])) {
+              if (start) {
+                df$pred.PeakArea[i] <- start_pa
+              } else {
+                df$pred.PeakArea[i] <- end_pa
+              }
+            } else {
+              start <- FALSE
+            }
+          }
+          df$corrected.PeakArea <- df$PeakArea / df$pred.PeakArea * mean_temp
+          isolate({
+            rv$drift_corrected_data_temp <- df
+          rv$dc_area <- df$corrected.PeakArea
           })
           
-        },
-        error = function(e) {
-
-          df$pred.PeakArea <- rep(1, nrow(df))
-          rv$drift_corrected_data_temp <- df
-          rv$dc_area <- df$PeakArea
-
-          stop("Error: Model could not be generated, data is not valid. Adjust model before using Drift Correction!")
-
-        }
-      )
-
+        })
+      }, error = function(e) {
+        
+        # Only stop, do not call update_dc_data recursively
+        stop("Error: Model could not be generated, data is not valid. Adjust model before using Drift Correction!")
+      })
     }
   }
 
@@ -1254,6 +1240,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
   get_plotly_dc <- function(input, rv){
     req(input$file1)
+    
 
     tryCatch({
       update_dc_data(input, rv)

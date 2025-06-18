@@ -33,6 +33,9 @@ server <- function(input, output, session){
     session$sendCustomMessage("registerDoubleClick", "quant")
   })
 
+  observe({
+    print(input$spline_df_dc)
+  })
 
 
   # ======= Reactive Values ==========
