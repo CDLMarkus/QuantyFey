@@ -38,19 +38,22 @@ theme_set(theme_bw(base_family = "serif"))
 
 ```
 
+
 ## Quantitation Summary for `r input$Compound`
 
-This report shows a summary of the quantification of `r input$Compound`. This includes all plots from the overviewiew tap. A summary of the method used for quantification and their individual plots, as well as a summary of all used calibration functions and the used settings.
+This report provides a detailed summary of the quantification results for `r input$Compound`. It includes all plots from the Overview tab, a description of the quantitation method applied, individual plots per method, calibration function summaries, and relevant parameter settings.
 
 ```{r, echo = F}
 table_n = 1
 fig_n = 1
 ```
 
-# Overview of the data
+# Overview of the Data
+
 ## Retention Time Analysis
 
-The following plot shows the retention time (RT) of the compound for the different sample types. 
+The plot below illustrates the retention time (RT) of the compound across different sample types. This helps to assess consistency and identify any retention shifts that may indicate anomalies in chromatography.
+ 
 
 ```{r, echo = F, fig.height = 3, results = "asis"}
 suppressWarnings({
@@ -71,10 +74,12 @@ suppressWarnings({
 
 ```
 
+
 \newpage
 
 ## Qualifier and Quantifier Analysis
-The following plot shows the ratio of the Quantifier and Qualifier transitions (Q/Q).
+
+This section shows the ion ratio between the Quantifier and Qualifier transitions (Q/Q) for each sample type. A stable ion ratio is important for confirming compound identity and method reliability.
 
 ```{r, echo = F, fig.height = 3, results = "asis"}
 suppressWarnings({
@@ -100,7 +105,8 @@ suppressWarnings({
 ```
 
 ## Blank Analysis
-The following plot shows the blank to sample ratio. 
+
+The following plot compares compound intensity in blank samples against the corresponding measurements in actual samples. This is useful to detect potential contamination or carryover.
 
 
 ```{r, echo = F, fig.height = 3, results = "asis"}
@@ -127,7 +133,7 @@ suppressWarnings({try({
 
 ## Method for Quantification
 
-For this compound the method `r input$quantitation_method` was used. 
+For `r input$Compound`, the quantitation was performed using the **`r input$quantitation_method`** method.
 
 
 ```{r, echo = F, warning = F, results = "asis", error = F}
@@ -181,7 +187,7 @@ if(input$quantitation_method == "Custom Bracketing"){
 cat(latex_table(checkbox_data))
   
 }else if(input$quantitation_method == "IS Correction"){
-  cat("The red dots mark the Peak Areas of the Internal Standard compounds and the Bars represent the Peak Areas of the Compound over the whole Measurement Sequence. The lower plot represents the ratios from the respective Sample after each Peak Area from the Compound was divided by the Peak Area from the selected Internal Standard.\\newline \n\n")
+  cat("IS correction was used for this analyte. In the following plot the red dots mark the Peak Areas of the Internal Standard compounds and the Bars represent the Peak Areas of the Compound over the whole Measurement Sequence. The lower plot represents the ratios from the respective Sample after each Peak Area from the Compound was divided by the Peak Area from the selected Internal Standard.\\newline \n\n")
   
   # Combine plots using patchwork
 
@@ -214,7 +220,7 @@ tryCatch({
 
 }else if(input$quantitation_method == "Drift Correction"){
   p <- get_plotly_dc(input, rv)
-  cat("The following plots showcase the Peak Areas for the selected compound from the measured data. The first plot show the Peak Areas as they were processed without any manipulation with red indicated bars showcasing the Samples selected for Drift Correction and the red line indicating the model used for Drift Correction. The second plot shows the manipulated data after Drift Correction.\\newline \n")
+  cat("The following plots present the Peak Areas for the selected compound as obtained from the measured data. The first plot displays the uncorrected Peak Areas, with red-highlighted bars indicating the samples selected for Drift Correction and a red line representing the applied correction model. The second plot illustrates the data after Drift Correction has been applied. This information is useful for assessing the impact and effectiveness of the correction process.\\newline \n")
   
   p1 <- rv$plot_dc[[1]] + theme(legend.position = "none") 
   p2 <- rv$plot_dc[[2]] + theme(legend.position = "bottom")
@@ -234,6 +240,8 @@ tryCatch({
   cat("\\newline \n")
   
 }else if(input$quantitation_method == "Default Bracketing"){
+
+  cat("No drift correction strategy was applied for this compound. A single calibration function was utilized for all measured calibration samples. This approach is appropriate when instrument response is stable throughout the analytical sequence, ensuring consistent quantitation across all samples.")
   
   df <- rv$data[,c("Sample.Name","Sample.Type", input$Compound)]
   colnames(df)[colnames(df) == input$Compound] <- "Peak Area"
@@ -261,7 +269,7 @@ tryCatch({
   cat("\\newline \n")
 
   # Add additional information text (customize as needed)
-  cat(paste0("A", input$model_ind_brack," was used.", "The plot above shows the distribution of weights and the calibration samples used for each block.\\newline \n"))
+  cat(paste0("A ", input$model_for_ind_bracketing," model was used.", "The plot above shows the distribution of weights and the calibration samples used for each block.\\newline \n"))
   # Show the weights table for Weighted Bracketing
 
   
@@ -285,7 +293,7 @@ tryCatch({
     
                                
     plots_quant <- list()
-    if(input$quantitation_method != "Weighted Bracketing"){
+    if(!(input$quantitation_method %in% c("Weighted Bracketing", "Custom Bracketing"))){
     for(block_name in names(rv$selection_cals_table)){
     
     mod <- mods[[block_name]]
@@ -304,7 +312,21 @@ tryCatch({
     }else {
   # Start with an empty base plo
   #base_data <- cals_data_block[]
-  p <- ggplot() + geom_point(data = rv$selection_cals_table[[1]], aes(x = Concentration, y = PeakArea, col = used)) + 
+  if (input$quantitation_method == "Custom Bracketing") {
+    data_plot <- c()
+    message(names(rv$selection_cals_table))
+    cal_blocks <- names(rv$selection_cals_table)[grepl("Cal", names(rv$selection_cals_table))]
+    dfs <- rv$selection_cals_table[cal_blocks]
+
+    for (df_temp in dfs) {
+      data_plot <- rbind(data_plot, df_temp)
+    }
+    
+  } else {
+    data_plot <- rv$selection_cals_table[[1]]
+  }
+
+  p <- ggplot() + geom_point(data = data_plot, aes(x = Concentration, y = PeakArea, col = used)) + 
   scale_color_manual(values = c("TRUE" = "black", "FALSE" = "lightgrey"))
 
   for (block in rv$Classification_temp) {
@@ -389,10 +411,10 @@ suppressWarnings({
 \newpage
 
 # Quantitation Summary
-## Summary of the Calibration Functions and the Accuracy of the models
 
-The following plots show for all separate Blocks the Calibration model used for the specific blocks. 
+## Summary of Calibration Data 
 
+The following plots display the generated calibration curves, in combination with further information about the calibration data.
 
 ```{r, results = "asis", warnings = F, echo = F, fig.height = 4}
 
@@ -421,7 +443,7 @@ auto_set_format()
  suppressWarnings({
    # Loop through each block in the calibration plots
 
-   if(input$quantitation_method != "Weighted Bracketing"){
+   if(!(input$quantitation_method %in% c("Weighted Bracketing", "Custom Bracketing"))){
    for (i in names(plots_quant)) {
   
      # Skip blocks that contain "^Cal" in their name
@@ -525,7 +547,22 @@ auto_set_format()
        } else if (x == "IS Correction") {
          compound_IS <- input$Compound_IS %>% gsub("_", "-", .)
          return(paste0("IS Compound for Correction:\\newline \n", compound_IS))
-       } else {
+       } else if(x == "Weighted Bracketing"){
+
+
+        if(input$model_for_ind_bracketing == "linear"){return(paste0("Model for weighting: ", input$model_for_ind_bracketing))}else{
+          txt <- paste0("Model: ", input$model_bracketing, "\\newline \n", ifelse(input$model_bracketing == "loess", paste0("Span width: ", input$span_width_bracketing),
+          pste0("Degree: ", input$spline_df)))
+
+          return(txt)
+
+        }
+
+
+
+        
+        
+        } else {
          return(c(""))
        }
      })
