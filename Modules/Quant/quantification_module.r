@@ -324,7 +324,7 @@ output$p_quant <- renderPlotly({
 
         p <- layout(p,
       xaxis = if (!is.null(x_range)) list(range = x_range, autotick = TRUE, tickmode = "auto") else list(autorange = TRUE),
-      yaxis = if (!is.null(y_range)) list(range = y_range, autotick = TRUE, tickmode = "auto") else list(autorange = TRUE)
+      yaxis = if (!is.null(y_range)) list(range = y_range, autotick = TRUE, tickmode = "auto", tickformat = ifelse(input$quantitation_method == "IS Correction", "~s", ".2e")) else list(autorange = TRUE, tickformat = ifelse(input$quantitation_method == "IS Correction", "~s", ".2e"))
       )
         
       } else {
@@ -340,7 +340,8 @@ output$p_quant <- renderPlotly({
           autorange = TRUE,
           autotick = TRUE,
           tickmode = "auto",
-          fixedrange = FALSE
+          fixedrange = FALSE,
+          tickformat = ifelse(input$quantitation_method == "IS Correction", "~s", ".2e")
         )
       )
 
@@ -404,6 +405,7 @@ selected <- event_data("plotly_selected", source = "quant")
       cancelButtonText = "Cancel",
       callbackR = function(value) {
         if (value) {
+          tryCatch({
 
           # Toggle selected points in the model
           for (row in 1:nrow(selected)) {
@@ -420,13 +422,13 @@ selected <- event_data("plotly_selected", source = "quant")
                 }
               }
               # Toggle the 'used' status of the selected points
-              temp[temp$PeakArea == info$y & temp$Concentration == info$x, c("used")] <- 
-                !temp[temp$PeakArea == info$y & temp$Concentration == info$x, c("used")]
+              temp[round(temp$PeakArea,2) == round(info$y,2) & temp$Concentration == info$x, c("used")] <- 
+                !temp[round(temp$PeakArea,2) == round(info$y,2) & temp$Concentration == info$x, c("used")]
               for (i in unique(blocks)) {
                 rv$selection_cals_table[[i]] <- temp
               }
             })
-          }
+          }}, error = function(e) e$message)
         }
       }
     )

@@ -100,7 +100,7 @@ observeEvent(event_data("plotly_doubleclick", source = "IS"), {
     # Combine with shared legend
     p <- subplot(g1, g2, nrows = 2, shareX = TRUE, shareY = FALSE) %>%
     layout(showlegend = TRUE,
-    yaxis = list(title = ylab),
+    yaxis = list(title = ylab, tickformat = ".2e"),
     yaxis2 = list(title = "IS Ratios"))
 
     if(!is.null(rv$current_layout_IS)){

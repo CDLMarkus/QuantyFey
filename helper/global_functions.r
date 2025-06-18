@@ -1652,6 +1652,7 @@ remove_point_from_click <- function(info, input, rv) {
       if (isTRUE(input$log_scale)) {
         info$y <- 10^(info$y)
       }
+
       isolate({
         blocks <- input$Block
         validate(need(blocks %in% names(rv$selection_cals_table), "Selected block not found in data."))
@@ -1664,7 +1665,7 @@ remove_point_from_click <- function(info, input, rv) {
           }
         }
         
-        idx <- which(temp$PeakArea == info$y & temp$Concentration == info$x)
+        idx <- which(round(temp$PeakArea, 4) == round(info$y, 4) & temp$Concentration == info$x)
         if (length(idx) > 0) {
           temp[idx, "used"] <- !temp[idx, "used"]
           for (i in unique(blocks)) {
@@ -1715,13 +1716,12 @@ get_plotly_quant <- function(input, rv) {
     paste("Concentration [", conc_unit, "]", sep = "")
   }
 
-  p <- p + {
+
     if (input$log_scale) {
-      scale_y_log10() + labs(x = xlab, y = "Peak Area (log)")
+      p <- p +scale_y_log10() + labs(x = xlab, y = "Peak Area (log)")
     } else {
-      labs(x = xlab, y = ylab)
+      p <- p + labs(x = xlab, y = ylab)
     }
-  }
 
   
 

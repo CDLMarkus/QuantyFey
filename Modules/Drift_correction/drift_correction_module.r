@@ -111,8 +111,8 @@ output$drift_output <- renderPlotly({
   p <- subplot(g1, g2, nrows = 2, shareX = TRUE, shareY = FALSE) %>%
   layout(
     showlegend = TRUE,
-    yaxis = list(title = ylab),  
-    yaxis2 = list(title = ylab_corr),
+    yaxis = list(title = ylab, tickformat = ".2e"),
+    yaxis2 = list(title = ylab_corr, tickformat = ".2e"),
     xaxis2 = list(title = "Number of injection")
   )
 
