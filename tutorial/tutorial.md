@@ -497,7 +497,7 @@ An automatic optimization Button allows the user to do a generic optimization of
 
 4. **Results**: Displays quantification results for the selected transition.
 
-![Overview of **Results** Tab](images/compound_quantification_results.png)
+![Overview of **Results** Tab](images/results_pane.png)
 
 #### **Saving Results**
 
@@ -545,9 +545,6 @@ This tab becomes active once **at least one compound** has been quantified and s
 > **Recommendation:**
 > When saving the same compound multiple times, make sure to use clear, informative comments. This helps you identifying which version you want to keep or report later on.
 > All saved versions are kept - **nothing is overwritten** - but without good labeling, it can get confusing.
-
-
-![Overview of the Results tab](images/results_pane.png) 
 
 
 #### **Summary**
