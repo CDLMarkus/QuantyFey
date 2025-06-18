@@ -242,6 +242,25 @@ tryCatch({
   fig_n <- fig_n + 1
   cat(caption_text)
   cat("\\newline \n")
+} else if(input$quantitation_method == "Weighted Bracketing") {
+  # Generate the plot for Weighted Bracketing
+  p <- get_plot_w_bracketing(input, rv)
+  plot(p, height = 1.5) # Set height to about 2/3 of default (default is 3)
+
+  # Add a caption for the plot
+  caption_text <- paste0("Figure ", fig_n, ": ", "Overview of Weighted Bracketing")
+  fig_n <- fig_n + 1
+  cat(caption_text)
+  cat("\\newline \n")
+
+  # Add additional information text (customize as needed)
+  cat("Weighted bracketing was used for quantification. The plot above shows the distribution of weights and the calibration samples used for each block.\\newline \n")
+  # Show the weights table for Weighted Bracketing
+
+  
+  cat("\\newline \n")
+
+
 }
 
 })
@@ -259,6 +278,7 @@ tryCatch({
     
                                
     plots_quant <- list()
+    if(input$quantitation_method != "Weighted Bracketing"){
     for(block_name in names(rv$selection_cals_table)){
     
     mod <- mods[[block_name]]
@@ -273,8 +293,32 @@ tryCatch({
 
       
       plots_quant[[block_name]] <- p
-      
-    }
+    } 
+    }else {
+  # Start with an empty base plo
+  #base_data <- cals_data_block[]
+  p <- ggplot() + geom_point(data = rv$selection_cals_table[[1]], aes(x = Concentration, y = PeakArea, col = used)) + 
+  scale_color_manual(values = c("TRUE" = "black", "FALSE" = "lightgrey"))
+
+  for (block in rv$Classification_temp) {
+    # Get model and data for current block
+    mod <- mods[[block]]
+    cals_data_block <- rv$selection_cals_table[[block]]
+
+    # Generate prediction data
+    df_mods <- data.frame(Concentration = seq(0, max(cals_data_block$Concentration[cals_data_block$used]), length.out = 300))
+    df_mods$Concentration2 <- df_mods$Concentration^2
+    df_mods$PeakArea <- predict(mod, df_mods)
+
+    # Add model line to plot (dashed, thin)
+    p <- p + geom_line(data = df_mods, aes(x = Concentration, y = PeakArea), 
+                       color = "black", linewidth = 0.1, linetype = "dashed", col = "grey3")
+  }
+
+  # Style plot
+  p <- p + theme_pubclean(base_size = 17)
+  plots_quant[[1]] <- p
+      }
 ```
 
 
@@ -369,6 +413,8 @@ auto_set_format()
 # Suppress warnings to avoid unnecessary output
  suppressWarnings({
    # Loop through each block in the calibration plots
+
+   if(input$quantitation_method != "Weighted Bracketing"){
    for (i in names(plots_quant)) {
   
      # Skip blocks that contain "^Cal" in their name
@@ -450,10 +496,67 @@ auto_set_format()
      if (i == "all") {
        break
      }
-  
      # Add a page break for the next block
      cat("\n\n\\pagebreak\n")
+
+   }} else {
+      p <- plots_quant[[1]]
+
+      print(p)
+
+     cat(caption_text)
+    cat("\\newline \n")
+  
+     # Generate specific settings for the quantitation method
+     quantitation_method_specifific <- sapply(input$quantitation_method, FUN = function(x) {
+       if (x == "Drift Correction") {
+         return(paste0(
+           "Model for Drift Correction: ", ifelse(input$model_drift == "lm", "linear", "LOESS"), "\\newline \n",
+           "File for Drift Correction: ", input$files_for_correction, 
+           ifelse(input$model_drift != "lm", paste0("\\newline \n", "Span Width: ", input$span_width), "")
+         ))
+       } else if (x == "IS Correction") {
+         compound_IS <- input$Compound_IS %>% gsub("_", "-", .)
+         return(paste0("IS Compound for Correction:\\newline \n", compound_IS))
+       } else {
+         return(c(""))
+       }
+     })
+  
+     # Start a two-column layout for the summary
+     cat("\\begin{multicols}{2}")
+  
+     # Add a table for concentration levels
+     cat(paste0("Table ", table_n, ": ", "Concentration levels ", "\\newline"))
+     print(kable(rv$setup_cal, booktabs = T))
+     table_n <- table_n + 1
+  
+     # Add a column break for the second column
+     cat("\\columnbreak \\newline \n")
+  
+     # Add a summary of settings
+     cat("\\textbf{Summary of Settings:}\\newline")
+     cat(paste0(
+       "\\newline \n",
+       "Model used: ", input$regression_model, "\\newline \n",
+       "Quantitation Method used: ", input$quantitation_method, "\\newline \n",
+       "Lower Limit of Quantification: ", rv$LLOQs[[1]], "\\newline \n",
+       "Weighting Method: ", input$weight_method, "\\newline \n",
+       quantitation_method_specifific, "\\newline \n",
+       "Comment added to this Compound:\\newline \n  ", comment_escaped, "\\newline \n", "\\newline \n"
+     ))
+  
+     # End the two-column layout
+     cat("\\end{multicols}")
+  
+
+     cat("\n\n\\pagebreak\n")
+
+
+
    }
+     
+   
  })
 ```
 
