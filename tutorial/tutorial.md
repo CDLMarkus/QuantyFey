@@ -182,7 +182,7 @@ Below are the default settings used by the app. You can change them in the `defa
 | `qual_pattern`  | `_qual`       | Identifies qualifier transition columns                    |
 | `IS_pattern`    | `IS`          | Identifies internal standard transition columns            |
 | `conc_unit`\*   | `µg/mL`       | Unit used for concentration in plots and tables            |
-| `int_unit`\*    | NULL      | Unit used for intensity values in outputs                  |
+| `int_unit`\*    | `NULL`      | Unit used for intensity values in outputs                  |
 | `rt_unit`\*     | `min`         | Unit used for retention time                               |
 | `Template_name` | `Example1`    | Default name of the template used for quantification setup |
 
