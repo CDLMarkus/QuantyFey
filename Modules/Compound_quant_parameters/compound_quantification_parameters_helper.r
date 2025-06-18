@@ -123,7 +123,7 @@ initialize_results <- function(input, rv) {
 get_quantitation_results <- function(input, rv) {
     tryCatch({
         quant <- quantitate(input, rv)[[1]]
-        quant <- rbind(c(input$Comment), data.frame(Concentration = signif(quant$pred, 3)))
+        quant <- rbind(c(input$Comment), data.frame(Concentration = signif(quant$predicted.Concentration, 3)))
         return(quant)
     }, error = function(e) {
         stop("Failed to calculate quantitation results: ", e$message)

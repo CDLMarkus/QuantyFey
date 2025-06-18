@@ -182,7 +182,7 @@ weights_ind <- function(input, rv){
 
 
 
-                df$pred <- predict(mod, df)
+                df$predicted.Concentration <- predict(mod, df)
 
                 rv$mod_ind <- list(df)
           
@@ -190,14 +190,14 @@ weights_ind <- function(input, rv){
 
 
            # Fill NAs at the beginning with the first non-NA value, and at the end with the last non-NA value
-           if (anyNA(df$pred)) {
-             first_non_na <- which(!is.na(df$pred))[1]
-             last_non_na <- tail(which(!is.na(df$pred)), 1)
+           if (anyNA(df$predicted.Concentration)) {
+             first_non_na <- which(!is.na(df$predicted.Concentration))[1]
+             last_non_na <- tail(which(!is.na(df$predicted.Concentration)), 1)
              if (!is.na(first_non_na) && first_non_na > 1) {
-               df$pred[1:(first_non_na - 1)] <- df$pred[first_non_na]
+               df$predicted.Concentration[1:(first_non_na - 1)] <- df$predicted.Concentration[first_non_na]
              }
              if (!is.na(last_non_na) && last_non_na < nrow(df)) {
-               df$pred[(last_non_na + 1):nrow(df)] <- df$pred[last_non_na]
+               df$predicted.Concentration[(last_non_na + 1):nrow(df)] <- df$predicted.Concentration[last_non_na]
              }
            }
 
@@ -207,7 +207,7 @@ weights_ind <- function(input, rv){
 
 
            # Calculate the numerical derivative of the predicted values with respect to injection position
-           df$deriv <- c(0, diff(df$pred) / diff(df$inj))
+           df$deriv <- c(0, diff(df$predicted.Concentration) / diff(df$inj))
 
             # Assign the derivative values to the weights data frame for each block
             weights$deriv <- 0  # Initialize with 0 for all blocks
@@ -407,7 +407,7 @@ weights_ind_for_plot <- function(input, rv){
 
 
 
-                df$pred <- predict(mod, df)
+                df$predicted.Concentration <- predict(mod, df)
 
                 rv$mod_ind <- list(df)
           
@@ -415,14 +415,14 @@ weights_ind_for_plot <- function(input, rv){
 
 
            # Fill NAs at the beginning with the first non-NA value, and at the end with the last non-NA value
-           if (anyNA(df$pred)) {
-             first_non_na <- which(!is.na(df$pred))[1]
-             last_non_na <- tail(which(!is.na(df$pred)), 1)
+           if (anyNA(df$predicted.Concentration)) {
+             first_non_na <- which(!is.na(df$predicted.Concentration))[1]
+             last_non_na <- tail(which(!is.na(df$predicted.Concentration)), 1)
              if (!is.na(first_non_na) && first_non_na > 1) {
-               df$pred[1:(first_non_na - 1)] <- df$pred[first_non_na]
+               df$predicted.Concentration[1:(first_non_na - 1)] <- df$predicted.Concentration[first_non_na]
              }
              if (!is.na(last_non_na) && last_non_na < nrow(df)) {
-               df$pred[(last_non_na + 1):nrow(df)] <- df$pred[last_non_na]
+               df$predicted.Concentration[(last_non_na + 1):nrow(df)] <- df$predicted.Concentration[last_non_na]
              }
            }
 
@@ -432,7 +432,7 @@ weights_ind_for_plot <- function(input, rv){
 
 
            # Calculate the numerical derivative of the predicted values with respect to injection position
-           df$deriv <- c(0, diff(df$pred) / diff(df$inj))
+           df$deriv <- c(0, diff(df$predicted.Concentration) / diff(df$inj))
 
             # Assign the derivative values to the weights data frame for each block
             weights$deriv <- 0  # Initialize with 0 for all blocks

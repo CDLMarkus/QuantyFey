@@ -314,17 +314,17 @@ suppressWarnings({
 
     
 
-    df$pred <- predict_concentrations(data = df, model = mod_temp ,method = input$regression_model)
+    df$predicted.Concentration <- predict_concentrations(data = df, model = mod_temp ,method = input$regression_model)
 
-    df$pred <- signif(df$pred, digits = 3)
+    df$predicted.Concentration <- signif(df$predicted.Concentration, digits = 3)
 
 
 
     df$PeakArea <- round(df$PeakArea, 1)
 
-    df$Accuracy <- signif(df$pred / df$Concentration * 100, 3)
+    df$Accuracy <- signif(df$predicted.Concentration / df$Concentration * 100, 3)
 
-    df <- dplyr::select(df, Sample.Name, Classification, PeakArea, Concentration, pred, Accuracy)
+    df <- dplyr::select(df, Sample.Name, Classification, PeakArea, Concentration, predicted.Concentration, Accuracy)
 
     
     results_acc[[block]] <- df

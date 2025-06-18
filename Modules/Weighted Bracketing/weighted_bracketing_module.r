@@ -30,7 +30,7 @@ output$bracketing_model_plot <- renderPlotly({
 
     
     df <- rv$mod_ind[[1]]
-    #df$pred <- predict(mod, df)
+    #df$predicted.Concentration <- predict(mod, df)
 
     df <- cbind(df, select(df_weight, -Classification))
  
@@ -62,7 +62,7 @@ color_palette <- rep(base_palette, length.out = length(cal_cols))
     geom_bar(data = df, aes(x = inj, y = PeakArea), stat = "identity", fill = "grey80", alpha = 0.7) +
 
     # Model prediction as line
-    #geom_line(data = df, aes(x = inj, y = pred), color = "black", linewidth = 1) +
+    #geom_line(data = df, aes(x = inj, y = predicted.Concentration), color = "black", linewidth = 1) +
 
     # Calibrant weights on secondary axis (0–1 scale)
     geom_line(

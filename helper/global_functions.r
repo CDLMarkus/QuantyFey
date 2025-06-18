@@ -863,7 +863,7 @@ labels <- function(rv){
       mods[[block]] <- quantyFey(data = cals_temp, xfunction = rv$regression_model, weight_method = input$weight_method)
  
 
-      block_temp$pred <- predict_concentrations(data = block_temp, model = mods[[block]], method = rv$regression_model)
+      block_temp$predicted.Concentration <- predict_concentrations(data = block_temp, model = mods[[block]], method = rv$regression_model)
 
 
       block_temp$cals_used <- rep(paste(unique(cals_temp$Classification), collapse = ", "))
@@ -960,25 +960,25 @@ update_select_plots <- function(rv) {
   
           if (is.null(mod_temp)) stop("Model could not be generated.")
   
-          df$pred.PeakArea <- predict(mod_temp, df)
+          df$predicted.Concentration.PeakArea <- predict(mod_temp, df)
   
-          mean_temp <- mean(df$pred.PeakArea, na.rm = TRUE)
-          start_pa <- na.omit(df)$pred.PeakArea[1]
-          end_pa <- na.omit(df)$pred.PeakArea[length(na.omit(df)$pred.PeakArea)]
+          mean_temp <- mean(df$predicted.Concentration.PeakArea, na.rm = TRUE)
+          start_pa <- na.omit(df)$predicted.Concentration.PeakArea[1]
+          end_pa <- na.omit(df)$predicted.Concentration.PeakArea[length(na.omit(df)$predicted.Concentration.PeakArea)]
   
           start <- TRUE
           for (i in seq_len(nrow(df))) {
-            if (is.na(df$pred.PeakArea[i])) {
+            if (is.na(df$predicted.Concentration.PeakArea[i])) {
               if (start) {
-                df$pred.PeakArea[i] <- start_pa
+                df$predicted.Concentration.PeakArea[i] <- start_pa
               } else {
-                df$pred.PeakArea[i] <- end_pa
+                df$predicted.Concentration.PeakArea[i] <- end_pa
               }
             } else {
               start <- FALSE
             }
           }
-          df$corrected.PeakArea <- df$PeakArea / df$pred.PeakArea * mean_temp
+          df$corrected.PeakArea <- df$PeakArea / df$predicted.Concentration.PeakArea * mean_temp
           isolate({
             rv$drift_corrected_data_temp <- df
           rv$dc_area <- df$corrected.PeakArea
@@ -1416,8 +1416,8 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         model_temp <- mod_lin
       }
 
-      cal_temp$pred <- predict_concentrations(data = cal_temp, model = model_temp, method = ifelse(better_model == "quad", "quadratic", "linear"))
-      cal_temp$accuracy <- cal_temp$pred / cal_temp$Concentration * 100
+      cal_temp$predicted.Concentration <- predict_concentrations(data = cal_temp, model = model_temp, method = ifelse(better_model == "quad", "quadratic", "linear"))
+      cal_temp$accuracy <- cal_temp$predicted.Concentration / cal_temp$Concentration * 100
 
       message("Step 4: Predicted concentrations and calculated accuracy for calibration data.")
 
@@ -1683,7 +1683,7 @@ get_plotly_quant <- function(input, rv) {
     suppressWarnings({
       p <- p + geom_point(
         data = quant_data_block,
-        mapping = aes(x = pred, y = PeakArea, label = Sample.Name),  # removed label
+        mapping = aes(x = predicted.Concentration, y = PeakArea, label = Sample.Name),  # removed label
         color = "orange"
       )
     })
@@ -1818,8 +1818,8 @@ get_acc_table <- function(input, rv)  {
 
   quantitate_object <- quantitate(input, rv)
   mod_temp <- quantitate_object[[3]][[input$Block]]
-  sel_cal_table$pred <- predict_concentrations(data = sel_cal_table, model = mod_temp, method = rv$regression_model)
-  sel_cal_table$Accuracy <- sel_cal_table$pred / sel_cal_table$Concentration * 100
+  sel_cal_table$predicted.Concentration <- predict_concentrations(data = sel_cal_table, model = mod_temp, method = rv$regression_model)
+  sel_cal_table$Accuracy <- sel_cal_table$predicted.Concentration / sel_cal_table$Concentration * 100
 
 
 suppressWarnings({
@@ -1828,7 +1828,7 @@ suppressWarnings({
 
    Standard_QC <- Standard_QC[Standard_QC$Sample.Name %in% rv$setup_cal$Cal.Name[rv$setup_cal$Concentration != 0], ]
     conc_temp <- concentrations(rv)[labels(rv) == Standard_QC$Sample.Name]
-    sel_cal_table <- rbind(sel_cal_table, data.frame(Sample.Name = Standard_QC$Sample.Name, Classification = Standard_QC$Classification, PeakArea  = Standard_QC$PeakArea, Concentration = conc_temp, weights = 0, used = FALSE, pred = Standard_QC$pred, Accuracy = Standard_QC$pred / conc_temp * 100))
+    sel_cal_table <- rbind(sel_cal_table, data.frame(Sample.Name = Standard_QC$Sample.Name, Classification = Standard_QC$Classification, PeakArea  = Standard_QC$PeakArea, Concentration = conc_temp, weights = 0, used = FALSE, predicted.Concentration = Standard_QC$predicted.Concentration, Accuracy = Standard_QC$predicted.Concentration / conc_temp * 100))
 
 }
 
@@ -1838,7 +1838,7 @@ suppressWarnings({
 
   rv$acc_table <- sel_cal_table
 
-  sel_cal_table$pred <- signif(sel_cal_table$pred, digits = 3)
+  sel_cal_table$predicted.Concentration <- signif(sel_cal_table$predicted.Concentration, digits = 3)
 
   if(input$quantitation_method == "IS Correction"){
     sel_cal_table$PeakArea <- signif(sel_cal_table$PeakArea, digits = 3)
@@ -1866,7 +1866,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
     if(input$quantitation_method == "Custom Bracketing"){
         res_df$PeakArea <- rv$data[, cpt_name]
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
-        res_df$Concentration <- signif(quant$pred, 3)
+        res_df$Concentration <- signif(quant$predicted.Concentration, 3)
         
         res_df$LLOQ <- sapply(res_df$Classification, FUN = function(x) {
             for (i in 1:length(rv$LLOQs)) {
@@ -1917,7 +1917,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
         res_df$IS_PeakArea <- rv$data[, input$Compound_IS]
         res_df$IS_Ratio <- rv$IS_ratio
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
-        res_df$Concentration <- signif(quant$pred, 3)
+        res_df$Concentration <- signif(quant$predicted.Concentration, 3)
         
         res_df$` ` <- rep("", nrow(res_df))
         res_df$info_label <- rep("", nrow(res_df))
@@ -1957,7 +1957,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
 
-        res_df$Concentration <- signif(quant$pred, 3)
+        res_df$Concentration <- signif(quant$predicted.Concentration, 3)
 
 
         res_df$` ` <- rep("", nrow(res_df))
@@ -2005,7 +2005,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
 
-        res_df$Concentration <- signif(quant$pred, 3)
+        res_df$Concentration <- signif(quant$predicted.Concentration, 3)
 
         res_df$` ` <- rep("", nrow(res_df))
         res_df$info_label <- rep("", nrow(res_df))
@@ -2037,7 +2037,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
       
       res_df$PeakArea <- rv$data[, cpt_name]
         res_df$RetentionTime <- rv$data_RT[, cpt_name]
-        res_df$Concentration <- signif(quant$pred, 3)
+        res_df$Concentration <- signif(quant$predicted.Concentration, 3)
         
         
         res_df$LLOQ <- sapply(res_df$Classification, FUN = function(x) {

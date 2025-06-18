@@ -243,9 +243,9 @@ observeEvent(event_data("plotly_click", source = "acc"), {
 
     df <- df[df$Classification == input$Block, ]
 
-    df$pred <- signif(df$pred, 3)
+    df$predicted.Concentration <- signif(df$predicted.Concentration, 3)
     df$PeakArea <- round(df$PeakArea, 1)
-    df <- dplyr::select(df, Sample.Name, Classification, cals_used, PeakArea, pred)
+    df <- dplyr::select(df, Sample.Name, Classification, cals_used, PeakArea, predicted.Concentration)
 
     datatable(df, options = list(dom = "tp", lengthMenu = list(c(20, -1), c("20", "All"))))
   })
