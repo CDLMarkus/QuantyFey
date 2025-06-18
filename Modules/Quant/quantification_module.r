@@ -260,7 +260,7 @@ output$acc_table <- renderDT({
 
   if(!is.null(df)){
     datatable(df, options = list(
-      dom = "tp",
+      dom = "t",
       lengthMenu = list(c(10, 25, 50, -1), c("10", "25", "50", "All")),
       pageLength = -1,  # Show all rows by default
       columnDefs = list(list(className = 'dt-center', targets = which(names(df) == "used")))

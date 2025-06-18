@@ -44,7 +44,7 @@ configure_settings_module <- function(input, output, session, rv) {
 
   output$setup_cal <- renderDT({
     req(rv$setup_cal)
-    datatable(rv$setup_cal, editable = FALSE, options = list(lengthMenu = list(c(15, -1), c("15", "All")), dom = "tp"))
+    datatable(rv$setup_cal, editable = FALSE, options = list(lengthMenu = list(c(15, -1), c("15", "All")), dom = "t"))
   })
 
   output$table_QQ <- renderDT({
@@ -54,7 +54,7 @@ configure_settings_module <- function(input, output, session, rv) {
     df_QQ <- get_qq_table(input, rv)
 
     
-    datatable(df_QQ, options = list(dom = "tp"))
+    datatable(df_QQ, options = list(dom = "t"))
 
   })
 
@@ -69,7 +69,7 @@ configure_settings_module <- function(input, output, session, rv) {
       showNotification("No IS columns found.")
       NULL
     } else {
-      datatable(df_IS, options = list(dom = "tp"))
+      datatable(df_IS, options = list(dom = "t"))
     }
     
   })

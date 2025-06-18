@@ -29,7 +29,7 @@ output[["dtable"]] <- renderDataTable(
       callback = DT::JS(js("dtable", checkboxesColumns)),  # Use the correct JS function
       options = list(
         lengthMenu = list(c(-1, 10, 25, 50), c("All", "10", "25", "50")),
-        dom = "ltip",
+        dom = "lti",
         autoWidth = TRUE,
         columnDefs = list(
           list(targets = 0, width = "20%", nowrap = TRUE),
