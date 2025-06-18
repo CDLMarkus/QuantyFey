@@ -2097,7 +2097,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
                     sep = " "
                 )
             }
-            print(weights)
+            
     
             res_df <- cbind(res_df, weights)
 
@@ -2112,7 +2112,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
     }
 
-    if((input$quantitation_method !="Custom Bracketing")){
+    if((!(input$quantitation_method %in% c("Custom Bracketing", "Weighted Bracketing")))){
       acc_table <- get_acc_table(input, rv)
    
     # Add two empty columns to res_df before combining
