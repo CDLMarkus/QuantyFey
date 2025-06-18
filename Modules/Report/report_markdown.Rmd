@@ -1,6 +1,7 @@
 ---
 title: "QuantyFey - Report"
-author: "Default User"
+author: "`r Sys.info()[['user']]`"
+date: "`r Sys.Date()`"
 output:
   pdf_document: 
     latex_engine: xelatex
@@ -236,7 +237,7 @@ tryCatch({
   p <- ggplot(df, aes(x = inj, y = `Peak Area`, fill = Sample.Type))+geom_bar(stat = "identity", col = "black") + 
   scale_fill_manual(values = c("Model" = "red3", "Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3"))
   
-  plot(p)
+  plot(p, fig.hight = 3)
 
   caption_text <- paste0("Figure ", fig_n, ": ", "Sequence Overview")
   fig_n <- fig_n + 1
@@ -245,7 +246,8 @@ tryCatch({
 } else if(input$quantitation_method == "Weighted Bracketing") {
   # Generate the plot for Weighted Bracketing
   p <- get_plot_w_bracketing(input, rv)
-  plot(p, height = 1.5) # Set height to about 2/3 of default (default is 3)
+  # Set the plot height by specifying fig.height in the chunk options
+  print(p)
 
   # Add a caption for the plot
   caption_text <- paste0("Figure ", fig_n, ": ", "Overview of Weighted Bracketing")
@@ -254,7 +256,7 @@ tryCatch({
   cat("\\newline \n")
 
   # Add additional information text (customize as needed)
-  cat("Weighted bracketing was used for quantification. The plot above shows the distribution of weights and the calibration samples used for each block.\\newline \n")
+  cat(paste0("A", input$model_ind_brack," was used.", "The plot above shows the distribution of weights and the calibration samples used for each block.\\newline \n"))
   # Show the weights table for Weighted Bracketing
 
   
