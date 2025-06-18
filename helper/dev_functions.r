@@ -47,12 +47,12 @@ optimize_save_compounds <- function(input, rv, session) {
 
     run_for_method <- function(j) {
       if (j > length(meths)) {
-        shinyjs::delay(500, run_for_cpt(i + 1))
+        shinyjs::delay(2000, run_for_cpt(i + 1))
         return()
       }
       meth <- meths[j]
       updateSelectInput(session, "quantitation_method", choices = meths, selected = meth)
-      shinyjs::delay(500, {
+      shinyjs::delay(2000, {
         #tryCatch({
         #  optimize_model_metrics(input, rv, session)
         #}, error = function(e) {

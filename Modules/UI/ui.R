@@ -314,12 +314,12 @@ navset_pill(
                   icon = bs_icon("graph-down"),
                   layout_columns(
                     card("Settings",
-                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess", "spline")),
+                      radioButtons("model_drift", "Choose Model", choices = c("lm", "loess", "poly")),
                       selectInput("files_for_correction", "Choose Sample for Drift Correction:", choices = NULL),
                       conditionalPanel(condition = "input.model_drift == 'loess'",
                         numericInput(inputId = "span_width", label = "Span Width for loess", min = 0.4, max = 2, step = 0.05, value = 0.75)),
-                        conditionalPanel(condition = "input.model_drift == 'spline'",
-                        numericInput("spline_df", "Degrees of Freedom for Spline", value = 4, min = 1, max = 20)
+                        conditionalPanel(condition = "input.model_drift == 'poly'",
+                        numericInput("spline_df", "Degree:", value = 4, min = 1, max = 20)
 
                       
                   )),
@@ -340,7 +340,7 @@ navset_pill(
                   selectInput(inputId = "model_for_ind_bracketing", "Model for weighting:", choices = c("linear", "non linear (QC)"), selected = "linear"),
                   conditionalPanel(condition = "input.model_for_ind_bracketing == 'non linear (QC)'",
                                    selectInput(inputId = "file_for_bracketing", label = "Select file for trend prediction", choices = NULL),
-                                   selectInput(inputId = "model_bracketing", "Select Model:", choices = c("loess", "spline")),
+                                   selectInput(inputId = "model_bracketing", "Select Model:", choices = c("loess", "poly")),
 
 
   # Loess-specific file input
@@ -355,10 +355,10 @@ navset_pill(
 
     # Optional smoothing parameter or model tuning inputs (placeholders for now)
     conditionalPanel(
-      condition = "input.model_bracketing == 'spline'",
+      condition = "input.model_bracketing == 'poly'",
       numericInput(
         inputId = "spline_df_dc",
-        label = "Degrees of freedom for spline:",
+        label = "Degree:",
         value = 4,
         min = 2,
         max = 20,

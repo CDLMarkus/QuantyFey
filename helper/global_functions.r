@@ -952,7 +952,7 @@ update_select_plots <- function(rv) {
             mod_temp <- lm(formula = PeakArea ~ inj, data = df_cals)
           } else if (input$model_drift == "loess") {
             mod_temp <- loess(formula = PeakArea ~ inj, data = df_cals, span = input$span_width)
-          } else if(input$model_drift == "spline") {
+          } else if(input$model_drift == "poly") {
             
     
 
@@ -1284,7 +1284,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, span = input$span_width, col = "red3", se = F)
       } else if(input$model_drift == "lm") {
         p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ x, method = input$model_drift, col = "red3", se = F)
-      } else if (input$model_drift == "spline") {
+      } else if (input$model_drift == "poly") {
   p1 <- p1 + stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = PeakArea, x = inj), formula = y ~ poly(x, degree = input$spline_df_dc), col = "red3", se = F, method = "lm")
   # Add fitted spline line
 

@@ -542,7 +542,7 @@ update_if_analyzed <- function(input, rv, session) {
 
 
       updateTextInput(session, "Comment", value = settings$comment)
-      updateRadioButtons(session, "model_drift", choices = c("lm", "loess", "spline"), selected = settings$correction_model)
+      updateRadioButtons(session, "model_drift", choices = c("lm", "loess", "poly"), selected = settings$correction_model)
 
           # Update selection inputs
     unique_sample_names <- unique(rv$data$Sample.Name[rv$data$Sample.Type != "Blank"])
@@ -565,7 +565,7 @@ update_if_analyzed <- function(input, rv, session) {
 updateSelectInput(session, inputId = "model_for_ind_bracketing", "Model for weighting:", choices = c("linear", "non linear (QC)"),
 selected = settings$model_for_ind_bracketing)
 
- updateSelectInput(session, inputId = "model_bracketing", "Select Model:", choices = c("loess", "spline"), selected = settings$model_bracketing)
+ updateSelectInput(session, inputId = "model_bracketing", "Select Model:", choices = c("loess", "poly"), selected = settings$model_bracketing)
 
                                    
   # Loess-specific file input
@@ -581,7 +581,7 @@ selected = settings$model_for_ind_bracketing)
     
       updateNumericInput(session,
         inputId = "spline_df",
-        label = "Degrees of freedom for spline:",
+        label = "Degree:",
         value = settings$spline_df,
         min = 2,
         max = 20,

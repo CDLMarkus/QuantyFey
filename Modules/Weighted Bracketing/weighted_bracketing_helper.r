@@ -166,14 +166,14 @@ weights_ind <- function(input, rv){
     }
   )
 
-} else if (input$model_bracketing == "spline") {
+} else if (input$model_bracketing == "poly") {
 
   mod <- tryCatch(
     {
       lm(PeakArea ~ poly(inj, degree = input$spline_df), data = df_ss)
     },
     error = function(e) {
-      showNotification("Spline (polynomial) model fitting failed.", type = "error")
+      showNotification("Polynomial model fitting failed.", type = "error")
       return(NULL)
     })
 
@@ -391,14 +391,14 @@ weights_ind_for_plot <- function(input, rv){
     }
   )
 
-} else if (input$model_bracketing == "spline") {
+} else if (input$model_bracketing == "poly") {
 
   mod <- tryCatch(
     {
       lm(PeakArea ~ poly(inj, degree = input$spline_df), data = df_ss)
     },
     error = function(e) {
-      showNotification("Spline (polynomial) model fitting failed.", type = "error")
+      showNotification("Polynomial model fitting failed.", type = "error")
       return(NULL)
     })
 
