@@ -164,7 +164,14 @@ navset_pill(
             page_sidebar(
               sidebar = sidebar(
                 fileInput("file1", "Upload Peak Area Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv", ".xlsx")),
-                fileInput("file_RT", "Upload Retention Time Data:", buttonLabel = "Choose File", placeholder = "No file selected", accept = c(".txt", ".csv", ".xlsx")),
+                conditionalPanel(
+  condition = "output.fileUploaded",
+  fileInput("file_RT", "Upload Retention Time Data:",
+            buttonLabel = "Choose File",
+            placeholder = "No file selected",
+            accept = c(".txt", ".csv", ".xlsx"))
+),
+                
                 checkboxInput("change_project_name", "Use Project Name", value = F),
                 conditionalPanel(condition = 'input.change_project_name == true',
                   textInput("project_name", label = "Project Name:", value = paste0("Results_", format(Sys.Date(), "%Y%m%d")))  
@@ -247,8 +254,8 @@ navset_pill(
                 textInput("Comment", "Comment:"),
                 actionButton("save_compound", label = "Save", class = "btn-primary"),
                 checkboxInput(inputId = "generate_report", label = "Generate Report", value = FALSE),
-                 checkboxInput(inputId = "show_dev", label = "Show Development Options", value = FALSE),
-                conditionalPanel(condition = "input.show_dev",
+                 #checkboxInput(inputId = "show_dev", label = "Show Development Options", value = FALSE),
+                conditionalPanel(condition = "false",
                   actionButton(inputId = "optimize_save", label = "Optimize and Save all Compounds")
               )),
               accordion(

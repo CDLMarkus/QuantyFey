@@ -33,9 +33,11 @@ server <- function(input, output, session){
     session$sendCustomMessage("registerDoubleClick", "quant")
   })
 
-  observe({
-    print(input$spline_df_dc)
-  })
+output$fileUploaded <- reactive({
+  return(!is.null(input$file1))
+})
+outputOptions(output, "fileUploaded", suspendWhenHidden = FALSE)
+
 
 
   # ======= Reactive Values ==========
