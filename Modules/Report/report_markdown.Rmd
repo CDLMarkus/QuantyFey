@@ -186,6 +186,10 @@ cat(latex_table(checkbox_data))
   # Combine plots using patchwork
 
 tryCatch({
+
+  p <- get_plot_IS(input, rv)
+
+
   combined_plot <- (rv$IS_plot[[1]] + 
       theme(legend.position = "none")) / 
       (rv$IS_plot[[2]] + 
@@ -209,6 +213,7 @@ tryCatch({
 
 
 }else if(input$quantitation_method == "Drift Correction"){
+  p <- get_plotly_dc(input, rv)
   cat("The following plots showcase the Peak Areas for the selected compound from the measured data. The first plot show the Peak Areas as they were processed without any manipulation with red indicated bars showcasing the Samples selected for Drift Correction and the red line indicating the model used for Drift Correction. The second plot shows the manipulated data after Drift Correction.\\newline \n")
   
   p1 <- rv$plot_dc[[1]] + theme(legend.position = "none") 
