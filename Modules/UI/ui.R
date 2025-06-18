@@ -146,11 +146,7 @@ ui <- fluidPage(
   titlePanel(
     div(
       class = "titlePanel",
-      tags$img(
-        src = "icon.png",
-        class = "app-icon",
-        style = "height: 48px; width: 48px;"
-      ),
+      tags$img(src = icon_data, height = "64px"),
       span(class = "app-name", "Quanty Fey")
     )
   ),

@@ -1334,7 +1334,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     }
 
     # Create data frame
-    df <- data.frame(Sample.Name = rv$data$Sample.Name, IS_Area = IS_Areas, Areas = Areas, IS_ratios = IS_ratios, Sample.Type = rv$data$Sample.Type)
+    df <- data.frame(Sample.Name = rv$data$Sample.Name, IS_Area = IS_Areas, Areas = Areas, IS_ratios = IS_ratios, Sample.Type = rv$data$Sample.Type, IS.Type = rep("IS Signal", nrow(rv$data)))
     df$inj <- 1:nrow(df)
 
     
@@ -1342,9 +1342,9 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     suppressWarnings({
       p1 <- ggplot(df)+
     geom_bar(aes(y =Areas, x = inj, label = Sample.Name, fill = Sample.Type), stat = "identity", col = "black") +
-    geom_point(aes(x = inj, y = IS_Area, label = Sample.Name), col = "red3") +
+    geom_point(aes(x = inj, y = IS_Area, label = Sample.Name, fill = IS.Type), col = "red3") +
     theme_pubclean(base_size = 17) +
-    scale_fill_manual(values = c("Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3"))
+    scale_fill_manual(values = c("Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3", "IS Signal" = "red3"))
 
  
 

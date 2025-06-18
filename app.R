@@ -99,6 +99,9 @@ checkboxesColumns <- c(1:15)
 
 #source("./helper/helper_data_upload.r")
 source("server.r")
+
+icon_data <- base64enc::dataURI(file = "Dependencies/icon.png", mime = "image/png")
+
 source("./Modules/UI/ui.r")
 script_path <- get_script_directory()
 source("./helper/global_functions.R")
