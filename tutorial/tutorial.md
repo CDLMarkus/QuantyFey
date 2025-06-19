@@ -206,7 +206,7 @@ IS_pattern = "IS"
 #### ---- Units ---- ####
 # Set to NULL if you don't want to show the unit in the plot
 # Concentration 
-conc_unit = "µg/mL"
+conc_unit = "µg/L"
 # Intensity Unit
 int_unit = NULL
 # RT Unit
