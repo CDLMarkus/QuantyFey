@@ -8,7 +8,7 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
 
 ##### Windows
 - **RTools 4.2** is required:
-  - **Option A**: Install from the [official CRAN page](https://cran.r-project.org/bin/windows/Rtools/rtools.html).
+  - **Option A**: Install from the [official CRAN page](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
   - **Option B**: Use the included Portable R:
     - Navigate to `R-portable/bin/` and launch `R.exe`
     - Run the following in the R console:
