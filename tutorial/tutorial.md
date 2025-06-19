@@ -1,6 +1,17 @@
 ## **Tutorial**
 This tutorials explains how to use the **QuantyFey** application, step by step. It covers everything you need to get started and use it efficiently. QuantyFey is designed to quantify targeted LC-MS/MS data using external calibration, but can also be used with other data formats that include intensity and retention time values.
 
+### **Table of Contents**
+
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+    - [Windows](#windows)
+    - [Linux](#linux)
+- [Notes before using your own data](#notes-before-using-your-own-data)
+- [Application Structure](#application-structure)
+  - [
+
+
 ### **Installation**
 The standalone version of this application runs on **Windows** and **Linux**. You can also run it directly from **R**, **RStudio**, or **VS Code**, which makes it compatible with **macOS** as well.
 
@@ -50,7 +61,7 @@ build-essential pkg-config
 
 ---
 
-#### **Notes before using it on your own data**
+### **Notes before using your own data**
 
 The application comes with several test datasets based on LC-MS/MS data. These are included to help you get started and explore the app's features.
 
