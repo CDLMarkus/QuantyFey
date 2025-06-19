@@ -7,9 +7,20 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
   - [Prerequisites](#prerequisites)
     - [Windows](#windows)
     - [Linux](#linux)
+  - [Standalone installation](#standalone-installation)
+  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-RStudio,-VS Code-etc.)
 - [Notes before using your own data](#notes-before-using-your-own-data)
 - [Application Structure](#application-structure)
-  - [
+  - [Data Upload](#data-upload)
+  - [Configure Settings)[#configure-setting)
+  - [Compound Quantification](#compound-quantification)
+    - [Data Visualization](#data-visualization
+    - [Drift Correction](#drift-correction)
+      - [IS Correction](#is-correction)
+      - [QC-based drift correction](#qc-based-drift-correction)
+      - [Custom Bracketing](#custom-bracketing)
+      - [Weighted Bracketing](#weighted-bracketing)
+    - [Quantification](#quatification)
 
 
 ### **Installation**
