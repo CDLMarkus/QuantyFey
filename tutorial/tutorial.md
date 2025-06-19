@@ -55,7 +55,7 @@ build-essential pkg-config
 
 #### **Standalone Installation**
 
-- **Download** the latest version of [QuantyFey](https://github.com/QuantyFey-Application/releases)
+- **Download** the latest version of [QuantyFey](https://github.com/QuantyFey-Application/releases/)
 - **Unzip** the folder to a destination of your choice.
 - **Run** the batch (Windows) or shell (Linux) file to start the App.
 > **Note:** you may need to approve the execution of the script on Windows*
