@@ -48,7 +48,11 @@ To make sure `QuantyFey` runs smoothly on Ubuntu, please make sure the following
 
 ### **Mac**
 
-Currently not working as standalone application on Mac.
+Not working as a standalone application on iOS. Can be run locally using **R**, or **RStudio**.
+
+---
+
+> Refer to the [`tutorial`](tutorial/tutorial.md) for a more information on installing and using **QuantyFey**.
 
 
 ## **Installation**
