@@ -47,7 +47,7 @@ sudo R CMD javareconf
 - **Open** `app.R` and **run** run the script
 
 
-> *Note: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.*
+> **Note**: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.
 
 ---
 
