@@ -22,11 +22,10 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
 ##### Linux
 Make sure all system dependencies are installed:
 ```bash
+sudo apt update
 sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev \
-libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev \
+libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev libtirpc-dev \
 build-essential pkg-config
-
-sudo R CMD javareconf
 ```
 
 #### **Standalone Installation**
