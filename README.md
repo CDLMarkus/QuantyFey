@@ -56,8 +56,8 @@ Not working as a standalone application on iOS. Can be run locally using **R**, 
 
 1. Download the zip file download [QuantyFey.zip](https://github.com/CDLMarkus/QuantyFey/releases/)
 2. Extract the folder to a desired location.
-3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (approval may be required).
-4. The console will open, and all required packages will be installed automatically (this process may take up to 20 minutes).
+3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (Windows) or `QuantyFey.sh` (Linux) (approval may be required).
+4. The console will open, and all required packages will be installed automatically (this process may take up to 10 minutes).
 5. Once installation is complete, the application will launch in your default web browser.
 
 ## **Overview**
@@ -68,8 +68,8 @@ Not working as a standalone application on iOS. Can be run locally using **R**, 
 
 # **Using the App**
 
-Discription of the app and tutorials on how to effectively use it can be found in the tutorial folder.
-The app provides the user the tools for versatile and interactive quantification of targeted Mass Spectrometry Data using external calibration. Especially when Intensity Drift is observed during the Measurement, the app provides the user with tools to effectively handle these drift. This app works as an extra software to already integrated mass spectrometry data, and does not provide any integration cabailities, but rather offers the user an interactive tool for efficient quantification.
+Discription of the app and tutorials on how to effectively use it can be found in the [tutorial](tutorial/tutorial.md).
+The app provides the user the tools for versatile and interactive quantification of targeted Mass Spectrometry Data using external calibration. Especially when Intensity Drift is observed during the Measurement, the app provides the user with tools to effectively handle these drift. This app works as an additional software to already integrated mass spectrometry data, and does not provide any integration cabailities, but rather offers the user an interactive tool for efficient quantification.
 
 ![Graphical Abstract of the App](tutorial/images/graphical_abstract.png)
 
