@@ -8,19 +8,22 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
     - [Windows](#windows)
     - [Linux](#linux)
   - [Standalone installation](#standalone-installation)
-  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-RStudio,-VS Code-etc.)
+  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-rstudio-vs-code-etc)
 - [Notes before using your own data](#notes-before-using-your-own-data)
 - [Application Structure](#application-structure)
   - [Data Upload](#data-upload)
-  - [Configure Settings)[#configure-setting)
+  - [Configure Settings](#configure-settings)
   - [Compound Quantification](#compound-quantification)
-    - [Data Visualization](#data-visualization
-    - [Drift Correction](#drift-correction)
+    - [Data Visualization](#data-visualization)
+    - [Drift Correction](#correcting-for-intensity-drift)
       - [IS Correction](#is-correction)
-      - [QC-based drift correction](#qc-based-drift-correction)
+      - [Drift correction](#drift-correction)
       - [Custom Bracketing](#custom-bracketing)
       - [Weighted Bracketing](#weighted-bracketing)
-    - [Quantification](#quatification)
+    - [Quantification](#quantification)
+    - [Saving Results](#saving-results)
+  - [Results](#results)
+- [Summary](#summary)
 
 
 ### **Installation**
@@ -176,7 +179,7 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 
 ---
 
-### **Configure Settings:**
+### **Configure Settings**
 
 #### **Selecting Quantification Template**
 To perform quantification, you need to select the appropriate template. Use the dropdown menu in the app to choose from available sheets in teh `templates.xlsx` file. Each sheet represents a separate template.
