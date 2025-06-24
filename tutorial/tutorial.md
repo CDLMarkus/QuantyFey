@@ -1,6 +1,31 @@
 ## **Tutorial**
 This tutorials explains how to use the **QuantyFey** application, step by step. It covers everything you need to get started and use it efficiently. QuantyFey is designed to quantify targeted LC-MS/MS data using external calibration, but can also be used with other data formats that include intensity and retention time values.
 
+### **Table of Contents**
+
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+    - [Windows](#windows)
+    - [Linux](#linux)
+  - [Standalone installation](#standalone-installation)
+  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-rstudio-vs-code-etc)
+- [Notes before using your own data](#notes-before-using-your-own-data)
+- [Application Structure](#application-structure)
+  - [Data Upload](#data-upload)
+  - [Configure Settings](#configure-settings)
+  - [Compound Quantification](#compound-quantification)
+    - [Data Visualization](#data-visualization)
+    - [Drift Correction](#correcting-for-intensity-drift)
+      - [IS Correction](#is-correction)
+      - [Drift correction](#drift-correction)
+      - [Custom Bracketing](#custom-bracketing)
+      - [Weighted Bracketing](#weighted-bracketing)
+    - [Quantification](#quantification)
+    - [Saving Results](#saving-results)
+  - [Results](#results)
+- [Summary](#summary)
+
+
 ### **Installation**
 The standalone version of this application runs on **Windows** and **Linux**. You can also run it directly from **R**, **RStudio**, or **VS Code**, which makes it compatible with **macOS** as well.
 
@@ -22,16 +47,15 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
 ##### Linux
 Make sure all system dependencies are installed:
 ```bash
+sudo apt update
 sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev \
-libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev default-jdk libtirpc-dev \
+libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev libtirpc-dev \
 build-essential pkg-config
-
-sudo R CMD javareconf
 ```
 
 #### **Standalone Installation**
 
-- **Download** the latest version of [QuantyFey](https://github.com/QuantyFey-Application/releases)
+- **Download** the latest version of [QuantyFey](https://github.com/CDLMarkus/QuantyFey/releases/tag/v1.0.1)
 - **Unzip** the folder to a destination of your choice.
 - **Run** the batch (Windows) or shell (Linux) file to start the App.
 > **Note:** you may need to approve the execution of the script on Windows*
@@ -51,7 +75,7 @@ sudo R CMD javareconf
 
 ---
 
-#### **Notes before using it on your own data**
+### **Notes before using your own data**
 
 The application comes with several test datasets based on LC-MS/MS data. These are included to help you get started and explore the app's features.
 
@@ -155,7 +179,7 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 
 ---
 
-### **Configure Settings:**
+### **Configure Settings**
 
 #### **Selecting Quantification Template**
 To perform quantification, you need to select the appropriate template. Use the dropdown menu in the app to choose from available sheets in teh `templates.xlsx` file. Each sheet represents a separate template.
