@@ -61,12 +61,27 @@ suppressWarnings({
   caption_text <- paste0("Figure ", fig_n, ": ", "overviewiew of Retention Time per Sample Type")
   
   fig_n <- fig_n + 1
+  tryCatch({
+    p <- get_plotly_RT(input, rv)
   
-  p <- get_plotly_RT(input, rv)
+  
   p$mapping[["text"]] <- NULL
   #p <- p + labs(x = "Retention Time", y = "Sample Type")+theme(legend.position = "none")
   
   plot(p)
+  }, error = function(e) {
+    rt_unit <- if (exists("rt_unit")) rt_unit else ""
+    if (is.null(rt_unit) || is.na(rt_unit) || rt_unit == "") {
+      ylab <- "Retention Time"
+    } else {
+      ylab <- paste0("Retention Time [", rt_unit, "]")
+    }
+    library(ggplot2)
+    p_empty <- ggplot() + 
+      labs(y = ylab, x = "Sample Type") +
+      theme_minimal()
+    print(p_empty)
+  })
 
   cat(caption_text)
   cat("\\newline \n")
@@ -88,15 +103,24 @@ suppressWarnings({
   
   fig_n <- fig_n + 1
   
-  p_quan_qual <- get_plotly_qual_quant(input, rv)
+  tryCatch({
+     p_quan_qual <- get_plotly_qual_quant(input, rv)
   p_quan_qual$mapping[["text"]] <- NULL
   
   p <- p_quan_qual + labs(y = "Ion Ratio", x = "Sample Type")+ theme(legend.position = "none")
   p <- p 
+  plot(p)
   
+  }, error = function(e){
+    
+    p_empty <- ggplot() +
+      labs(y = "Ion Ratio", x = "Sample Type") +
+      theme_minimal()
+    print(p_empty)
   })
 
-  plot(p)
+})
+ 
   
   cat(caption_text)
   cat("\\newline \n")
@@ -117,13 +141,20 @@ suppressWarnings({try({
   
   fig_n <- fig_n + 1
   
-  p <- get_plotly_blank(input, rv)
+  tryCatch({
+    p <- get_plotly_blank(input, rv)
   p <- p + labs(y = "Blank Ratio", x = "Sample Type")+theme(legend.position = "none") 
+  plot(p)
+  
+}, error = function(e) {
+    library(ggplot2)
+    p_empty <- ggplot() +
+      labs(y = "Blank Ratio", x = "Sample Type") +
+      theme_minimal()
+    print(p_empty)
+  })
   
 })
-
-  plot(p)
- 
   cat(caption_text)
   cat("\\newline \n")
 

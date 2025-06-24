@@ -14,12 +14,12 @@ server <- function(input, output, session){
 
 
   observe({
-    invalidateLater(1000)
+    #invalidateLater(1000)
     req(input$file1)
     req(input$Compound != "")
     req(!is.null(rv$df_QQ))
-    req("Quant.Name" %in% colnames(rv$df_QQ))
-    req("Qual.Name" %in% colnames(rv$df_QQ))
+    #req("Quant.Name" %in% colnames(rv$df_QQ))
+    #req("Qual.Name" %in% colnames(rv$df_QQ))
 
     cond <- is.null(rv$df_QQ$Qual.Name[which(rv$df_QQ$Quant.Name == input$Compound)]) ||
             is.na(rv$df_QQ$Qual.Name[which(rv$df_QQ$Quant.Name == input$Compound)])
