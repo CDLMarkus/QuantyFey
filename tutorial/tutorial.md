@@ -98,7 +98,7 @@ The app uses this file to **map the concentrations** of the Calibration standard
 > **Note:**
 > Standard names in the template **must exactly** match those in the sequence (**case-sensitive**).
 > - Standard names are the names in the `Sample.Name` column of your Peak Area Table that are classified as `Standard` or `Cal` in the `Sample.Type` column.
-> - Refer to the [Example Peak Table](Example_Datasets/Example_Areas.csv).
+> - Refer to the [Example Peak Table](Example%20Datasets/Example_Areas.csv).
 > If any standard that is defined in your data (**Sample.Type column**) is not included in this template, it will be appended with a concentration of **0** - and will not be included in the quantification process.
 > If not all quantifier transitions are present in the template, errors can occur. Please mind the pop-up messages while selecting the quantification template!
 
