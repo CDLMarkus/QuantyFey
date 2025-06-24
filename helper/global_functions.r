@@ -1142,7 +1142,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
         suppressWarnings({
         p <- ggplot(df_ss, aes(x = Sample.Type, y = ion_ratios, fill = Sample.Type, label = Sample.Name, text = Sequence.Position)) + geom_boxplot(outlier.shape = NA, alpha = 0.7, width = 0.5) + 
-        geom_jitter(width = 0.2, size = 2) + theme_pubclean(base_size = 17) + 
+        geom_jitter(width = 0.2, size = 2, hight = 0) + theme_pubclean(base_size = 17) + 
         geom_hline(yintercept = ion_ratios_standards) + geom_hline(yintercept = (ion_ratios_standards * 1.5), linetype = "dotted") + 
         geom_hline(yintercept = (ion_ratios_standards * 0.5), linetype = "dotted") + scale_fill_manual(values = c("Cal" = "navy", "Sample" = "lightblue3", "Blank" = "grey70", "QC" = "purple3")) +
         labs(x = "Sample Type", y = "Ion Ratio", fill = "Sample Type", color = "Sample Type", text = "Sequence Position")
@@ -1165,6 +1165,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     df$Sequence.Position <- 1:nrow(df) %>% as.numeric()
     
     df[df == "N/A"] <- NA
+    df[df == "N/F"] <- NA
 
     df[[input$Compound]] <- as.numeric(df[[input$Compound]])
 
@@ -1196,7 +1197,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
         p <- ggplot(df_ss, aes(y = `Retention.Time`, x = Sample.Type, label = Sample.Name, text = Sequence.Position)) +
         geom_boxplot(outlier.shape = NA, alpha = 0.7, width = 0.5, mapping = aes(fill = Sample.Type)) +
-        geom_jitter(size = 2, width = 0.2, aes(fill = Sample.Type), color = "black") +
+        geom_jitter(size = 2, width = 0.2, aes(fill = Sample.Type), color = "black", height = 0) +
         geom_hline(yintercept = (means_cal + 0.05), linetype = "dotted", color = "black") +
         geom_hline(yintercept = (means_cal - 0.05), linetype = "dotted", color = "black") +
         geom_hline(yintercept = means_cal, color = "black", linetype = "solid") +
