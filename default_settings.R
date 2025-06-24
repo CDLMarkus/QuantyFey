@@ -1,7 +1,7 @@
 ## Setup Default Settings for QuantyFey
 
 # Default Template name
-Template_name = "Example1" 
+Template_name = "Example" 
 # Pattern for Quant Transition:
 quant_pattern = "_quant"
 # Pattern for Qual Transition:

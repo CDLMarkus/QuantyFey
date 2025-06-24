@@ -11,6 +11,8 @@ server <- function(input, output, session){
     session$sendCustomMessage("enable-blur-update", list("span_width", "quant_indicator", "qual_indicator", "IS_indicator"))
   })
 
+
+
   observe({
     invalidateLater(1000)
     req(input$file1)

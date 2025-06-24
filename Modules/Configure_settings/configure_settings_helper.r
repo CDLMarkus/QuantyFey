@@ -113,6 +113,22 @@ observe_input_mode <- function(input, rv, session) {
     template_cols <- setdiff(colnames(template), "Cal.Name")
     data_cols <- colnames(rv$data)
 
+    # Check if any column names in template_cols or data_cols start with a number and add 'X' in front if needed
+    fix_colnames <- function(cols) {
+      gsub("^([0-9])", "X\\1", cols)
+    }
+
+    if (any(grepl("^[0-9]", template_cols))) {
+      new_names <- fix_colnames(colnames(template))
+      colnames(template) <- new_names
+      template_cols <- fix_colnames(template_cols)
+    }
+    if (any(grepl("^[0-9]", data_cols))) {
+      new_names <- fix_colnames(colnames(rv$data))
+      colnames(rv$data) <- new_names
+      data_cols <- fix_colnames(data_cols)
+    }
+
     if (all(template_cols %in% data_cols)) {
       rv$specific_setup <- template
 

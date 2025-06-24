@@ -226,7 +226,9 @@ observe_input_file_1 <- function(input, rv, session) {
     req(input$mode)
     req(rv$templates[[input$mode]])
 
-    if (all(dplyr::select(rv$templates[[input$mode]], -Cal.Name) %in% colnames(rv$data))) {
+    
+
+    if (all(colnames(dplyr::select(rv$templates[[input$mode]], -Cal.Name)) %in% colnames(rv$data))) {
       rv$specific_setup <- rv$templates[[input$mode]] %>% as.data.frame()
 
       if ((input$Compound) == "") {
