@@ -77,12 +77,12 @@ build-essential pkg-config
 
 ### **Notes before using your own data**
 
-The application comes with several test datasets based on LC-MS/MS data. These are included to help you get started and explore the app's features.
+The application comes with a test dataset based on LC-MS/MS data. This is included to help you get started and explore the app's features.
 
 > **Important:** The app is preconfigured to work with these test datasets. This includes predefined **Calibration Standard Names** and their **Concentrations**. Before using your own data, you'll need to update this setup.
 
 To adjust the configuration:
-1. open the file at `Dependencies/templates.xlsx`
+1. Open the file at `Dependencies/templates.xlsx`
 2. Add a new sheet or edit an existig one to define your own analysis setup.
 
 **Template Structure Requirements**
@@ -90,26 +90,30 @@ The template must follow this structure exactly:
 - `Cal.Name`: The first column must be named `Cal.Name` (spelling and case-sensitive). It should list the **names of the Calibration Standards** used in your sequence.
 - `Concentration`: The second column should specify the **concentration** for each corresponding **Calibration Standard**.
 You may also define concentrations at the **transition level** (e.g., different concentrations for every single transition). In that case:
-- Every single **transition name must be included in the template**.
+- Every single **quantifier transition name must be included in the template**.
+- Refer to the worksheet `ExampleAllCompounds` in the [templates.xlsx file](Dependencies/templates.xlsx)
 
 The app uses this file to **map the concentrations** of the Calibration standards to their corresponding names in the dataset. The concentrations are used for compound quantification.
 
-> **Note:** Standard names in the template **must exactly** match those in the sequence (**case-sensitive**).
-> **Note:** if any standard that is defined in your data (**Sample.Type column**) is not included in this template, it will be appended with a concentration of **0** - and will not be included in the quantification process.
+> **Note:**
+> Standard names in the template **must exactly** match those in the sequence (**case-sensitive**).
+> - Standard names are the names in the `Sample.Name` column of your Peak Area Table that are classified as `Standard` or `Cal` in the `Sample.Type` column. Refer to the [Example Peak Table](Example Datasets/Example_Area.csv).
+> If any standard that is defined in your data (**Sample.Type column**) is not included in this template, it will be appended with a concentration of **0** - and will not be included in the quantification process.
+> If not all quantifier transitions are present in the template, errors can occur. Please mind the pop-up messages while selecting the quantification template!
 
 ![Overview of the structure of the concentration templates](images/concentration_template.png)
 
 
 ## **Application Structure**
 
-The app is divided into multiple tabs, each with a specific function. This layout helps guide users through the analysis process step by step.
+The app is divided into multiple tabs, each with a specific function. This layout guides users through the analysis process step by step.
 
 ![Overview of main tabs of the QuantyFey Application](images/overview_workflow.png)
 
 ---
 ### **Data Upload**
 
-The **Data Upload** tab lets you import the two required data files for analysis. Two files must be uploaded in **csv**, **txt**, or **xlsx** format using standard delimiters (`,`, `;`, `:`, or tab `\t`):
+In the **Data Upload**, you need to import the two data files required for analysis - **Peak Intensity** values and **Retention Times** (RT). These files must be uploaded in **csv**, **txt**, or **xlsx** format using standard delimiters (`,`, `;`, `:`, or tab `\t`):
 
 ![Screenshot of the Data Upload settings](images/data_upload_parameters.png)
 
@@ -119,6 +123,7 @@ The **Data Upload** tab lets you import the two required data files for analysis
 This file contains **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*) for the measured compounds. The required structure is as follows:
 
 - `Sample.Name`: Identifier for each sample.
+  > **Note:** Avoid numerals at the first position of the name, and avoid special characters.
 - `Sample.Type`: Must be one of the following (case-sensitive):
   - `Sample` – Experimental samples.
   - `Standard` or `Cal` – Calibration standards.
@@ -139,9 +144,9 @@ This file contains **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*
 
 ##### Example Table: Peak Table Format
 
-Example file: `Example_Datasets/Example1_Drift_Areas.csv`
+Example file: `Example_Datasets/Example_Areas.csv`
 
-![Overview of the Example1 Dataset](images/example1_areas.png)
+![Overview of the Example1 Dataset](images/example_areas.png)
 
 #### **2. Retention Time Table**
 
@@ -155,7 +160,7 @@ This file provides **retention time (RT)** data for the compounds.
 
 ##### Example Table: Retention Time Table Format
 
-Example file: `Example_Datasets/Example1_Drift_RT.csv`
+Example file: `Example_Datasets/Example_RT.csv`
 
 ![Overview of the Example1 Dataset](images/example1_RT.png)
 
@@ -174,7 +179,7 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 
 | File                | Required Columns                        | Notes                                                       |
 |---------------------|------------------------------------------|-------------------------------------------------------------|
-| **Peak Table**      | `Sample.Name`, `Sample.Type`             | Optional: `Classification`; supports multiple transitions.  |
+| **Peak Table**      | `Sample.Name`, `Sample.Type`             | Optional: `Classification`; supports multiple transitions per analyte.  |
 | **RT Table**        | `Sample.Name`, transitions from Peak Table | Must match Peak Table sample names.                         |
 
 ---
@@ -182,11 +187,12 @@ Click **Reset App** to restart the session and clear all uploaded data — usefu
 ### **Configure Settings**
 
 #### **Selecting Quantification Template**
-To perform quantification, you need to select the appropriate template. Use the dropdown menu in the app to choose from available sheets in teh `templates.xlsx` file. Each sheet represents a separate template.
+To perform quantification, you need to select the appropriate template. Use the dropdown menu in the app to choose from available sheets in the `templates.xlsx` file. Each sheet represents a separate template.
 When selected, the left pane will be updated with the respective template. If the template encompasses all transition names, it will show the concentrations of the selected compound.
 
- > **Note:** Make sure the correct template is selected - quantification will not work if the template does not match your data or the wrong sheet is chosen.
-
+> **Note:**
+> Make sure the correct template is selected - quantification will not work if the template does not match your data or the wrong sheet is chosen.
+> Refer to [Chapter `Notes before using your own data`](#notes_before_using_your_own_data) for more information how to add your template the the `tamplets.xlsx` file.
 
 #### **Change patterns**
 QuantyFey automatically detects **Quantifier**, **Qualifier**, and **Internal Standard (IS)** transitions by searching for predefined patterns in the column names of the Peak Table. These patterns can be customized to match your dataset's naming.
@@ -198,7 +204,7 @@ Patterns can be changed by selecting the `Change Patterns` Checkbox. Then three 
 
 #### **Default Pattern Setup (*in `default_settings.R`*)**
 
-Below are the default settings used by the app. You can change them in the `default_settings.R` file.
+Below are the default settings used by the app. You can change them in the `default_settings.R` (using RStudio, VS Code, or the text editor) file.
 
 | Setting         | Default Value | Description                                                |
 | --------------- | ------------- | ---------------------------------------------------------- |
@@ -248,11 +254,10 @@ This pattern identifies **quantifier** transitions from Peak Table column names.
 - Supports **regular expressions** (*Regex*)
 - Only columns matching this pattern (and **not** matching the IS pattern) will be used for quantification.
 
-#### Examples:
+#### Regex Examples:
 - `^Compound1_` → Columns starting with `Compound1_`
 - `_quant$` → Columns ending with `_quant`
 - `Compound[0-9]+_` → Matches names like `Compound1_`, `Compound2_`, etc.
-- `.*_qual` → Columns containing `_qual`
 - `^Cal.*ppb$` → Columns starting with `Cal` and ending with `ppb`
 
 
@@ -307,19 +312,19 @@ In the left-side panel, users can configure the following:
 - **Compound**: Select the quantification transition.
 - **Comment**: Add notes for the quantification process.
 - **Save**:
-    - Ouput is saved to users **Documents** folder
+    - Ouput is saved to user's **Documents** folder
     - If the default path fails (e.g., due to permissions), results are saved to the local QuantyFey directory.
     - Files are placed inside a folder names `Results_<date>` unless a different name is specified as **Project Name** in the **Data Upload** tab.
     - Two output files are created and updated with each save:
-    -   A **concentration table** (`Results_quant.csv`) per compound.
-    -   A **summary file**  (`Quant_summary.xlsx`) listing all parameters and settings, with one sheet per save.
+      - A **concentration table** (`Results_quant.csv`) showing concentrations and comment for each compound saved.
+      - A **summary file**  (`Quant_summary.xlsx`) listing all parameters and settings, with one sheet per save.
 
 - **Generate Report**: Optional checkbox. If enabled, a PDF report will be created containing all plots and a summary of the quantification.
 
 > **Note on File Management:**
 > To avoid overwriting while limiting file clutter:
 > - Concentration tables: The app checks for **differences** between the **existing file** and the **new data**. **If all data** from the existing file **matches** data from the new data, the file is **overwritten**. If **differences** exist, a **new file** is created with a **time stamp**.
-> - Summary File: With every save, data is **appended** as **new worksheet** to the file.
+> - Summary File: With every save, data are **appended** as **new worksheet** to the file.
 > - PDF Report: Reports may be overwritten if the app is restarted and outputs are saved to the same directory.
 > **Suggestion:** After launching the app, create a new output folder by renaming the **Project Name** in the **Data Upload** tab. This helps prevent conflicts and ensures all outputs are saved realiably.
 
@@ -346,8 +351,8 @@ Each tab will be explained in  detail in the following section.
 This tab provides an overview of the data for the selected transitions, including **Retention Time (RT)**, **Ion Ratio Analysis**, and **Blank Analysis**.
 
 - **Retention Time**: Interactive plot of RT values for selected sample types. Hover over any point to view sample-specific details.
-- **Ion Ratio Analysis**: Interactive plot of Qualifier-to-Quantifier Ion ratios for selected sample types. Hover over any point to view sample-specific details.
-  > Note: This section is only visible if a matching Qulaifier was found for the selected Quantifier transition.
+- **Ion Ratio Analysis**: Interactive plot of **Qualifier-to-Quantifier** peak area ratios (Ion ratios= for selected sample types. Hover over any point to view sample-specific details.
+  > **Note:** This section is only visible if a matching Qualifier was found for the selected Quantifier transition.
 - **Blank Analysis**: Boxplots comparing blank and sample signal ratios.
   Blank ratios are calculated as: `sample intensity / mean blank intensity`
   This helps distinguish background noise from true signals.
@@ -358,7 +363,7 @@ This visualization tab is designed to help **verify compound identity** by compa
 
 ### **Correcting for Intensity Drift**
 
-The following four tabs are used to set up different **drift correction strategies**. For best results, it's recommended to configure all applicable methods **before** performing quantification.
+The following four tabs are used to set up different **drift correction strategies**. For best results, it is recommended to configure all applicable methods **before** performing quantification.
 
 
 #### **IS Correction**
@@ -372,9 +377,9 @@ These ratios are then used instead of raw intensities for both the regression mo
 
 - **Plots:**
   - **Raw Intensity**: Bars indicate raw intensities; red dots indicate IS intensities.
-  - **IS Ratios**: Displayes IS ratios.
+  - **IS Ratios**: Displays IS ratios.
 
-**Note**: For IS intensites falling below 0.1 % of the median IS value, the median value is used for correction.
+**Note**: For IS intensites falling below 0.1% of the median IS value, the median value is used for correction.
 
 ---
 
@@ -389,7 +394,7 @@ This module corrects signal drift based on QC samples or other repeated injectio
 - **Models**: 
     - **Linear Model (lm)**: Simple linear regression.
     - **Loess**: Non-linear locally estimated scatterplot smoothing.
-    - **Poly**:Polynomial fit.
+    - **Poly**: Polynomial fit.
 - **Sample for Drift Correction**:
     - Select a sample (e.g., QC) injected regularly throughout the sequence. Only non-blank samples injected **3+ times** can be selected.
 - **Span Width** (for loess only): Controls smoothness of the loess fit.
@@ -405,7 +410,7 @@ The main panel displays:
 > **Note:**
 > Loess models cannot extrapolate: Edge values are estimated using the nearest available data point.
 > Span width must be above 0.4. Smaller values may cause errors. If an error appears, adjust the parameters and retry.
-> Span width cahnges are only applied after clicking outisde the input box.
+> Span width changes are only applied after clicking outside the input box.
 
 ---
 
@@ -443,7 +448,7 @@ This module builds a separate **regression model for each injection**, based on 
 
 
 > **Note**:
-> Weights using the linear model are just increasing/decreasing weights from one to the next calibration block. They dont require QC injections
+> Weights using the linear model are just increasing/decreasing weights from one to the next calibration block. They dont require QC injections.
 > Non-linear models require QC samples. 
 
 ### **Quantification**
@@ -468,7 +473,7 @@ The **Quantification** tab is where the actual quantification of the selected tr
     - `None`: No weighting applied.
       > **Note**:
       > Values with PeakArea = 0 will automatically hava a weight of 0.
-- **Quantitation Method**: Selects the quantification approach:
+- **Quantification Method**: Selects the quantification approach:
     - `IS Correction`: One regression over all calibration blocks using IS ratios
     - `Drift Correction`: One regression over all calibration blocks using drift corrected peak areas.
     - `Custom Bracketing`: Individual regressions over the respective calibration data assigned to each block.
