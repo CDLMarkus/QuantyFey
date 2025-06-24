@@ -224,7 +224,7 @@ save_final_results <- function(input, rv, quant, cpt_name) {
         res_list[["models"]] <- quantitate_output[[3]]
         res_df <- build_quant_results(res_df, input, rv, quant, res_list, cpt_name)
         setwd(results_directory(input))
-        print("error??")
+        #
         write_quant_results(res_df, cpt_name)
     }, error = function(e) {
         stop("Failed to save final results: ", e$message)
@@ -506,7 +506,7 @@ if (is.null(rv$bracketing_table)) {
 update_if_analyzed <- function(input, rv, session) {
       settings <- rv$settings_used[[input$Compound]]
 
-      print(str(settings))
+      #print(str(settings))
       #print(settings)
       updateSelectInput(session, inputId = "regression_model", choices = c("linear", "quadratic"), selected = settings$regression_model)
     

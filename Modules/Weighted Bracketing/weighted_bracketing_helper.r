@@ -558,16 +558,20 @@ if (length(cal_cols) > 0) {
 # Define a base palette (can be extended)
 base_palette <- c(
   "#1b9e77", "#d95f02", "#7570b3", "#e7298a",
-  "#66a61e", "#e6ab02", "#a6761d", "#666666"
+  "#66a61e", "#e6ab02", "#a6761d", "#666666",
+  "#8dd3c7", "#fb8072", "#80b1d3", "#fdb462",
+  "#b3de69", "#fccde5"
 )
 
 # Repeat or trim the palette to match the number of cal_cols
 color_palette <- rep(base_palette, length.out = length(cal_cols))
 
+colnames(df)[which(colnames(df) == "inj")] <- "Injection Position"
+colnames(df_long)[which(colnames(df_long) == "inj")] <- "Injection Position"
   # Build base plot
   p <- ggplot() +
     # Raw intensities as bars
-    geom_bar(data = df, aes(x = inj, y = PeakArea), stat = "identity", fill = "grey80", alpha = 0.7) +
+    geom_bar(data = df, aes(x = `Injection Position`, y = PeakArea, name = Sample.Name), stat = "identity", fill = "grey80", alpha = 0.7) +
 
     # Model prediction as line
     #geom_line(data = df, aes(x = inj, y = predicted.Concentration), color = "black", linewidth = 1) +
@@ -575,7 +579,7 @@ color_palette <- rep(base_palette, length.out = length(cal_cols))
     # Calibrant weights on secondary axis (0–1 scale)
     geom_line(
       data = df_long,
-      aes(x = inj, y = Weight * max(df$PeakArea, na.rm = TRUE), color = Calibration),  # scale to match y
+      aes(x = `Injection Position`, y = Weight * max(df$PeakArea, na.rm = TRUE), color = Calibration),  # scale to match y
       linetype = "dashed",
       linewidth = 1
     ) +

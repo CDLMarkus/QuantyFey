@@ -54,7 +54,7 @@ configure_settings_module <- function(input, output, session, rv) {
     df_QQ <- get_qq_table(input, rv)
 
     
-    datatable(df_QQ, options = list(dom = "t"), selection = "none")
+    datatable(df_QQ, options = list(dom = "tp"), selection = "none")
 
   })
 
@@ -69,7 +69,7 @@ configure_settings_module <- function(input, output, session, rv) {
       showNotification("No IS columns found.")
       NULL
     } else {
-      datatable(df_IS, options = list(dom = "t"), selection = "none")
+      datatable(df_IS, options = list(dom = "tp"), selection = "none")
     }
     
   })

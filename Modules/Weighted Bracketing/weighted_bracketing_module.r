@@ -11,11 +11,11 @@ output$bracketing_model_plot <- renderPlotly({
 
 
 tryCatch({
-  p <- get_plot_w_bracketing(input, rv)
+  p <- suppressWarnings({get_plot_w_bracketing(input, rv)})
 
 
 # Convert to interactive plot
-p <- ggplotly(p)
+p <- ggplotly(p, tooltip = c("Sample.Name", "Injection Position", "PeakArea"))
 
 })
 

@@ -1366,7 +1366,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
     areas <- get_peak_area_by_method(input$quantitation_method, rv)
 
-    message("Step 1: Retrieved calibration tables and areas.")
+    
 
     if(all(rv$setup_cal$Cal.Name %in% rv$data$Sample.Name)){
 
@@ -1382,7 +1382,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
 
         better_model <- ifelse(loftest$`Pr(>F)`[2] <= 0.05, "quad", "lin")
 
-        message("Step 2: Determined better model (linear or quadratic) for calibration data.")
+       
       }
       
       cal_n <- 2
@@ -1408,7 +1408,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
             break
           }
         }
-        message("Step 3: Optimized calibration model by iteratively testing quadratic and linear fits.")
+        
       })
 
       if(better_model == "quad"){
@@ -1420,7 +1420,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
       cal_temp$predicted.Concentration <- predict_concentrations(data = cal_temp, model = model_temp, method = ifelse(better_model == "quad", "quadratic", "linear"))
       cal_temp$accuracy <- cal_temp$predicted.Concentration / cal_temp$Concentration * 100
 
-      message("Step 4: Predicted concentrations and calculated accuracy for calibration data.")
+      
 
       good_or_not <- sapply(unique(cal_temp$Sample.Name), FUN = function(x) {
         mean <- cal_temp$accuracy[cal_temp$Sample.Name == x] %>% mean()
@@ -1447,14 +1447,14 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         }
       }
 
-      message("Step 5: Adjusted calibration levels based on sample predictions and accuracy.")
+      
 
       rv$LLOQs <- list()
 
 
       good_or_not[is.na(good_or_not)] <- FALSE
-
-      for (block in unique(rv$Classification_temp)) {
+      suppressWarnings({
+        for (block in unique(rv$Classification_temp)) {
         if(!all(good_or_not)){
           rv$LLOQs[[block]] <- min(unique(cal_temp$Concentration[cal_temp$Sample.Name %in% names(good_or_not)[good_or_not]]))
         } else {
@@ -1462,11 +1462,14 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         }
       }
 
+      })
+      
+
       
 
       if(is.finite(rv$LLOQs[[input$Block]])){
         updateNumericInput(session, inputId = "LOQ", label = "Limit of Quantification", value = rv$LLOQs[[input$Block]], step = min(concentrations(rv)), min = min(concentrations(rv)), max = max(concentrations(rv)))
-        message("Step 6: Updated Limit of Quantification (LOQ) based on calibration data.")
+        
       } else {
         showNotification(
           "LLOQ was not set, due to bad accuracy of the model! Please revise and adjust your regression model.",
@@ -1489,7 +1492,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
         return(df_temp)
       })
 
-      message("Step 7: Updated calibration tables and regression model selection.")
+      
     }   
   }
 
@@ -2076,7 +2079,7 @@ build_quant_results <- function(res_df, input, rv, quant, res_list, cpt_name){
 
         for (i in 1:ncol(rv$weights)) {
 
-          print(rv$weights)
+          #print(rv$weights)
 
           if(!grepl("Cal", colnames(rv$weights)[i])){
             next
