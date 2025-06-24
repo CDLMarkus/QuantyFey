@@ -149,7 +149,7 @@ This file contains **peak intensity data** (e.g., *Peak Areas* or *Peak Heights*
 
 Example file: `Example_Datasets/Example_Areas.csv`
 
-![Overview of the Example1 Dataset](images/example_areas.png)
+![Overview of the Example1 Dataset](images/example1_areas.png)
 
 #### **2. Retention Time Table**
 
