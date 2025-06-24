@@ -127,10 +127,10 @@ output$drift_output <- renderPlotly({
 
     if(is.null(int_unit)) {
       ylab <- "Peak Area"
-      ylab_corr <- "corrected Peak Area"
+      ylab_corr <- "Corrected Peak Area"
     } else {
       ylab <- paste("Peak Area [", int_unit, "]", sep = "")
-      ylab_corr <- paste("corrected Peak Area [", int_unit, "]", sep = "")
+      ylab_corr <- paste("Corrected Peak Area [", int_unit, "]", sep = "")
     }
 
   

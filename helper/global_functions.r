@@ -1286,7 +1286,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
     p2 <- ggplot(data = df, aes(x = inj, y = corrected.PeakArea, label = Sample.Name, fill = Sample.Type))+ geom_bar(stat = "identity", col = "black", width = 0.7) +
       scale_fill_manual(values = c("Model" = "red3", "Sample" = "lightblue3", "Cal" = "navy", "Blank" = "grey70", "QC" = "purple3")) +
       theme_pubclean(base_size = 17) +
-      labs(x = "Number of injection", y = "corrected Peak Area") +
+      labs(x = "Number of injection", y = "Corrected Peak Area") +
       theme(legend.position = "bottom")+
       stat_smooth(data = df[df$Sample.Name == cal_dc, ], mapping = aes(y = corrected.PeakArea, x = inj), formula = y ~ x, method = "lm", col = "red3", se = F)
     #})
