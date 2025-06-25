@@ -3,43 +3,10 @@
 # Display copyright and license information
 echo
 echo "QuantyFey  Copyright (C) 2025  Markus Aigensberger"
-echo "This program comes with ABSOLUTELY NO WARRANTY; for details type \"show w\"."
+echo "This program comes with ABSOLUTELY NO WARRANTY; refer to the LICENCE file for details."
 echo "This is free software, and you are welcome to redistribute it"
-echo "under the terms of the GNU General Public License v3.0; type \"show c\" for details."
+echo "under the terms of the GNU General Public License v3.0; refer to the LICENCE file for details."
 echo
-
-# Implement 'show w' and 'show c' commands
-while true; do
-    read -p 'Type "show w" for warranty, "show c" for license, or press Enter to continue: ' LICENSE_CMD
-    case "$LICENSE_CMD" in
-        "show w"|"SHOW W"|"Show W")
-            echo
-            echo "NO WARRANTY: This program is distributed in the hope that it will be useful,"
-            echo "but WITHOUT ANY WARRANTY; without even the implied warranty of"
-            echo "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the"
-            echo "GNU General Public License for more details."
-            echo
-            ;;
-        "show c"|"SHOW C"|"Show C")
-            echo
-            echo "LICENSE: This program is free software: you can redistribute it and/or modify"
-            echo "it under the terms of the GNU General Public License as published by"
-            echo "the Free Software Foundation, either version 3 of the License, or"
-            echo "(at your option) any later version."
-            echo
-            echo "You should have received a copy of the GNU General Public License"
-            echo "along with this program.  If not, see https://www.gnu.org/licenses/."
-            echo
-            ;;
-        "")
-            break
-            ;;
-        *)
-            ;;
-    esac
-done
-echo
-
 
 
 echo "=== DEBUGGING INFORMATION ==="

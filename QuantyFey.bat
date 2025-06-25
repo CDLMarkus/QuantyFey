@@ -3,34 +3,9 @@ setlocal
 :: Display copyright and license information
 echo.
 echo QuantyFey  Copyright (C) 2025  Markus Aigensberger
-echo This program comes with ABSOLUTELY NO WARRANTY; for details type "show w".
+echo This program comes with ABSOLUTELY NO WARRANTY; see the LICENCE file for details.
 echo This is free software, and you are welcome to redistribute it
-echo under the terms of the GNU General Public License v3.0; type "show c" for details.
-echo.
-
-:: Implement 'show w' and 'show c' commands
-:license_prompt
-set /p LICENSE_CMD=Type "show w" for warranty, "show c" for license, or press Enter to continue: 
-if /i "%LICENSE_CMD%"=="show w" (
-    echo.
-    echo NO WARRANTY: This program is distributed in the hope that it will be useful,
-    echo but WITHOUT ANY WARRANTY; without even the implied warranty of
-    echo MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    echo GNU General Public License for more details.
-    echo.
-    goto license_prompt
-) else if /i "%LICENSE_CMD%"=="show c" (
-    echo.
-    echo LICENSE: This program is free software: you can redistribute it and/or modify
-    echo it under the terms of the GNU General Public License as published by
-    echo the Free Software Foundation, either version 3 of the License, or
-    echo (at your option) any later version.
-    echo.
-    echo You should have received a copy of the GNU General Public License
-    echo along with this program.  If not, see https://www.gnu.org/licenses/.
-    echo.
-    goto license_prompt
-)
+echo under the terms of the GNU General Public License v3.0; see the LICENCE file for details.
 echo.
 
 
@@ -74,3 +49,7 @@ echo Running R Script...
 
 :: Pause to check output
 pause
+
+:: Keep console open at the very end
+echo Press any key to exit...
+pause >nul
