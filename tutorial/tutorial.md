@@ -8,7 +8,7 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
     - [Windows](#windows)
     - [Linux](#linux)
   - [Standalone installation](#standalone-installation)
-  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-rstudio-vs-code-etc)
+  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-rstudio)
 - [Notes before using your own data](#notes-before-using-your-own-data)
 - [Application Structure](#application-structure)
   - [Data Upload](#data-upload)
@@ -62,13 +62,13 @@ build-essential pkg-config
 - A console will open and first all requirec packages will be installed automatically
 
 
-#### **Installation for launching the app using RStudio, VS Code etc.**
+#### **Installation for launching the app using RStudio**
 - **Download** the GitHub repository.
 - **Unzip** the files to a destination of your choosing.
-- **Install** [RStudio](https://posit.co/download/rstudio-desktop/) or [VS Code](https://code.visualstudio.com/download)
+- **Install** [RStudio](https://posit.co/download/rstudio-desktop/)
 - **Install** [pandoc](https://pandoc.org/installing.html)
 - **Install** prerequisites as mentioned above.
-- **Open** `app.R` and **run** run the script
+- **Open** `app.R` and **run** the script
 
 
 > **Note**: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.
