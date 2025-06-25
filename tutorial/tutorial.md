@@ -6,7 +6,6 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
     - [Windows](#windows)
-    - [Linux](#linux)
   - [Standalone installation](#standalone-installation)
   - [Installation for launching the app using RStudio](#installation-for-launching-the-app-using-rstudio)
 - [Notes before using your own data](#notes-before-using-your-own-data)
@@ -44,20 +43,11 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
     - Do not update the R version if prompted.
     - Follow the installer instructions. You can ignore any non-critical error during the final steps.
 
-##### Linux
-Make sure all system dependencies are installed:
-```bash
-sudo apt update
-sudo apt install -y cmake libcurl4-openssl-dev libssl-dev libfontconfig1-dev libfreetype6-dev \
-libharfbuzz-dev libfribidi-dev libpng-dev libjpeg-dev libtiff5-dev libtirpc-dev \
-build-essential pkg-config
-```
-
 #### **Standalone Installation**
 
 - **Download** the latest version of [QuantyFey](https://github.com/CDLMarkus/QuantyFey/releases/)
 - **Unzip** the folder to a destination of your choice.
-- **Run** the batch (Windows) or shell (Linux) file to start the App.
+- **Run** the batch (Windows) file to start the App.
 > **Note:** you may need to approve the execution of the script on Windows*
 - A console will open and first all requirec packages will be installed automatically
 
