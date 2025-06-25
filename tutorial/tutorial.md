@@ -477,10 +477,10 @@ The **Quantification** tab is where the actual quantification of the selected tr
       > **Note**:
       > Values with PeakArea = 0 will automatically hava a weight of 0.
 - **Quantification Method**: Selects the quantification approach:
-    - `IS Correction`: One regression over all calibration blocks using IS ratios
-    - `Drift Correction`: One regression over all calibration blocks using drift corrected peak areas.
-    - `Custom Bracketing`: Individual regressions over the respective calibration data assigned to each block.
-    - `Weighted Bracketing`: Individual regressions for each injection weighted according to the position in the sequence.
+    - [`IS Correction`](#is-correction): One regression over all calibration blocks using IS ratios
+    - [`Drift Correction`](#drift-correction): One regression over all calibration blocks using drift corrected peak areas.
+    - [`Custom Bracketing`](#custom-bracketing): Individual regressions over the respective calibration data assigned to each block.
+    - [`Weighted Bracketing`](#weighted-bracketing): Individual regressions for each injection weighted according to the position in the sequence.
     - `Default Bracketing`: One regression over all calibration blocks.
 - **Show Samples**: Toggles sample visibility in plots.
 
