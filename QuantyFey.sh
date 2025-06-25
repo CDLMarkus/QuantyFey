@@ -9,38 +9,63 @@ echo "under the terms of the GNU General Public License v3.0; refer to the LICEN
 echo
 
 
-echo "=== DEBUGGING INFORMATION ==="
-echo "Current Directory: $(pwd)"
-echo "Script Location: $(dirname "$0")"
+
+# Set the script directory
+SCRIPT_DIR=$(dirname "$0")
 
 # Set the path to the portable R executable
-R_PATH="$(dirname "$0")/Dependencies/R-Portable/bin/Rscript"
-echo "R_PATH: $R_PATH"
+R_PATH="/usr/bin/R"
 
 # Check if Rscript exists
-if [ ! -f "$R_PATH" ]; then
-    echo "ERROR: Rscript not found in $(dirname "$0")/Dependencies/R-Portable/bin"
+if [ ! -x "$R_PATH" ]; then
+    echo "ERROR: Rscript not found in $R_PATH"
+    echo "Consider installing it with 'sudo apt install r-base'"
     exit 1
+else
+    echo "R path: $R_PATH"
 fi
 
 # Set library path for the portable R version
-export R_LIBS_USER="$(dirname "$0")/Dependencies/portable R/library"
+R_LIBS_USER=$(realpath "$SCRIPT_DIR/library")
 echo "R_LIBS_USER: $R_LIBS_USER"
 
-# Set Pandoc Path
-export RSTUDIO_PANDOC="$(dirname "$0")/Dependencies/pandoc-3.6.3"
-echo "RSTUDIO_PANDOC: $RSTUDIO_PANDOC"
+# Create R_LIBS_USER directory if it doesn't exist
+mkdir -p "$R_LIBS_USER"
 
-# Verify Pandoc
-"$RSTUDIO_PANDOC/pandoc" --version
-if [ $? -ne 0 ]; then
-    echo "ERROR: Pandoc is not found or not working!"
+# Set Pandoc Path
+RSTUDIO_PANDOC=$(realpath "$SCRIPT_DIR/pandoc-3.6.3")
+
+# Check if Pandoc exists
+if [ ! -x "$RSTUDIO_PANDOC" ]; then
+    echo "ERROR: Pandoc not found in $RSTUDIO_PANDOC"
+    echo "Consider installing it with 'sudo apt install pandoc'"
     exit 1
+else
+    echo "RSTUDIO_PANDOC: $RSTUDIO_PANDOC"
+fi
+
+# Check if cmake exists
+if [ ! -x "cmake" ]; then
+    echo "ERROR: cmake not found"
+    echo "Consider installing it with 'sudo apt install cmake'"
+    exit 1
+else
+    echo "cmake found"
+fi
+
+# Ensure renv is installed
+echo 
+"$R_PATH" -e "if (!requireNamespace('renv', quietly = TRUE)){ cat('Installing renv package...'); install.packages('renv', repos = 'https://cloud.r-project.org/'); }"
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to install renv package!"
+    exit 1
+else
+    echo "renv package available"
 fi
 
 # Run the R script
-echo "Running R Script..."
-"$R_PATH" --vanilla "$(dirname "$0")/app.R"
+echo "Running R Script... $SCRIPT_DIR"
+"${R_PATH}script" --vanilla "$SCRIPT_DIR/QuantyFey-Script.R"
 
-# Pause to check output
-read -p "Press any key to continue..."
+echo "Script completed."
+
