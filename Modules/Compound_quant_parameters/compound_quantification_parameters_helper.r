@@ -176,7 +176,7 @@ overwrite_below_LLOQ <- function(rv, cpt_name) {
 save_interim_results <- function(input, rv) {
     tryCatch({
         setwd(results_directory(input))
-        if ("Results_quant.csv" %in% dir()) {
+        if ("Results_quant.xlsx" %in% dir()) {
             interim_files <- list.files(pattern = "Results_quant")
             interim_files <- sort(interim_files)
             file_matched <- FALSE
@@ -188,7 +188,7 @@ save_interim_results <- function(input, rv) {
                 if (all(colnames(interim_data) %in% colnames(rv$results))) {
                     subset_results <- rv$results[, colnames(interim_data)]
                     if (identical(subset_results, interim_data)) {
-                        write.csv(rv$results, file)
+                        write_xlsx(rv$results, file)
                         file_matched <- TRUE
                         break
                     }
@@ -196,17 +196,17 @@ save_interim_results <- function(input, rv) {
             }
             if (!file_matched) {
                 timestamp <- format(Sys.Date(), "%Y%m%d")
-                results_filename <- paste0("Results_quant_", timestamp, ".csv")
+                results_filename <- paste0("Results_quant_", timestamp, ".xlsx")
             } else {
-                results_filename <- "Results_quant.csv"
+                results_filename <- "Results_quant.xlsx"
             }
-            write.csv(rv$results, results_filename)
+            write_xlsx(rv$results, results_filename)
         } else {
-          results_filename <- "Results_quant.csv"
-            write.csv(rv$results, results_filename)
+          results_filename <- "Results_quant.xlsx"
+            write_xlsx(rv$results, results_filename)
         }
         if(is.null(results_filename)){
-            results_filename <- "Results_quant.csv"
+            results_filename <- "Results_quant.xlsx"
         }
 
         return(results_filename)
