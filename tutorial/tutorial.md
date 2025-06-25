@@ -8,7 +8,7 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
     - [Windows](#windows)
     - [Linux](#linux)
   - [Standalone installation](#standalone-installation)
-  - [Installation for launching the app using RStudio, VS Code etc.](#installation-for-launching-the-app-using-rstudio)
+  - [Installation for launching the app using RStudio](#installation-for-launching-the-app-using-rstudio)
 - [Notes before using your own data](#notes-before-using-your-own-data)
 - [Application Structure](#application-structure)
   - [Data Upload](#data-upload)
