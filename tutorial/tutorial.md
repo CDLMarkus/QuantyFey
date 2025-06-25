@@ -48,7 +48,7 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
 - **Download** the latest version of [QuantyFey](https://github.com/CDLMarkus/QuantyFey/releases/)
 - **Unzip** the folder to a destination of your choice.
 - **Run** the batch (Windows) file to start the App.
-> **Note:** you may need to approve the execution of the script on Windows*
+> **Note:** you may need to approve the execution of the script on Windows
 - A console will open and first all requirec packages will be installed automatically
 
 
