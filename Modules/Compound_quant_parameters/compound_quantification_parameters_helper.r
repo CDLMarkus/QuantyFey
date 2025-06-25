@@ -181,7 +181,7 @@ save_interim_results <- function(input, rv) {
             interim_files <- sort(interim_files)
             file_matched <- FALSE
             for (file in interim_files) {
-                interim_data <- read.csv(file)
+                interim_data <- read_xlsx(file)
                 if ("X" %in% colnames(interim_data)) {
                     interim_data <- interim_data[, !colnames(interim_data) %in% "X"]
                 }

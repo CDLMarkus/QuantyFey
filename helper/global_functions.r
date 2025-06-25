@@ -1053,7 +1053,7 @@ read_file_safe = function(file_name, seps = c(":", ";", ",", " ", "\t"), allowed
           error("No valid separator was found. Make sure, only ',', ';', ':', ' ', '\t' are used.")
         }
 
-        data <- read.csv(file_name, sep = valid_sep)
+        data <- read_xlsx(file_name, sep = valid_sep)
         }
 
         colnames(data) <- gsub("[^a-zA-Z0-9._]", ".", colnames(data))
