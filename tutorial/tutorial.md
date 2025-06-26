@@ -55,6 +55,8 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
 #### **Installation for launching the app using RStudio**
 - **Download** the GitHub repository.
 - **Unzip** the files to a destination of your choosing.
+- **Install** [R](https://cran.r-project.org/)
+  > **Make sure R version 4.2.x is installed; versions > 4.5 might be troublesome for installing packages!**
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/)
 - **Install** [pandoc](https://pandoc.org/installing.html)
 - **Install** prerequisites as mentioned above.
@@ -607,8 +609,29 @@ An **automatic optimization feature** is available to suggest a possible regress
 
 - **Package Installation Failure**:
     - Ensure RTools 4.2 is correctly installed.
+    - Ensure the correct R version is installed (R 4.2.x is preferred)
 
 - **Console Does Not Open**:
     - Relocate the application folder to a different directory.
     - Avoid running the application from the "Downloads" folder, as this may cause issues.
+
+- **Report is not generated**
+  - Ensure tinytex is installed.
+    - Open the R console and type:
+      ``` r
+      install_packages("tinytex")
+      tinytex::install_tinytex()
+      ```
+  - Ensure pandoc is available
+    - Open the R console and type:
+      ``` r
+      markdown::pandoc_available()
+      ```
+    - If `false` install pandoc:
+      ``` r
+      install.packages("pandoc")
+      pandoc::pandoc_install()
+      ```
+      
+      
 
