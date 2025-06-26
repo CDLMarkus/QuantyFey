@@ -23,6 +23,7 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
     - [Saving Results](#saving-results)
   - [Results](#results)
 - [Summary](#summary)
+- [Troubleshooting](#troubleshooting)
 
 
 ### **Installation**
@@ -624,10 +625,13 @@ An **automatic optimization feature** is available to suggest a possible regress
       ```
   - Ensure pandoc is available
     - Open the R console and type:
+      
       ``` r
       markdown::pandoc_available()
       ```
-    - If `false` install pandoc:
+      
+    - If `false`: install pandoc:
+      
       ``` r
       install.packages("pandoc")
       pandoc::pandoc_install()
