@@ -627,7 +627,7 @@ An **automatic optimization feature** is available to suggest a possible regress
     - Open the R console and type:
       
       ``` r
-      markdown::pandoc_available()
+      rmarkdown::pandoc_available()
       ```
       
     - If `false`: install pandoc:
