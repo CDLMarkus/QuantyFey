@@ -1,3 +1,4 @@
 # .gitignore
 Dependencies/R-Portable/
 Dependencies/pandoc-3.6.3/
+Dependencies/pandoc-3.6.3-linux/
