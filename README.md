@@ -38,14 +38,11 @@ QuantyFey provides:
 ## **Prerequisites**
 ### **Windows**:
 - **RTools**: Version 4.2 must be installed.
- 
-### **Linux**
 
-Multiple packages are required for **Quanty Fey** to run smoothly on Linux. Make sure all of them are installed. Refer to the [tutorial](tutorial/tutorial.md) for more informaiton.
 
-### **Mac**
+### **Mac and Linux**
 
-Not working as a standalone application on iOS. Can be run locally using **R**, or **RStudio**.
+Not working as a standalone application on iOS and Linux. Can be run locally using **R**, or **RStudio**.
 
 ---
 
