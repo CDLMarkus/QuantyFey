@@ -189,7 +189,7 @@ When selected, the left pane will be updated with the respective template. If th
 
 > **Note:**
 > Make sure the correct template is selected - quantification will not work if the template does not match your data or the wrong sheet is chosen.
-> Refer to [Chapter `Notes before using your own data`](#notes_before_using_your_own_data) for more information how to add your template the the `tamplets.xlsx` file.
+> Refer to [`Notes before using your own data`](#notes-before-using-your-own-data) for more information how to add your template the the `tamplets.xlsx` file.
 
 #### **Change patterns**
 QuantyFey automatically detects **Quantifier**, **Qualifier**, and **Internal Standard (IS)** transitions by searching for predefined patterns in the column names of the Peak Table. These patterns can be customized to match your dataset's naming.
