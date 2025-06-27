@@ -44,6 +44,7 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
     - Do not update the R version if prompted.
     - Follow the installer instructions. You can ignore any non-critical error during the final steps.
 
+
 #### **Standalone Installation**
 
 - **Download** the latest version of [QuantyFey](https://github.com/CDLMarkus/QuantyFey/releases/)
