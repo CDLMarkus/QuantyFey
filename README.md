@@ -53,7 +53,7 @@ Not working as a standalone application on iOS and Linux. Can be run locally usi
 
 1. Download the zip file download [QuantyFey.zip](https://github.com/CDLMarkus/QuantyFey/releases/)
 2. Extract the folder to a desired location.
-3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (Windows) or `QuantyFey.sh` (Linux) (approval may be required).
+3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (Windows only)(approval may be required).
 4. The console will open, and all required packages will be installed automatically (this process may take up to 10 minutes).
 5. Once installation is complete, the application will launch in your default web browser.
 
