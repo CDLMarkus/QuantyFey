@@ -1,16 +1,19 @@
-#### Shiny App QuantyFey Version beta 0.1
+#### Shiny App QuantyFey Version 1.0.0
 #### Author Markus Aigensberger
 #### Funding Christian Doppler Forschungsgesellschaft
 #### Project CDL-LiveGut
-#### Date 2022-09-01
+#### Date 2025-06-26
+
+#### Display copyright and license information
+
+#### QuantyFey  Copyright (C) 2025  Markus Aigensberger
+#### This program comes with ABSOLUTELY NO WARRANTY; see the LICENCE file for details.
+#### This is free software, and you are welcome to redistribute it
+#### under the terms of the GNU General Public License v3.0; see the LICENCE file for details.
+
+
 
 ## Load necessary libraries ----
-
-# Set Java environment (commented out as it might not be necessary for all users)
- #Sys.setenv(JAVA_HOME = "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.2.13-hotspot")
-
-
-
 
 
 # Check if required files are present in the working directory
