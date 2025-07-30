@@ -180,6 +180,12 @@ observe_input_file_1 <- function(input, rv, session) {
     sample_name_counts <- sapply(unique_sample_names, function(x) sum(rv$data$Sample.Name == x))
     unique_sample_names <- unique_sample_names[sample_name_counts > 2]
     sample_name_counts <- sample_name_counts[sample_name_counts > 2]
+
+    # If unique_sample_names and sample_name_counts are both empty, do not filter
+    if (length(unique_sample_names) == 0 && length(sample_name_counts) == 0) {
+      unique_sample_names <- unique(rv$data$Sample.Name[rv$data$Sample.Type != "Blank"])
+      sample_name_counts <- sapply(unique_sample_names, function(x) sum(rv$data$Sample.Name == x))
+    }
     display_choices <- paste(unique_sample_names, "(", sample_name_counts, ")", sep = "")
 
     updateSelectInput(session, inputId = "files_for_correction", choices = setNames(unique_sample_names, display_choices))

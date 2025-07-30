@@ -469,55 +469,60 @@ selected <- event_data("plotly_selected", source = "quant")
 
 
 # ------------------------------------------
-  output$HoR <- renderPlot({
-    mods <- quantitate(input, rv)[3]
-
-    mod_temp <- mods[[1]][[input$Block]]
-
-    p <- gg_reshist(mod_temp) + theme_pubr()
-
-    plot(p)
+output$HoR <- renderPlotly({
+  mod_temp <- quantitate(input, rv)[3][[1]][[input$Block]]
+  tryCatch({
+    p <- gg_reshist_with_guides(mod_temp)
+    if (!is.null(p)) ggplotly(p)
+  }, error = function(e) {
+    showNotification("The plot could not be generated.", type = "error")
+    NULL
   })
+})
 
-  output$RFV <- renderPlot({
-    mods <- quantitate(input, rv)[3]
-
-    mod_temp <- mods[[1]][[input$Block]]
-
-    p <- gg_resfitted(mod_temp) + theme_pubr()
-
-    plot(p)
+output$RFV <- renderPlotly({
+  mod_temp <- quantitate(input, rv)[3][[1]][[input$Block]]
+  tryCatch({
+    p <- gg_resfitted_with_limits(mod_temp)
+    if (!is.null(p)) ggplotly(p)
+  }, error = function(e) {
+    showNotification("The plot could not be generated.", type = "error")
+    NULL
   })
+})
 
-  output$QQ <- renderPlot({
-    mods <- quantitate(input, rv)[3]
-
-    mod_temp <- mods[[1]][[input$Block]]
-
-    p <- gg_qqplot(mod_temp) + theme_pubr()
-
-    plot(p)
+output$QQ <- renderPlotly({
+  mod_temp <- quantitate(input, rv)[3][[1]][[input$Block]]
+  tryCatch({
+    p <- qq_with_ci(mod_temp)
+    if (!is.null(p)) ggplotly(p)
+  }, error = function(e) {
+    showNotification("The plot could not be generated.", type = "error")
+    NULL
   })
+})
 
-  output$SLP <- renderPlot({
-    mods <- quantitate(input, rv)[3]
-
-    mod_temp <- mods[[1]][[input$Block]]
-
-    
-    p <- gg_scalelocation(mod_temp) + theme_pubr()
-    #gg_scalelocation()
-    plot(p)
+output$SLP <- renderPlotly({
+  mod_temp <- quantitate(input, rv)[3][[1]][[input$Block]]
+  tryCatch({
+    p <- gg_scalelocation_with_limits(mod_temp)
+    if (!is.null(p)) ggplotly(p)
+  }, error = function(e) {
+    showNotification("The plot could not be generated.", type = "error")
+    NULL
   })
+})
 
-  output$CDP <- renderPlot({
-    mods <- quantitate(input, rv)[3]
-
-    mod_temp <- mods[[1]][[input$Block]]
-
-    p <- gg_cooksd(mod_temp) + theme_pubr()
-    plot(p)
+output$CDP <- renderPlotly({
+  mod_temp <- quantitate(input, rv)[3][[1]][[input$Block]]
+  tryCatch({
+    p <- gg_cooksd_with_threshold(mod_temp)
+    if (!is.null(p)) ggplotly(p)
+  }, error = function(e) {
+    showNotification("The plot could not be generated.", type = "error")
+    NULL
   })
+})
 
 
 

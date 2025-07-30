@@ -426,11 +426,11 @@ navset_pill(
                         verbatimTextOutput("click"))), card(checkboxInput(inputId = "log_scale", label = "Show log scale", value = F))),
                         nav_panel("Accuracy", card(plotlyOutput("p_acc", height = "600px"), DTOutput("acc_table"), verbatimTextOutput("click_acc"), verbatimTextOutput("select_info_acc"), height = "1400px")),
                         nav_panel("Model Diagnostics", card(navset_pill(
-                          nav_panel("Histogram of Residuals", plotOutput("HoR", height = "800px")),
-                          nav_panel("Residuals vs. Fitted Values", plotOutput("RFV", height = "800px")),
-                          nav_panel("Normal-QQ Plot", plotOutput("QQ", height = "800px")),
-                          nav_panel("Scale-Location Plot", plotOutput("SLP", height = "800px")),
-                          nav_panel("Cook's Distance Plot", plotOutput("CDP", height = "800px"))
+                          nav_panel("Histogram of Residuals", plotlyOutput("HoR", height = "800px")),
+                          nav_panel("Residuals vs. Fitted Values", plotlyOutput("RFV", height = "800px")),
+                          nav_panel("Normal-QQ Plot", plotlyOutput("QQ", height = "800px")),
+                          nav_panel("Scale-Location Plot", plotlyOutput("SLP", height = "800px")),
+                          nav_panel("Cook's Distance Plot", plotlyOutput("CDP", height = "800px"))
                         ))),
                         nav_panel("Results", card(DTOutput("quan_results_table", width = "600px"), height = "900px"))
                       )
