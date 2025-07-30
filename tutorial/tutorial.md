@@ -515,21 +515,35 @@ An automatic optimization Button allows the user to do a generic optimization of
 This section provides a set of diagnostics plots to evaluate how well the model assumtion hold. These plots are generated using the `lindia`package and help identify issues such as non-linearity, non-constant variance, outliers, and influential observations.
 The following plots are included:
 
-    - Histogram of Residuals
-      <img src="images/model_diagnostics_HisRes.png" width="300px" />  
-      > This plots shows the distribution of residuals (the differences between observed and predicted values). Ideally, the residuals should be roughly normally distributed and centered around zero. A skewed or multi-peakd distribution may indicate problems like non-linearity or omitted variables.
-    - Residuals vs. Fitted Values
-      <img src="images/model_diagnostics_ResFit.png" width="300px" />  
-      > This scatter plot helps assess wheather the residuals have constant variance (homoscedacity) and wheather the relationship between predictors and outcome is linear. A random scatter around the horizontal line at zero is a good indication. Patterns (e.g., curves or funnels) suggest violations of these assumptions.
-    - Normal Q-Q Plot
-      <img src="images/model_diagnostics_QQ.png" width="300px" />  
-      > This plot compares the distribution of residuals to a normal distribution. If the residuals are normally distributed, the points should lie along the 45-degree reference line. Systematic deviations (e.g., heavy tails or S-shapes) suggest that the residuals are not normal, which may affect inference (e.g., p-values, confidence intervals). 
-    - Scale-Location Plot
-      <img src="images/model_diagnostics_ScaleLoc.png" width="300px" />  
-      > This plot shows the square root of the standardized residuals versus the fitted values. It helps check for homoscedasticity. Ideally, the points should be evenly spread. A clear pattern (e.g., increasing or decreasing spread) indicates heteroscedasticity.
-    - Cook's Distance
-      <img src="images/model_diagnostics_cooksD.png" width="300px" />  
-      > Cook's Distance measures the overall influence of each observation on the fitted model. Points with a Cook's Distance substantially larger than others (often flagged with a threshold, like 4/n) may have an outsized impact on the model and should be investigated further.
+- Histogram of Residuals
+   
+<img src="images/model_diagnostics_HisRes.png" width="400px" />
+
+> This plots shows the distribution of residuals (the differences between observed and predicted values). Ideally, the residuals should be roughly normally distributed and centered around zero. A skewed or multi-peakd distribution may indicate problems like non-linearity or omitted variables.
+   
+- Residuals vs. Fitted Values
+      
+<img src="images/model_diagnostics_ResFit.png" width="400px" />  
+
+> This scatter plot helps assess wheather the residuals have constant variance (homoscedacity) and wheather the relationship between predictors and outcome is linear. A random scatter around the horizontal line at zero is a good indication. Patterns (e.g., curves or funnels) suggest violations of these assumptions.
+    
+- Normal Q-Q Plot
+    
+<img src="images/model_diagnostics_QQ.png" width="400px" />  
+
+> This plot compares the distribution of residuals to a normal distribution. If the residuals are normally distributed, the points should lie along the 45-degree reference line. Systematic deviations (e.g., heavy tails or S-shapes) suggest that the residuals are not normal, which may affect inference (e.g., p-values, confidence intervals). 
+      
+- Scale-Location Plot
+    
+<img src="images/model_diagnostics_ScaleLoc.png" width="400px" />  
+
+> This plot shows the square root of the standardized residuals versus the fitted values. It helps check for homoscedasticity. Ideally, the points should be evenly spread. A clear pattern (e.g., increasing or decreasing spread) indicates heteroscedasticity.
+    
+- Cook's Distance
+
+<img src="images/model_diagnostics_cooksD.png" width="400px" /> 
+
+> Cook's Distance measures the overall influence of each observation on the fitted model. Points with a Cook's Distance substantially larger than others (often flagged with a threshold, like 4/n) may have an outsized impact on the model and should be investigated further.
   
 > **Note**: These diagnostic polts are helpful for checking model assumptions and identifying problematic observations. For further details on how these plots are constructed and used, please refer to the [`lindia`](https://github.com/yeukyul/lindia) package documentation.
   
