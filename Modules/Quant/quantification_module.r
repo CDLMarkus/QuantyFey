@@ -1,6 +1,6 @@
 ## Quantification Module
 
-# modules/quantification_module.R
+# modules/quantification_module.r
 
 source("Modules/Quant/quantification_helper.r", local = TRUE)
 

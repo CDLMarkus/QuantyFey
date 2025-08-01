@@ -17,7 +17,7 @@
 
 
 # Check if required files are present in the working directory
-required_files <- c("./Modules/Package_installation/install_packages.R", "./helper/global_functions.R", "./Modules/Report/report_markdown.Rmd", "./Dependencies/templates.xlsx")
+required_files <- c("./Modules/Package_installation/install_packages.r", "./helper/global_functions.r", "./Modules/Report/report_markdown.rmd", "./Dependencies/templates.xlsx")
 missing_files <- required_files[!file.exists(required_files)]
 
 if (length(missing_files) > 0) {
@@ -25,7 +25,7 @@ if (length(missing_files) > 0) {
 }
 
 # Source the script to install required packages
-source("./Modules/Package_installation/install_packages.R")
+source("./Modules/Package_installation/install_packages.r")
 
 
 # Load required libraries
@@ -63,9 +63,9 @@ suppressPackageStartupMessages({
 })
 
 
-source("./helper/global_functions.R")
+source("./helper/global_functions.r")
 source("./helper/dev_functions.r")
-source("default_settings.R")
+source("default_settings.r")
 
 # Check if the file exists in the current working directory
 
@@ -107,7 +107,7 @@ icon_data <- base64enc::dataURI(file = "Dependencies/icon.png", mime = "image/pn
 
 source("./Modules/UI/ui.r")
 script_path <- get_script_directory()
-source("./helper/global_functions.R")
+source("./helper/global_functions.r")
 # Create and run the Shiny app
 app <- shinyApp(server = server, ui = ui)
 
