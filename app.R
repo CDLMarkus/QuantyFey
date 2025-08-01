@@ -112,8 +112,16 @@ source("./helper/global_functions.R")
 app <- shinyApp(server = server, ui = ui)
 
 
-runApp(app, launch.browser = T)
 
-
-
+cat("parsing args")
+args = commandArgs(trailingOnly=TRUE)
+if(length(args) == 2){
+    launch = tolower(args[1]) == "true"
+    port = as.integer(args[2])
+}else{
+    launch = TRUE
+    port = 3000
+}
+cat(sprintf("Launching QuantyFey on port %d", launch, port))
+runApp(app, launch.browser = launch, port = port)
 
