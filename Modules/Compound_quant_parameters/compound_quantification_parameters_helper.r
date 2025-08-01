@@ -235,7 +235,7 @@ generate_report_if_requested <- function(input, rv, cpt_name) {
     if (input$generate_report) {
         tryCatch({
             setwd(script_path)
-            rmd_file <- file.path(script_path, "./Modules/Report/report_markdown.Rmd")
+            rmd_file <- file.path(script_path, "./Modules/Report/report_markdown.rmd")
             output_file <- paste0("Report_", cpt_name, ".pdf")
             if (file.exists(file.path(results_directory(input), output_file))) {
                 timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
