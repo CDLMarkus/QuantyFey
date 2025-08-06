@@ -21,18 +21,28 @@ install_if_missing(required_packages)
 # Load renv to check for lock file
 library(renv)
 
+# Get the major.minor version of R
+r_version <- paste0(R.version$major, ".", strsplit(R.version$minor, "\\.")[[1]][1])
+lockfile_name <- paste0("renv.lock.", r_version)
+
+# Check and copy version-specific lockfile if it exists
 start <- Sys.time()
-# Check if renv.lock file exists in the current working directory
-if (file.exists("renv.lock")) {
-  message("Lock file found. Restoring environment...")
+if (file.exists(lockfile_name)) {
+  message("Found lockfile for R version ", r_version, ": ", lockfile_name)
+  file.copy(lockfile_name, "renv.lock", overwrite = TRUE)
+  message("Copied ", lockfile_name, " to renv.lock. Restoring environment...")
+  renv::restore()
+} else if (file.exists("renv.lock")) {
+  message("Default renv.lock found. Restoring environment...")
   renv::restore()
 } else {
-  message("No lock file found. Skipping environment restoration.")
+  message("No lockfile found for R version ", r_version, ". Skipping environment restoration.")
 }
 end <- Sys.time()
 
 message("Time taken for renv restore: ", round(difftime(end, start, units = "secs"), 2), " seconds")
-# Check and install additional packages (tinytex and shiny)
+
+# Check and install additional packages
 additional_packages <- c("tinytex", "shiny")
 install_if_missing(additional_packages)
 
