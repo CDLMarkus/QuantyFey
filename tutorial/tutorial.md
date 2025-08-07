@@ -65,7 +65,7 @@ sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-opens
 - **Download** the GitHub repository.
 - **Unzip** the files to a destination of your choosing.
 - **Install** [R](https://cran.r-project.org/)
-  > **Make sure R version 4.2.x is installed; versions > 4.5 might be troublesome for installing packages!**
+  > **Preferable the current version 4.5 or 4.2 (version the app was developed in)**
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/)
 - **Install** [pandoc](https://pandoc.org/installing.html)
 - **Install** prerequisites as mentioned above.
