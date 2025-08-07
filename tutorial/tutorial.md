@@ -44,6 +44,13 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
     - Do not update the R version if prompted.
     - Follow the installer instructions. You can ignore any non-critical error during the final steps.
 
+##### Linux
+install the following packages before using **QuantyFey**
+``` bash
+sudo apt update
+sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev 
+```
+
 
 #### **Standalone Installation**
 
@@ -62,7 +69,8 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/)
 - **Install** [pandoc](https://pandoc.org/installing.html)
 - **Install** prerequisites as mentioned above.
-- **Open** `app.R` and **run** the script
+- **Open** `app.r` and **run** the script (in RStudio)
+- **Source** `app.r` (in the R terminal)
 
 
 > **Note**: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.
