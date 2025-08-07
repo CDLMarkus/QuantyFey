@@ -39,10 +39,14 @@ QuantyFey provides:
 ### **Windows**:
 - **RTools**: Version 4.2 must be installed.
 
+### **Linux**
+multiple prerequisites - please refer to the [`tutorial`](tutorial/tutorial.md) for more information.
+
 
 ### **Mac and Linux**
 
-Not working as a standalone application on iOS and Linux. Can be run locally using **R**, or **RStudio**.
+Currently not working as a standalone version for **Linux** or **Mac**.
+Possible to run it using **R console** or **RStudio** by using the Repository - installing prerequisites and sourcing `app.r`.
 
 ---
 
