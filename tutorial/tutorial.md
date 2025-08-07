@@ -646,7 +646,6 @@ An **automatic optimization feature** is available to suggest a possible regress
 
 - **Package Installation Failure**:
     - Ensure RTools 4.2 is correctly installed.
-    - Ensure the correct R version is installed (R 4.2.x is preferred)
 
 - **Console Does Not Open**:
     - Relocate the application folder to a different directory.
