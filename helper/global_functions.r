@@ -40,7 +40,9 @@ results_directory <- function(input = NULL) {
   path <- stringr::str_replace_all(path, "\\\\", "/")
   
   if (!dir.exists(path)) {
-    stop("Error: Documents folder not found! Please check your system.")
+    message("Error: Documents folder not found! Results stored in current directory.")
+
+    return(".")
   }
   
   # Set working directory to Documents
