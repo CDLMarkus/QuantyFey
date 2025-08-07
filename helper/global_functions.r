@@ -42,7 +42,7 @@ results_directory <- function(input = NULL) {
   if (!dir.exists(path)) {
     message("Error: Documents folder not found! Results stored in current directory.")
 
-    return(".")
+    return("/user_host_home")
   }
   
   # Set working directory to Documents
