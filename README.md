@@ -66,6 +66,8 @@ This comes with mutliple batch files for installation of wsl, apptainer and othe
 
 > **Note:** For Windows the standalone version is preferred - as writing output is not as easily done with the apptainer version.
 
+---
+
 ## **Overview**
 
 ![Overview of the QuantyFey Application](tutorial/images/workflow.png)
