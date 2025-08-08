@@ -42,14 +42,6 @@ QuantyFey provides:
 ### **Linux**
 multiple prerequisites - please refer to the [`tutorial`](tutorial/tutorial.md) for more information.
 
-
-### **Mac and Linux**
-
-A standalone version based on **Apptainer** is available for download [QuantyFey_apptainer.zip](https://github.com/CDLMarkus/QuantyFey/releases/).
-This comes with mutliple batch files for installation of wsl, apptainer and other required packages - as well as a launch script (as shell for Linux or batch for Windows).
-
-For Windows - the standalone Windows Version is preferred (next chapter).
-
 ---
 
 > Refer to the [`tutorial`](tutorial/tutorial.md) for a more information on installing and using **QuantyFey**.
@@ -62,6 +54,17 @@ For Windows - the standalone Windows Version is preferred (next chapter).
 3. Navigate to the `QuantyFey` folder and execute `QuantyFey.bat` (Windows only)(approval may be required).
 4. The console will open, and all required packages will be installed automatically (this process may take up to 10 minutes).
 5. Once installation is complete, the application will launch in your default web browser.
+
+## **Apptainer Version Installation**
+
+A standalone version based on **Apptainer** is available for download.
+This comes with mutliple batch files for installation of wsl, apptainer and other required packages - as well as a launch script (as shell for Linux or batch for Windows).
+
+1. Download and unzip [QuantyFey_apptainer.zip](https://github.com/CDLMarkus/QuantyFey/releases/)
+2. Windows: install wsl and apptainer - use `install_wsl.bat` (admin rights required) and `setup.bat`.
+3. Launch the app using `launch_windows.bat` or `launch_linux.sh`
+
+> **Note:** For Windows the standalone version is preferred - as writing output is not as easily done with the apptainer version.
 
 ## **Overview**
 
