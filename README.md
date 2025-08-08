@@ -45,8 +45,10 @@ multiple prerequisites - please refer to the [`tutorial`](tutorial/tutorial.md) 
 
 ### **Mac and Linux**
 
-Currently not working as a standalone version for **Linux** or **Mac**.
-Possible to run it using **R console** or **RStudio** by using the Repository - installing prerequisites and sourcing `app.r`.
+A standalone version based on **Apptainer** is available for download [QuantyFey_apptainer.zip](https://github.com/CDLMarkus/QuantyFey/releases/).
+This comes with mutliple batch files for installation of wsl, apptainer and other required packages - as well as a launch script (as shell for Linux or batch for Windows).
+
+For Windows - the standalone Windows Version is preferred (next chapter).
 
 ---
 
