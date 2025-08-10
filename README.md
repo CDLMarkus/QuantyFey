@@ -35,12 +35,86 @@ QuantyFey provides:
 ---
 # **Quick Installation Guide**
 
-## **Prerequisites**
-### **Windows**:
+## Standalone Version
+
+The standalone version [QuantyFey](https://github/CDLMarkus/QuantyFey/releases/) only works on **Windows** systems. It runs on R-portable 4.2.0 and runs locally on the user's computer.
+
+### **Prerequisites**
 - **RTools**: Version 4.2 must be installed.
 
+## Apptainer Version
+
+To facilitate usability also by other computer systems, a apptainer container was built including a **Linux Debian** version with all necessary packages. Multiple prerequisites must be installed to facilitate a smooth launch of the app.
+
+### **MacOS**
+- **Homebrewer**:
+- **Linux Virtual Machine (VM)** (Lima)
+- [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html) in the Lima VM
+
+### **Windows**
+- **Windows Subsystem for Linux (WSL)**
+- [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html) in WSL
+
 ### **Linux**
-multiple prerequisites - please refer to the [`tutorial`](tutorial/tutorial.md) for more information.
+- [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html)
+
+To facilitate the output generation, the document directory must be bound to the VM during its launch:
+
+Linux:
+``` bash
+# Set the bind target (Documents folder)
+BIND_PATH="$HOME/Documents"
+
+# bind and run the apptainer
+apptainer run --bind "${BIND_PATH}:/user_host_home" ./QuantyFey.sif &
+```
+Windows:
+``` bash
+:: Get user Documents path
+for /f "usebackq tokens=*" %%A in (`powershell -noprofile -command "[Environment]::GetFolderPath('MyDocuments')"`) do set "WIN_DOCS=%%A"
+
+:: Convert to WSL path
+set "WSL_DOCS=%WIN_DOCS:C:=/mnt/c%"
+set "WSL_DOCS=%WSL_DOCS:\=/%"
+
+:: Change to the directory where this script is
+cd /d %~dp0
+
+echo Mapping %WIN_DOCS% to /user_host_home and launching container...
+
+:: Run Apptainer with bind
+wsl --distribution Debian --exec apptainer run --bind "%WSL_DOCS%:/user_host_home" ./QuantyFey.sif
+
+:: Open browser to localhost:3000
+start http://localhost:3000/
+
+```
+
+
+
+Mac:
+``` bash
+
+```
+
+
+
+
+## Launch QuantyFey from your local R, or RStudio
+> **Note:** The launch directly from R with appropriate package control only works on R 4.2.x or the R 4.5.x versions.
+
+Windows: current version of RTools for your R version
+Linux: multiple prerequisites - referr to the [`tutorial`](/tutorial/tutorial.md) for more information
+Mac: no additional prerequisites required
+
+1. Download the github repository
+2. Open the `app.r` script
+3. Set the current working directory to the `app.r` location
+  ``` r
+  setwd("pat_to_QuantyFey_app.r")
+  ```
+4. Run the entire script (Ctrl+A; Ctrl+Enter)
+
 
 ---
 
