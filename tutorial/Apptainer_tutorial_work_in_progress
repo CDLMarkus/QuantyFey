@@ -1,0 +1,76 @@
+### This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
+### However, this is difficult, and requires quite some time - also on MacOS, as it must be emulated due to the chip structure, this is very slow.
+### It is advised to use it mainly on Linux machines, while for Windows refer to the standalone installation guide.
+### For MacOS it is advised to run it from the R terminal, or RStudio.
+
+## Linux:
+
+1. install apptainer as described on their [official website](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
+2. Launch the apptainer by using the `launch_quantyfey.sh`-file.
+
+# install apptainer:
+
+# Windows
+> Note: are you *sure* you want to run it via Apptainer? It might run a bit faster, but its much more complicated.
+
+
+
+# MacOS
+
+On macOS a small Linux VM with [Lima] and run the already built `QuantyFey.sif` container.
+
+> Works on Apple Silicon and Intel Macs. 
+> If perfomrance is slow, use the vz config on Apple Silicon or Intel. Use the QEMU config only if uv is not available.
+
+## Requirements
+- macOS 12 or newer
+- terminal
+- Admin rights
+- `QuantyFey.sif` file
+
+One-time tools
+``` bash
+# Install Homebrew if you don't have it
+/bin/bash -c "$curl -fsSl https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+
+# Make sure brew is on PATH (Apple Silicon)
+eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+
+# Install Lima. Also install the extra guest agents for the QEMU fallback
+brew update
+brew install lima lima-additional-guestagents
+
+```
+
+## Pick a VM config
+Option A: faster setup using Apple's Virtualization.framework (vz)
+
+Use this first if you can. It is faster on Apple Silicon and Intel.
+
+Save as `/tmp/apptainer-vz.yaml`:
+``` yaml
+vmType: "vz"
+arch: "aarch64"
+images:
+  - location: "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-arm64.img"
+    arch: "aarch64"
+
+mounts:
+  - location: "~"
+    writable: true
+  - location: "/tmp/lima"
+    writable: true
+
+portForwards:
+  - guestPort: 3000
+    hostPort: 3000
+```
+
+Notes:
+- This VM is ARM64. It is fastest on Apple Silicon and runs well on Intel with vz too.
+If your SIF contains x86_64-only binaries, some workloads may not run under ARM. If you hit incompatible binareis, use the QEMU fallback below.
+
+
+
+
+
