@@ -58,46 +58,6 @@ To facilitate usability also by other computer systems, a apptainer container wa
 ### **Linux**
 - [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html)
 
-To facilitate the output generation, the document directory must be bound to the VM during its launch:
-
-Linux:
-``` bash
-# Set the bind target (Documents folder)
-BIND_PATH="$HOME/Documents"
-
-# bind and run the apptainer
-apptainer run --bind "${BIND_PATH}:/user_host_home" ./QuantyFey.sif &
-```
-Windows:
-``` bash
-:: Get user Documents path
-for /f "usebackq tokens=*" %%A in (`powershell -noprofile -command "[Environment]::GetFolderPath('MyDocuments')"`) do set "WIN_DOCS=%%A"
-
-:: Convert to WSL path
-set "WSL_DOCS=%WIN_DOCS:C:=/mnt/c%"
-set "WSL_DOCS=%WSL_DOCS:\=/%"
-
-:: Change to the directory where this script is
-cd /d %~dp0
-
-echo Mapping %WIN_DOCS% to /user_host_home and launching container...
-
-:: Run Apptainer with bind
-wsl --distribution Debian --exec apptainer run --bind "%WSL_DOCS%:/user_host_home" ./QuantyFey.sif
-
-:: Open browser to localhost:3000
-start http://localhost:3000/
-
-```
-
-
-
-Mac:
-``` bash
-
-```
-
-
 
 
 ## Launch QuantyFey from your local R, or RStudio
@@ -121,7 +81,7 @@ Mac: no additional prerequisites required
 > Refer to the [`tutorial`](tutorial/tutorial.md) for a more information on installing and using **QuantyFey**.
 
 
-## **Installation**
+## **Installation Standalone Version**
 
 1. Download the zip file download [QuantyFey.zip](https://github.com/CDLMarkus/QuantyFey/releases/)
 2. Extract the folder to a desired location.
@@ -129,14 +89,12 @@ Mac: no additional prerequisites required
 4. The console will open, and all required packages will be installed automatically (this process may take up to 10 minutes).
 5. Once installation is complete, the application will launch in your default web browser.
 
-## **Apptainer Version Installation**
+## **Installation Apptainer**
 
 A standalone version based on **Apptainer** is available for download.
 This comes with mutliple batch files for installation of wsl, apptainer and other required packages - as well as a launch script (as shell for Linux or batch for Windows).
 
-1. Download and unzip [QuantyFey_apptainer.zip](https://github.com/CDLMarkus/QuantyFey/releases/)
-2. Windows: install wsl and apptainer - use `install_wsl.bat` (admin rights required) and `setup.bat`.
-3. Launch the app using `launch_windows.bat` or `launch_linux.sh`
+As this installation and lauch is complicates, please referr to the [`tutorial`](/tutorial/tutorial.md) for detailed information.
 
 > **Note:** For Windows the standalone version is preferred - as writing output is not as easily done with the apptainer version.
 
