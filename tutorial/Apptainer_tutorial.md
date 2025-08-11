@@ -19,7 +19,7 @@ This file is additional file for the correct installation of apptainer for Windo
 
 1. install apptainer as described on their [official website](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
 2. Launch the apptainer by using the `launch_quantyfey.sh`-file.
-
+3. If the browser doesn't open automatically - go to `https://localhost:3000`
 
 ### Windows
 This guide sets up **WSL2** with Debian, installs Apptainer inside it, and runs a prebuilt `.sif` file.
@@ -73,6 +73,7 @@ apptainer version
 5. Bind and run the Apptainer Version
 Run the `launch_quantyfey.bat` file in the downloaded `QuantyFey_apptainer` folder.
 
+6. If the browser doesn't open automatically - go to `https://localhost:3000`
 
 ### MacOS
 
