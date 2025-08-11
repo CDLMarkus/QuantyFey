@@ -1,10 +1,6 @@
-### This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
-### However, this is difficult, and requires quite some time - also on MacOS, as it must be emulated due to the chip structure, this is very slow.
-### It is advised to use it mainly on Linux machines, while for Windows refer to the standalone installation guide.
-### For MacOS it is advised to run it from the R terminal, or RStudio.
-
-
-
+---
+This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
+---
 ### **MacOS**
 - **Homebrewer**:
 - **Linux Virtual Machine (VM)** (Lima)
