@@ -246,7 +246,8 @@ generate_report_if_requested <- function(input, rv, cpt_name) {
                 output_format = "pdf_document",
                 output_dir = results_directory(input),
                 output_file = output_file,
-                intermediates_dir = results_directory(input)
+                intermediates_dir = results_directory(input),
+                knit_root_dir = results_directory(input)
             )
             return(output_file)
         }, error = function(e) {
