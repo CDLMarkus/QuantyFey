@@ -1,5 +1,5 @@
 ---
-This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
+> This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
 ---
 ### **MacOS**
 - **Homebrewer**:
