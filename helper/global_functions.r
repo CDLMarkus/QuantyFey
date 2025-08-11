@@ -40,7 +40,7 @@ results_directory <- function(input = NULL) {
   path <- stringr::str_replace_all(path, "\\\\", "/")
   
   if (!dir.exists(path)) {
-    message("Error: Documents folder not found! Results stored in current directory.")
+    #message("Error: Documents folder not found! Results stored in current directory.")
 
     path <- c("/user_host_home")
   }

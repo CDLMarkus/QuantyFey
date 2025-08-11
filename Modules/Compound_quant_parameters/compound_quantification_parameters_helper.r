@@ -232,28 +232,38 @@ save_final_results <- function(input, rv, quant, cpt_name) {
 }
 
 generate_report_if_requested <- function(input, rv, cpt_name) {
-    if (input$generate_report) {
-        tryCatch({
-            setwd(script_path)
-            rmd_file <- file.path(script_path, "./Modules/Report/report_markdown.rmd")
-            output_file <- paste0("Report_", cpt_name, ".pdf")
-            if (file.exists(file.path(results_directory(input), output_file))) {
-                timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-                output_file <- paste0("Report_", cpt_name, "_", timestamp, ".pdf")
-            }
-            rmarkdown::render(
-                input = rmd_file,
-                output_format = "pdf_document",
-                output_dir = results_directory(input),
-                output_file = output_file,
-                intermediates_dir = results_directory(input),
-                knit_root_dir = results_directory(input)
-            )
-            return(output_file)
-        }, error = function(e) {
-            stop("Failed to generate report: ", e$message)
-        })
-    }
+  if (input$generate_report) {
+    tryCatch({
+      setwd(script_path)
+      rmd_file <- file.path(script_path, "./Modules/Report/report_markdown.rmd")
+      output_file <- paste0("Report_", cpt_name, ".pdf")
+      results_dir <- results_directory(input)
+      if (file.exists(file.path(results_dir, output_file))) {
+        timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+        output_file <- paste0("Report_", cpt_name, "_", timestamp, ".pdf")
+      }
+      # Set knitr options for figures and base directory
+      knitr::opts_knit$set(base.dir = results_dir)
+      knitr::opts_chunk$set(fig.path = file.path(results_dir, "figure/"))
+      # Set TMPDIR environment variable for temp files (works on most platforms)
+      old_tmpdir <- Sys.getenv("TMPDIR")
+      Sys.setenv(TMPDIR = results_dir)
+      on.exit(Sys.setenv(TMPDIR = old_tmpdir), add = TRUE)
+      # Render the report, specifying all relevant directories
+      rmarkdown::render(
+        input = rmd_file,
+        output_format = "pdf_document",
+        output_dir = results_dir,
+        output_file = output_file,
+        intermediates_dir = results_dir,
+        knit_root_dir = results_dir,
+        envir = new.env(parent = globalenv())
+      )
+      return(output_file)
+    }, error = function(e) {
+      stop("Failed to generate report: ", e$message)
+    })
+  }
 }
 
 update_compound_analysis_state <- function(input, rv, cpt_name, session) {
