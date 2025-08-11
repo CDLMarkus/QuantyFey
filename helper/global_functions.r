@@ -46,7 +46,8 @@ results_directory <- function(input = NULL) {
   }
   
   # Set working directory to Documents
-  setwd(path)
+  
+  tryCatch(setwd(path), error = function(e) {setwd(".")})
   #message("Working directory set to Documents folder.")
   
   # Create 'QuantyFey' folder if it doesn't exist

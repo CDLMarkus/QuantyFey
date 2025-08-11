@@ -257,7 +257,6 @@ generate_report_if_requested <- function(input, rv, cpt_name) {
         output_file = output_file,
         intermediates_dir = results_dir,
         knit_root_dir = results_dir,
-        envir = new.env(parent = globalenv())
       )
       return(output_file)
     }, error = function(e) {
