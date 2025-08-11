@@ -28,55 +28,49 @@ create_block_sample_subsets <- function(block_cal_map, sample_data) {
 }
 
 # Function to get results directory
-
 results_directory <- function(input = NULL) {
-  if (.Platform$OS.type == "windows") {
-    path <- file.path(Sys.getenv("USERPROFILE"), "Documents")
-  } else if (Sys.info()["sysname"] == "Darwin") {
-    path <- file.path(Sys.getenv("HOME"), "Documents")
-  } else {
-    path <- file.path(Sys.getenv("HOME"), "Documents")
-  }
-  path <- stringr::str_replace_all(path, "\\\\", "/")
-  
-  if (!dir.exists(path)) {
-    #message("Error: Documents folder not found! Results stored in current directory.")
+  # Prefer an env var you set at launch
+  base <- Sys.getenv("QUANTYFEY_RESULTS_DIR", unset = "")
 
-    path <- c("/user_host_home")
+  # Fallback to ~/Documents only if the env var is not set
+  if (base == "") {
+    base <- file.path(Sys.getenv("HOME", unset = "~"), "Documents")
   }
-  
-  # Set working directory to Documents
-  
-  tryCatch(setwd(path), error = function(e) {setwd(".")})
-  #message("Working directory set to Documents folder.")
-  
-  # Create 'QuantyFey' folder if it doesn't exist
-  quantyfey_path <- file.path(path, "QuantyFey")
+
+  base <- gsub("\\\\", "/", base)
+
+  # Make sure base exists and is writable
+  if (!dir.exists(base) && !dir.create(base, recursive = TRUE, showWarnings = FALSE)) {
+    stop("Base results path is not available: ", base)
+  }
+
+  quantyfey_path <- file.path(base, "QuantyFey")
   if (!dir.exists(quantyfey_path)) {
-    dir.create(quantyfey_path)
-    message("Created 'QuantyFey' folder.")
+    if (!dir.create(quantyfey_path, recursive = TRUE, showWarnings = TRUE)) {
+      stop("Cannot create QuantyFey folder at: ", quantyfey_path)
+    } else {
+      message("Created 'QuantyFey' folder.")
+    }
   }
-  setwd(quantyfey_path)
-  #message("Working directory set to 'QuantyFey' folder.")
-  
-  # Create 'Results_YYYYMMDD' folder
+
   today_date <- format(Sys.Date(), "%Y%m%d")
-
-  if(!is.null(input)){
-    results_folder <- file.path(quantyfey_path, input$project_name)
+  results_folder <- if (!is.null(input) && !is.null(input$project_name) && nzchar(input$project_name)) {
+    file.path(quantyfey_path, input$project_name)
   } else {
-    results_folder <- file.path(quantyfey_path, paste0("Results_", today_date))
+    file.path(quantyfey_path, paste0("Results_", today_date))
   }
-  
-
 
   if (!dir.exists(results_folder)) {
-    dir.create(results_folder)
-    message(paste("Created results folder:", results_folder))
+    if (!dir.create(results_folder, recursive = TRUE, showWarnings = TRUE)) {
+      stop("Cannot create results folder at: ", results_folder)
+    } else {
+      message("Created results folder: ", results_folder)
+    }
   }
+
   return(results_folder)
-  
 }
+
 
 
 checkboxColumn <- function(len, col, values = NULL, ...) {
