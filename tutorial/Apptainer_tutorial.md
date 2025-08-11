@@ -15,13 +15,13 @@ This file is additional file for the correct installation of apptainer for Windo
 
 ---
 ## Installation
-## Linux:
+### Linux:
 
 1. install apptainer as described on their [official website](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
 2. Launch the apptainer by using the `launch_quantyfey.sh`-file.
 
 
-## Windows
+### Windows
 This guide sets up **WSL2** with Debian, installs Apptainer inside it, and runs a prebuilt `.sif` file.
 > Note: This version is not recommanded, as the setup is a bit more complicated. The standalone version is recommanded for windows systems.
 
@@ -74,7 +74,7 @@ apptainer version
 Run the `launch_quantyfey.bat` file in the downloaded `QuantyFey_apptainer` folder.
 
 
-# #MacOS
+### MacOS
 
 On macOS a small Linux VM with [Lima] and run the already built `QuantyFey.sif` container.
 > **Note:** This version is not recommanded, as the VR completely needs to emulate a Linux machine, which is inefficient.
