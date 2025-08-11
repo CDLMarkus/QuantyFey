@@ -1,7 +1,7 @@
-## **Tutorial**
+# **Tutorial**
 This tutorials explains how to use the **QuantyFey** application, step by step. It covers everything you need to get started and use it efficiently. QuantyFey is designed to quantify targeted LC-MS/MS data using external calibration, but can also be used with other data formats that include intensity and retention time values.
 
-### **Table of Contents**
+## **Table of Contents**
 
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
@@ -26,12 +26,12 @@ This tutorials explains how to use the **QuantyFey** application, step by step. 
 - [Troubleshooting](#troubleshooting)
 
 
-### **Installation**
-The standalone version of this application runs on **Windows** and **Linux**. You can also run it directly from **R**, **RStudio**, or **VS Code**, which makes it compatible with **macOS** as well.
+## **Installation**
+
+### **Standalone Version**
+The standalone version of this application runs on **Windows** only. 
 
 #### Prerequisites
-
-##### Windows
 - **RTools 4.2** is required:
   - **Option A**: Install from the [official CRAN page](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html).
   - **Option B**: Use the included Portable R:
@@ -44,15 +44,7 @@ The standalone version of this application runs on **Windows** and **Linux**. Yo
     - Do not update the R version if prompted.
     - Follow the installer instructions. You can ignore any non-critical error during the final steps.
 
-##### Linux
-install the following packages before using **QuantyFey**
-``` bash
-sudo apt update
-sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev 
-```
-
-
-#### **Standalone Installation**
+#### **Installation**
 
 - **Download** the latest version of [QuantyFey](https://github.com/CDLMarkus/QuantyFey/releases/)
 - **Unzip** the folder to a destination of your choice.
@@ -60,6 +52,24 @@ sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-opens
 > **Note:** you may need to approve the execution of the script on Windows
 - A console will open and first all requirec packages will be installed automatically
 
+### Launching from R Terminal/RStudio
+To facilitate applicability on **macOS** or **Linux** systems, the app can be run directly from the R Terminal, or RStudio.
+> Note: Currently only versions 4.2.x or 4.5.x are working robustly, as package control files are available for these versions only. It should also work for different versions, however, there might be issues during the `install_packages` steps. This step could be also removed and all packeges can be installed manually.
+
+#### Prerequisites
+
+##### Windows
+- same as above
+
+##### Linux
+install the following packages before using **QuantyFey**
+``` bash
+sudo apt update
+sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev 
+```
+
+##### MacOS
+- no additional prerequisites necessary
 
 #### **Installation for launching the app using RStudio**
 - **Download** the GitHub repository.
@@ -69,11 +79,22 @@ sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-opens
 - **Install** [RStudio](https://posit.co/download/rstudio-desktop/)
 - **Install** [pandoc](https://pandoc.org/installing.html)
 - **Install** prerequisites as mentioned above.
-- **Open** `app.r` and **run** the script (in RStudio)
-- **Source** `app.r` (in the R terminal)
 
+- **Open** `app.r` and **run** (Ctrl+A; Ctrl+Enter) the script (in RStudio)
+- **Source** `app.r` (in the R terminal)
+> **Note:** make sure you are in the correct working directory. Use ``` r setwd("path_to_script") ``` to set the working directory.
 
 > **Note**: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.
+
+### Apptainer Version
+The apptainer version is recommanded for running on **Linux** systems. For MacOS Systems, this version is generally slow and difficult to setup. 
+Here, only the installation for **Linux** systems will be discussed, referr to the file [tutorial_apptainer.md](/tutorial_apptainer.md) for more information.
+
+#### Prerequisites
+- Install [Apptainer](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
+
+#### Launch and bind directory
+Launch the apptainer by using the `launch_quantyfey.sh` file.
 
 ---
 
