@@ -42,23 +42,15 @@ The standalone version [QuantyFey](https://github/CDLMarkus/QuantyFey/releases/)
 ### **Prerequisites**
 - **RTools**: Version 4.2 must be installed.
 
-## Apptainer Version
+### Apptainer Version
+The apptainer version is recommanded for running on **Linux** systems. For MacOS Systems, this version is generally slow and difficult to setup. 
+Here, only the installation for **Linux** systems will be discussed, referr to the file [tutorial_apptainer.md](/tutorial_apptainer.md) for more information.
 
-To facilitate usability also by other computer systems, a apptainer container was built including a **Linux Debian** version with all necessary packages. Multiple prerequisites must be installed to facilitate a smooth launch of the app.
+#### Prerequisites
+- Install [Apptainer](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
 
-### **MacOS**
-- **Homebrewer**:
-- **Linux Virtual Machine (VM)** (Lima)
-- [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html) in the Lima VM
-
-### **Windows**
-- **Windows Subsystem for Linux (WSL)**
-- [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html) in WSL
-
-### **Linux**
-- [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html)
-
-
+#### Launch and bind directory
+Launch the apptainer by using the `launch_quantyfey.sh` file.
 
 ## Launch QuantyFey from your local R, or RStudio
 > **Note:** The launch directly from R with appropriate package control only works on R 4.2.x or the R 4.5.x versions.
@@ -71,7 +63,7 @@ Mac: no additional prerequisites required
 2. Open the `app.r` script
 3. Set the current working directory to the `app.r` location
   ``` r
-  setwd("pat_to_QuantyFey_app.r")
+  setwd("path_to_QuantyFey_app.r")
   ```
 4. Run the entire script (Ctrl+A; Ctrl+Enter)
 

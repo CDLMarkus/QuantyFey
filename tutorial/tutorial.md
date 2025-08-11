@@ -80,9 +80,9 @@ sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-opens
 - **Install** [pandoc](https://pandoc.org/installing.html)
 - **Install** prerequisites as mentioned above.
 
-- **Open** `app.r` and **run** (Ctrl+A; Ctrl+Enter) the script (in RStudio)
+- **Open** `app.r` and **run** (Ctrl+A; Ctrl+Enter) the script (in RStudio) or
 - **Source** `app.r` (in the R terminal)
-> **Note:** make sure you are in the correct working directory. Use ``` r setwd("path_to_script") ``` to set the working directory.
+> **Note:** make sure you are in the correct working directory. Use ``` r setwd("path_to_QuantyFey_app.r") ``` to set the working directory.
 
 > **Note**: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.
 
