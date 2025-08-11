@@ -63,11 +63,23 @@ wsl -d Debian
 
 4. Install Apptainer inside Debian
 ``` bash
-sudo apt install -y wget
-wget https://github.com/apptainer/apptainer/releases/download/v1.4.1/apptainer_1.4.1_amd64.deb
-sudo apt install -y ./apptainer_1.4.1_amd64.deb
-rm -f ./apptainer_1.4.1_amd64.deb
-apptainer version
+sudo apt-get update
+sudo apt-get install -y build-essential libseccomp-dev pkg-config uidmap \
+  squashfs-tools fuse-overlayfs git golang-go curl
+
+# Get Apptainer source
+git clone https://github.com/apptainer/apptainer.git
+cd apptainer
+git fetch --tags
+git checkout "$(git tag -l 'v[0-9]*' | sort -Vr | head -n1)"
+
+# Build and install
+./mconfig
+make -C builddir
+sudo make -C builddir install
+
+# Check
+apptainer --version
 ```
 
 5. Bind and run the Apptainer Version
