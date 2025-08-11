@@ -27,49 +27,35 @@ create_block_sample_subsets <- function(block_cal_map, sample_data) {
   return(block_sample_list)
 }
 
-# Function to get results directory
 results_directory <- function(input = NULL) {
-  # Prefer an env var you set at launch
-  base <- Sys.getenv("QUANTYFEY_RESULTS_DIR", unset = "")
-
-  # Fallback to ~/Documents only if the env var is not set
-  if (base == "") {
-    base <- file.path(Sys.getenv("HOME", unset = "~"), "Documents")
+  env_base <- Sys.getenv("QUANTYFEY_RESULTS_DIR", unset = "")
+  quantyfey_base <- if (nzchar(env_base)) {
+    env_base                              # already the base you mounted
+  } else {
+    file.path(Sys.getenv("HOME", "~"), "Documents", "QuantyFey")
   }
 
-  base <- gsub("\\\\", "/", base)
-
-  # Make sure base exists and is writable
-  if (!dir.exists(base) && !dir.create(base, recursive = TRUE, showWarnings = FALSE)) {
-    stop("Base results path is not available: ", base)
-  }
-
-  quantyfey_path <- file.path(base, "QuantyFey")
-  if (!dir.exists(quantyfey_path)) {
-    if (!dir.create(quantyfey_path, recursive = TRUE, showWarnings = TRUE)) {
-      stop("Cannot create QuantyFey folder at: ", quantyfey_path)
-    } else {
-      message("Created 'QuantyFey' folder.")
+  quantyfey_base <- gsub("\\\\", "/", quantyfey_base)
+  if (!dir.exists(quantyfey_base)) {
+    if (!dir.create(quantyfey_base, recursive = TRUE, showWarnings = TRUE)) {
+      stop("Cannot create base folder: ", quantyfey_base)
     }
   }
 
   today_date <- format(Sys.Date(), "%Y%m%d")
-  results_folder <- if (!is.null(input) && !is.null(input$project_name) && nzchar(input$project_name)) {
-    file.path(quantyfey_path, input$project_name)
-  } else {
-    file.path(quantyfey_path, paste0("Results_", today_date))
-  }
+  subdir <- if (!is.null(input) && nzchar(input$project_name)) input$project_name
+            else paste0("Results_", today_date)
 
+  results_folder <- file.path(quantyfey_base, subdir)
   if (!dir.exists(results_folder)) {
     if (!dir.create(results_folder, recursive = TRUE, showWarnings = TRUE)) {
       stop("Cannot create results folder at: ", results_folder)
-    } else {
-      message("Created results folder: ", results_folder)
     }
   }
 
-  return(results_folder)
+  results_folder
 }
+
 
 
 
