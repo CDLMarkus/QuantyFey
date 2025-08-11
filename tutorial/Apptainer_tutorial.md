@@ -3,17 +3,18 @@
 This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
 
 ---
-### **MacOS**
+### Prerequisites
+#### **MacOS**
 - **Homebrewer**:
 - **Linux Virtual Machine (VM)** (Lima)
 - [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html) in the Lima VM
 
-### **Windows**
+#### **Windows**
 - **Windows Subsystem for Linux (WSL)**
 - [**Apptainer**](https://apptainer.org/docs/admin/main/installation.html) in WSL
 
-
-
+---
+## Installation
 ## Linux:
 
 1. install apptainer as described on their [official website](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
