@@ -232,38 +232,53 @@ save_final_results <- function(input, rv, quant, cpt_name) {
 }
 
 generate_report_if_requested <- function(input, rv, cpt_name) {
-  if (input$generate_report) {
-    tryCatch({
-      setwd(script_path)
-      rmd_file <- file.path(script_path, "./Modules/Report/report_markdown.rmd")
-      output_file <- paste0("Report_", cpt_name, ".pdf")
-      results_dir <- results_directory(input)
-      if (file.exists(file.path(results_dir, output_file))) {
-        timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-        output_file <- paste0("Report_", cpt_name, "_", timestamp, ".pdf")
-      }
-      # Set knitr options for figures and base directory
-      knitr::opts_knit$set(base.dir = results_dir)
-      knitr::opts_chunk$set(fig.path = file.path(results_dir, "figure/"))
-      # Set TMPDIR environment variable for temp files (works on most platforms)
-      old_tmpdir <- Sys.getenv("TMPDIR")
-      Sys.setenv(TMPDIR = results_dir)
-      on.exit(Sys.setenv(TMPDIR = old_tmpdir), add = TRUE)
-      # Render the report, specifying all relevant directories
-      rmarkdown::render(
-        input = rmd_file,
-        output_format = "pdf_document",
-        output_dir = results_dir,
-        output_file = output_file,
-        intermediates_dir = results_dir,
-        knit_root_dir = results_dir,
-      )
-      return(output_file)
-    }, error = function(e) {
-      stop("Failed to generate report: ", e$message)
-    })
-  }
+  if (!isTRUE(input$generate_report)) return(invisible(NULL))
+
+  results_dir <- results_directory(input)
+
+  # sanity: make sure it's writable
+  dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
+  ok <- tryCatch({
+    tf <- tempfile(tmpdir = results_dir)
+    writeLines("probe", tf); unlink(tf); TRUE
+  }, error = function(e) FALSE)
+  if (!ok) stop("Results directory is not writable: ", results_dir)
+
+  rmd_file <- file.path(script_path, "Modules/Report/report_markdown.rmd")
+
+  # unique output filename
+  base_name <- paste0("Report_", cpt_name, ".pdf")
+  output_file <- if (file.exists(file.path(results_dir, base_name))) {
+    paste0("Report_", cpt_name, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".pdf")
+  } else base_name
+
+  # ensure figure dir exists
+  dir.create(file.path(results_dir, "figure"), showWarnings = FALSE, recursive = TRUE)
+
+  # Do NOT try to change TMPDIR mid-session; tempdir() is sticky.
+  # Set where LaTeX writes aux/logs even if CWD is not writable.
+  old_env <- Sys.getenv(c("TEXMFOUTPUT"), names = TRUE)
+  on.exit(do.call(Sys.setenv, as.list(old_env)), add = TRUE)
+  Sys.setenv(TEXMFOUTPUT = results_dir)
+
+  # Knit and compile from the writable results dir
+  withr::with_dir(results_dir, {
+    knitr::opts_knit$set(base.dir = results_dir)
+    knitr::opts_chunk$set(fig.path = "figure/")
+
+    rmarkdown::render(
+      input             = rmd_file,        # absolute path ok
+      output_format     = "pdf_document",
+      output_file       = output_file,
+      output_dir        = results_dir,
+      intermediates_dir = results_dir,
+      knit_root_dir     = results_dir
+    )
+  })
+
+  return(output_file)
 }
+
 
 update_compound_analysis_state <- function(input, rv, cpt_name, session) {
     tryCatch({
