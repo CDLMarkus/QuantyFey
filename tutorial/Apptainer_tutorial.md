@@ -2,6 +2,8 @@
 
 This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
 
+> **Note:** The apptainer Version currently only works with the provided Datasets. Efforts are put into it, to make the Templates adjustable, and the PDF-report available. Please use other forms of installation for using QuantyFey as intended.
+
 ---
 ### Prerequisites
 #### **MacOS**

@@ -89,7 +89,7 @@ sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-opens
 ### Apptainer Version
 The apptainer version is recommanded for running on **Linux** systems. For MacOS Systems, this version is generally slow and difficult to setup. 
 Here, only the installation for **Linux** systems will be discussed, referr to the file [tutorial_apptainer.md](/tutorial_apptainer.md) for more information.
-> **Note:** The apptainer version does not currently enable generating a pdf-report. Consider an alternative installation if a pdf-report is required.
+> **Note:** The apptainer version does not currently enable generating a pdf-report. Consider an alternative installation if a pdf-report is required. The version also does not support updateing templates, and therefore can only be used to test the software, rather than actually using it. Please refer to other installation options for using QuantyFey.
 
 #### Prerequisites
 - Install [Apptainer](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
