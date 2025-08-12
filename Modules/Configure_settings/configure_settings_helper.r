@@ -210,3 +210,35 @@ get_qq_table <- function(input, rv) {
 
 
 }
+
+update_template <- function(session, input, rv){
+
+  template_file <- input$template_upload
+
+  templates_names <- excel_sheets(template_file$datapath)
+
+  for (template in templates_names) {
+  df_temp <- read_xlsx(template_file$datapath, sheet = template) %>% as.data.frame()
+  colnames(df_temp) <- gsub("[^a-zA-Z0-9._]", ".", colnames(df_temp))
+
+  template_list[[template]] <- df_temp
+}
+
+for (i in 1:length(template_list)) {
+      name_temp <- names(template_list)[i]
+      template_temp <- template_list[[i]]
+
+      if (!("Cal.Name" %in% colnames(template_temp))) {
+        stop(paste("The sheet", name_temp, "does not contain the column 'Cal.Name'."))
+      } 
+    }
+
+    print(template_list)
+    rv$templates <- template_list
+    message("rv$templates was updated")
+
+    updateSelectInput(session, "mode", "Template:", choices = templates_names, selected = templates_names[1])
+
+}
+
+

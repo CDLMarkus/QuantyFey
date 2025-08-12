@@ -40,6 +40,16 @@ configure_settings_module <- function(input, output, session, rv) {
     })
   })
 
+  observeEvent(input$template_upload, {
+    req(input$file1)
+    tryCatch({
+      update_template(session, input, rv)
+    }, error = function(e) {showNotification(paste("An error occured during upload.", e$message, sep = " "))})
+    
+
+
+  })
+
   # ----- Output -----
 
   output$setup_cal <- renderDT({

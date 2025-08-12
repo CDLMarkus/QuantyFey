@@ -213,6 +213,9 @@ navset_pill(
         title = "Settings",
         page_sidebar(
           sidebar = sidebar(
+          checkboxInput(inputId = "show_template_upload", label = "Upload Template File", value = FALSE),
+          conditionalPanel(condition = 'input.show_template_upload == true',
+            fileInput(inputId = "template_upload", label = "Upload Template.xlsx", accept = ".xlsx")),
           selectInput("mode", "Template:", choices = templates_names, selected = Template_name),
           checkboxInput(inputId = "change_patterns", "Change Patterns", value = FALSE),
           conditionalPanel(condition = 'input.change_patterns == true',
