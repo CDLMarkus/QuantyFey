@@ -91,7 +91,7 @@ Run the `launch_quantyfey.bat` file in the downloaded `QuantyFey_apptainer` fold
 
 On macOS a small Linux VM with [Lima] and run the already built `QuantyFey.sif` container.
 > **Note:** This version is not recommanded, as the VR completely needs to emulate a Linux machine, which is inefficient.
-> The launch using R terminal, or RStudio is recommanded for MacOS systems. Refer to the [tutorial.md](/./tutorial.md) for more information.
+> The launch using R terminal, or RStudio is recommanded for MacOS systems. Refer to the [`tutorial.md`](/tutorial/tutorial.md) for more information.
 
 > Works on Apple Silicon and Intel Macs. 
 > If perfomrance is slow, use the vz config on Apple Silicon or Intel. Use the QEMU config only if uv is not available.
