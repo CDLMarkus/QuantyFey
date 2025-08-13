@@ -1,0 +1,208 @@
+# Linux Setup Guide for QuantyFey
+
+This guide will walk you through setting up all necessary components to run QuantyFey on Linux using Apptainer (formerly known as Singularity).
+
+## Prerequisites
+
+- A Linux distribution (Ubuntu 20.04 LTS or newer recommended)
+- At least 4 GB of RAM (8 GB recommended)
+- Sudo/root privileges
+- At least 5 GB of free disk space
+- Basic familiarity with terminal commands
+
+## Step 1: System Preparation
+
+1. Update your system's package list and upgrade existing packages:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+
+2. Install essential build tools and dependencies:
+   ```bash
+   sudo apt install -y \
+       build-essential \
+       libseccomp-dev \
+       pkg-config \
+       squashfs-tools \
+       cryptsetup \
+       curl \
+       wget \
+       git \
+       software-properties-common
+   ```
+
+## Step 2: Install Go
+
+Apptainer requires Go to build from source. Install it using these commands:
+
+1. Install Go:
+   ```bash
+   export GOLANG_VERSION=1.19.9
+   wget https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz
+   sudo tar -C /usr/local -xzf go${GOLANG_VERSION}.linux-amd64.tar.gz
+   rm go${GOLANG_VERSION}.linux-amd64.tar.gz
+   ```
+
+2. Set up Go environment by adding these lines to your `~/.bashrc`:
+   ```bash
+   echo 'export PATH=/usr/local/go/bin:$PATH' >> ~/.bashrc
+   echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+3. Verify Go installation:
+   ```bash
+   go version
+   ```
+
+## Step 3: Install Apptainer
+
+1. Clone the Apptainer repository:
+   ```bash
+   git clone https://github.com/apptainer/apptainer.git
+   cd apptainer
+   git checkout v1.1.9
+   ```
+
+2. Build and install Apptainer:
+   ```bash
+   ./mconfig
+   make -C builddir
+   sudo make -C builddir install
+   ```
+
+3. Verify the installation:
+   ```bash
+   apptainer --version
+   ```
+
+## Step 4: Set Up QuantyFey
+
+1. Create a directory for QuantyFey:
+   ```bash
+   mkdir -p ~/Documents/QuantyFey
+   cd ~/Documents/QuantyFey
+   ```
+
+2. Copy the following files to your QuantyFey directory:
+   - `QuantyFey.sif`
+   - `launch_quantyfey.sh`
+
+3. Make the launch script executable:
+   ```bash
+   chmod +x launch_quantyfey.sh
+   ```
+
+## Running QuantyFey
+
+1. Navigate to your QuantyFey directory:
+   ```bash
+   cd ~/Documents/QuantyFey
+   ```
+
+2. Launch QuantyFey using the script:
+   ```bash
+   ./launch_quantyfey.sh
+   ```
+
+The script will:
+- Create an overlay file if it doesn't exist
+- Set up the necessary directories
+- Launch QuantyFey with your Documents folder mounted
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+1. **Apptainer not found:**
+   ```bash
+   which apptainer
+   ```
+   If not found, ensure you've sourced your `.bashrc` or try reinstalling.
+
+2. **Permission denied errors:**
+   ```bash
+   # Check if you're in the required groups
+   groups
+   # Check file permissions
+   ls -la ~/Documents/QuantyFey
+   ```
+
+3. **Overlay creation fails:**
+   - Ensure you have enough disk space:
+   ```bash
+   df -h
+   ```
+   - Check if your filesystem supports overlay:
+   ```bash
+   mount | grep $(df . | tail -1 | cut -d' ' -f1)
+   ```
+
+4. **Build errors during Apptainer installation:**
+   ```bash
+   # Install additional development tools
+   sudo apt install -y gcc gfortran make
+   ```
+
+### System-Specific Notes
+
+#### Ubuntu/Debian:
+All commands in this guide should work as-is.
+
+#### Fedora/RHEL:
+Replace apt commands with:
+```bash
+sudo dnf install -y \
+    gcc kernel-devel make \
+    libseccomp-devel squashfs-tools cryptsetup
+```
+
+#### Arch Linux:
+Replace apt commands with:
+```bash
+sudo pacman -S base-devel libseccomp squashfs-tools cryptsetup
+```
+
+## Additional Notes
+
+- The overlay file provides persistence between sessions
+- Keep your system updated regularly with:
+  ```bash
+  sudo apt update && sudo apt upgrade
+  ```
+- For better performance, ensure your system's security policies allow unprivileged user namespaces:
+  ```bash
+  sudo sysctl -w kernel.unprivileged_userns_clone=1
+  ```
+
+## Uninstallation
+
+To completely remove QuantyFey and Apptainer:
+
+1. Remove the QuantyFey directory:
+   ```bash
+   rm -rf ~/Documents/QuantyFey
+   ```
+
+2. Uninstall Apptainer:
+   ```bash
+   sudo rm -rf /usr/local/bin/apptainer /usr/local/etc/apptainer
+   ```
+
+3. (Optional) Remove Go:
+   ```bash
+   sudo rm -rf /usr/local/go
+   ```
+
+4. Clean up environment variables by removing the Go-related lines from `~/.bashrc`
+
+## Getting Help
+
+If you encounter any issues:
+1. Check the error messages in the terminal
+2. Verify all prerequisites are properly installed
+3. Ensure your system meets the minimum requirements
+4. Check system logs:
+   ```bash
+   journalctl -xe
+   ```
