@@ -67,6 +67,8 @@ install the following packages before using **QuantyFey**
 sudo apt update
 sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev 
 ```
+> **Note:** as no Linux PC was available for testing the App, there might be some packages missing. Please install them accordingly.
+
 
 ##### MacOS
 - no additional prerequisites necessary
@@ -87,15 +89,11 @@ sudo apt install -y wget nano r-base r-base-dev cmake curl pandoc libcurl4-opens
 > **Note**: On first launch, the app uses the `renv` package to restore the required R package environment. This enusres compatibility by installing the correct package versions. This process may take up to 20 minutes.
 
 ### Apptainer Version
-The apptainer version is recommanded for running on **Linux** systems. For MacOS Systems, this version is generally slow and difficult to setup. 
-Here, only the installation for **Linux** systems will be discussed, referr to the file [tutorial_apptainer.md](/tutorial_apptainer.md) for more information.
-> **Note:** The apptainer version does not currently enable generating a pdf-report. Consider an alternative installation if a pdf-report is required. The version also does not support updateing templates, and therefore can only be used to test the software, rather than actually using it. Please refer to other installation options for using QuantyFey.
+An apptainer version is also available [QuantyFey_apptainer.zib](https://github.com/CDLMarkus/QuantyFey/releases/).
+As this version can be run platform independent, offering an solution for all computer setups.
+Note: on macOS (especially) this is a bit complicated - and does not run efficiently (it may be very slow). Try to use a windows PC for the standalone application, or the apptainer version if possible.
 
-#### Prerequisites
-- Install [Apptainer](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
-
-#### Launch and bind directory
-Launch the apptainer by using the `launch_quantyfey.sh` file.
+The installation and setup are described in more detail in the [`respective tutorials`](./tutorial/).
 
 ---
 
