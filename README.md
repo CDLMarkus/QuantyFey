@@ -55,10 +55,11 @@ Launch the apptainer by using the `launch_quantyfey.sh` file.
 ## Launch QuantyFey from your local R, or RStudio
 > **Note:** The launch directly from R with appropriate package control only works on R 4.2.x or the R 4.5.x versions.
 
-Windows: current version of RTools for your R version
-Linux: multiple prerequisites - referr to the [`tutorial`](/tutorial/tutorial.md) for more information
-Mac: no additional prerequisites required
+- Windows: current version of RTools for your R version
+- Linux: multiple prerequisites - referr to the [`tutorial`](/tutorial/tutorial.md) for more information
+- Mac: no additional prerequisites required
 
+### Installation 
 1. Download the github repository
 2. Open the `app.r` script
 3. Set the current working directory to the `app.r` location
