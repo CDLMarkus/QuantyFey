@@ -1,12 +1,4 @@
-## Tutorial for Apptainer Version
-
-This file is additional file for the correct installation of apptainer for Windows, Linux, and MacOS
-
-> **Note:** The apptainer Version currently only works with the provided Datasets. Efforts are put into it, to make the Templates adjustable, and the PDF-report available. Please use other forms of installation for using QuantyFey as intended.
-
----
-
-## Windows
+# Windows Setup Guide for QuantyFey
 
 This guide will walk you through setting up all necessary components to run QuantyFey on Windows using WSL (Windows Subsystem for Linux) and Apptainer.
 
