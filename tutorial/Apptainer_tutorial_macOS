@@ -1,0 +1,274 @@
+# macOS Setup Guide for QuantyFey
+
+This guide will walk you through setting up all necessary components to run QuantyFey on macOS using Lima VM and Apptainer. Since Apptainer doesn't run natively on macOS, we'll use a lightweight Linux VM.
+
+## Prerequisites
+
+- macOS Monterey (12.0) or newer
+- Apple Silicon (M1/M2) or Intel processor
+- At least 8 GB of RAM (16 GB recommended)
+- At least 20 GB of free disk space
+- Administrator access to your Mac
+- Homebrew package manager installed
+
+## Step 1: Install Required Tools
+
+1. Install Homebrew if you haven't already:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. Install Lima VM and other required tools:
+   ```bash
+   brew install lima
+   ```
+
+## Step 2: Set Up Lima VM
+
+1. Create a directory for your Lima configuration:
+   ```bash
+   mkdir -p ~/.lima/quantyfey
+   ```
+
+2. Create a Lima configuration file for QuantyFey:
+   ```bash
+   cat << EOF > ~/.lima/quantyfey.yaml
+   # Example Lima configuration
+   images:
+   - location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+     arch: "x86_64"
+   - location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+     arch: "aarch64"
+   
+   # Mount your home directory for easy file access
+   mounts:
+   - location: "~"
+     writable: true
+   
+   # VM resources
+   cpus: 4
+   memory: "8GiB"
+   disk: "20GiB"
+   
+   # Enable containerd and buildkit
+   containerd:
+     system: false
+     user: true
+   
+   # Provide larger timeout for slower machines
+   timeout: 30m
+   EOF
+   ```
+
+3. Start the Lima VM:
+   ```bash
+   limactl start quantyfey
+   ```
+
+4. Enter the VM:
+   ```bash
+   limactl shell quantyfey
+   ```
+
+## Step 3: Set Up the Linux Environment (Inside Lima VM)
+
+1. Update the system:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+
+2. Install required dependencies:
+   ```bash
+   sudo apt install -y \
+       build-essential \
+       libseccomp-dev \
+       pkg-config \
+       squashfs-tools \
+       cryptsetup \
+       curl \
+       wget \
+       git \
+       software-properties-common
+   ```
+
+## Step 4: Install Go (Inside Lima VM)
+
+1. Install Go:
+   ```bash
+   export GOLANG_VERSION=1.19.9
+   wget https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz
+   sudo tar -C /usr/local -xzf go${GOLANG_VERSION}.linux-amd64.tar.gz
+   rm go${GOLANG_VERSION}.linux-amd64.tar.gz
+   ```
+
+2. Set up Go environment:
+   ```bash
+   echo 'export PATH=/usr/local/go/bin:$PATH' >> ~/.bashrc
+   echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+## Step 5: Install Apptainer (Inside Lima VM)
+
+1. Clone and install Apptainer:
+   ```bash
+   git clone https://github.com/apptainer/apptainer.git
+   cd apptainer
+   git checkout v1.1.9
+   ./mconfig
+   make -C builddir
+   sudo make -C builddir install
+   ```
+
+2. Verify the installation:
+   ```bash
+   apptainer --version
+   ```
+
+## Step 6: Set Up QuantyFey
+
+1. Create a directory for QuantyFey in your home directory:
+   ```bash
+   mkdir -p ~/Documents/QuantyFey
+   cd ~/Documents/QuantyFey
+   ```
+
+2. Copy the following files to your QuantyFey directory:
+   - `QuantyFey.sif`
+   - `launch_quantyfey.sh`
+
+3. Make the launch script executable:
+   ```bash
+   chmod +x launch_quantyfey.sh
+   ```
+
+## Running QuantyFey
+
+1. Start the Lima VM if it's not running:
+   ```bash
+   limactl start quantyfey
+   ```
+
+2. Enter the VM:
+   ```bash
+   limactl shell quantyfey
+   ```
+
+3. Navigate to your QuantyFey directory:
+   ```bash
+   cd ~/Documents/QuantyFey
+   ```
+
+4. Launch QuantyFey:
+   ```bash
+   ./launch_quantyfey.sh
+   ```
+
+## Creating a Convenient Launch Script
+
+Create a script on your Mac to automate the VM startup and QuantyFey launch:
+
+```bash
+cat << EOF > ~/Documents/launch-quantyfey-mac.sh
+#!/bin/bash
+
+# Start Lima VM if not running
+limactl start quantyfey 2>/dev/null || true
+
+# Run QuantyFey in the VM
+limactl shell quantyfey <<< "cd ~/Documents/QuantyFey && ./launch_quantyfey.sh"
+EOF
+
+chmod +x ~/Documents/launch-quantyfey-mac.sh
+```
+
+Now you can launch QuantyFey with:
+```bash
+~/Documents/launch-quantyfey-mac.sh
+```
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+1. **Lima VM fails to start:**
+   ```bash
+   limactl delete quantyfey
+   limactl start quantyfey
+   ```
+
+2. **Performance issues:**
+   - Adjust VM resources in `~/.lima/quantyfey.yaml`
+   - Increase CPU and memory allocation if your Mac has sufficient resources
+
+3. **File permission issues:**
+   ```bash
+   # Inside Lima VM
+   sudo chown -R $USER:$USER ~/Documents/QuantyFey
+   ```
+
+4. **VM Networking issues:**
+   ```bash
+   # Check VM status
+   limactl list
+   # Restart VM
+   limactl stop quantyfey
+   limactl start quantyfey
+   ```
+
+### Architecture-Specific Notes
+
+#### Apple Silicon (M1/M2) Macs:
+- The VM runs in emulation mode for x86_64 images
+- Consider using ARM64 images for better performance
+- Modify the Lima configuration to prefer ARM64 images
+
+#### Intel Macs:
+- Use x86_64 images for native performance
+- No emulation layer needed
+
+## Additional Notes
+
+- Keep your Lima VM updated:
+  ```bash
+  limactl shell quantyfey "sudo apt update && sudo apt upgrade -y"
+  ```
+- The Lima VM persists your changes between sessions
+- Your home directory is automatically mounted in the VM
+
+## Uninstallation
+
+1. Stop and delete the Lima VM:
+   ```bash
+   limactl stop quantyfey
+   limactl delete quantyfey
+   ```
+
+2. Remove Lima and related files:
+   ```bash
+   brew uninstall lima
+   rm -rf ~/.lima/quantyfey*
+   rm ~/Documents/launch-quantyfey-mac.sh
+   ```
+
+3. Remove QuantyFey files:
+   ```bash
+   rm -rf ~/Documents/QuantyFey
+   ```
+
+## Getting Help
+
+If you encounter issues:
+1. Check Lima VM status:
+   ```bash
+   limactl list
+   ```
+2. View Lima logs:
+   ```bash
+   limactl show-log quantyfey
+   ```
+3. Check system resources in Activity Monitor
+4. Verify your macOS version:
+   ```bash
+   sw_vers
+   ```
