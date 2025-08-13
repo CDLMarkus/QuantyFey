@@ -44,7 +44,7 @@ The standalone version [QuantyFey](https://github/CDLMarkus/QuantyFey/releases/)
 
 ### Apptainer Version
 The apptainer version is recommanded for running on **Linux** systems. For MacOS Systems, this version is generally slow and difficult to setup. 
-Here, only the installation for **Linux** systems will be discussed, referr to the file [Apptainer_tutorial.md](/tutorial/Apptainer_tutorial.md) for more information.
+Here, only the installation for **Linux** systems will be discussed, referr to the [respective tutorials](/tutorial/) for more information.
 
 #### Prerequisites
 - Install [Apptainer](https://apptainer.org/docs/admin/main/installation.html#install-from-github-release-rpms)
