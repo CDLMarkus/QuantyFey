@@ -107,6 +107,11 @@ To adjust the configuration:
 1. Open the file at `Dependencies/templates.xlsx`
 2. Add a new sheet or edit an existig one to define your own analysis setup.
 
+For the Apptainer Version:
+- The `templates.xlsx` cannot be configured within the Apptainer.
+- A template file can be loaded into the app by generating the template as an .xlsx file as described below.
+- And use the `Upload Templates` in the `Configure Settings` pane.
+
 **Template Structure Requirements**
 The template must follow this structure exactly:
 - `Cal.Name`: The first column must be named `Cal.Name` (spelling and case-sensitive). It should list the **names of the Calibration Standards** used in your sequence.
