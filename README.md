@@ -84,11 +84,9 @@ Mac: no additional prerequisites required
 ## **Installation Apptainer**
 
 A standalone version based on **Apptainer** is available for download.
-This comes with mutliple batch files for installation of wsl, apptainer and other required packages - as well as a launch script (as shell for Linux or batch for Windows).
-
-As this installation and lauch is complicates, please referr to the [`tutorial`](/tutorial/tutorial.md) for detailed information.
-
-> **Note:** For Windows the standalone version is preferred - as writing output is not as easily done with the apptainer version.
+The setup is a bit more complicated and a detailed descriptin of the setup is provided in the [`tutorial folder`](./tutorial/) for Windows, Linux, and macOS.
+> **Note:** the apptainer setup is (more) complicated on macOS and runs not very fast. Try to avoid setting it up on macOS - instead try to use the lauch via R terminal, or RStudio instead.
+> For Windows - it runs smoothly on Apptainer and the standalone version. However, the standalone version is preferred as it is more flexible and configurable.
 
 ---
 
