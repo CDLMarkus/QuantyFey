@@ -77,21 +77,13 @@ Apptainer requires Go to build from source. Install it using these commands:
    ```
 
 ## Step 4: Set Up QuantyFey
-
-1. Create a directory for QuantyFey:
-   ```bash
-   mkdir -p ~/Documents/QuantyFey
-   cd ~/Documents/QuantyFey
+1. Download [QuantyFey_apptainer.zip.part1 & QuantyFey_apptainer.zip.part2](https://github.com/CDLMarkus/QuantyFey/releases)
+2. Combine them by using
+   ``` bash
+   cat QuantyFey_apptainer_1.0.5.zip.part0 QuantyFey_apptainer_1.0.5.zip.part1 > QuantyFey_apptainer_1.0.5.zip
    ```
 
-2. Copy the following files to your QuantyFey directory:
-   - `QuantyFey.sif`
-   - `launch_quantyfey.sh`
 
-3. Make the launch script executable:
-   ```bash
-   chmod +x launch_quantyfey.sh
-   ```
 
 ## Running QuantyFey
 
