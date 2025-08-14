@@ -127,19 +127,10 @@ This guide will walk you through setting up all necessary components to run Quan
 
 ## Step 6: Set Up QuantyFey
 
-1. Create a directory for QuantyFey in your home directory:
-   ```bash
-   mkdir -p ~/Documents/QuantyFey
-   cd ~/Documents/QuantyFey
-   ```
-
-2. Copy the following files to your QuantyFey directory:
-   - `QuantyFey.sif`
-   - `launch_quantyfey.sh`
-
-3. Make the launch script executable:
-   ```bash
-   chmod +x launch_quantyfey.sh
+1. Download [QuantyFey_apptainer.zip.part1 & QuantyFey_apptainer.zip.part2](https://github.com/CDLMarkus/QuantyFey/releases)
+2. Combine them by using
+   ``` bash
+   cat QuantyFey_apptainer_1.0.5.zip.part0 QuantyFey_apptainer_1.0.5.zip.part1 > QuantyFey_apptainer_1.0.5.zip
    ```
 
 ## Running QuantyFey
