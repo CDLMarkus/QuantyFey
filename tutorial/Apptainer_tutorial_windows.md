@@ -95,15 +95,11 @@ If the automatic installation doesn't work, follow these manual steps:
 
 ## Step 6: Set Up QuantyFey
 
-1. Create a directory for QuantyFey (in Windows):
-   ```powershell
-   mkdir "%USERPROFILE%\Documents\QuantyFey"
+1. Download [QuantyFey_apptainer.zip.part1 & QuantyFey_apptainer.zip.part2](https://github.com/CDLMarkus/QuantyFey/releases)
+2. Combine them by using
+   ``` powershell
+   cmd /c copy /b "QuantyFey_apptainer_1.0.5.zip.part0" + "QuantyFey_apptainer_1.0.5.zip.part1" "QuantyFey_apptainer_1.0.5.zip"
    ```
-
-2. Copy the following files to your Documents\QuantyFey folder:
-   - `QuantyFey.sif`
-   - `launch_quantyfey.bat`
-   - `launch_quantyfey.sh`
 
 ## Running QuantyFey
 
