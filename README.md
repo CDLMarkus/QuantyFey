@@ -37,7 +37,7 @@ QuantyFey provides:
 
 ## Standalone Version
 
-The standalone version [QuantyFey](https://github/CDLMarkus/QuantyFey/releases/) only works on **Windows** systems. It runs on R-portable 4.2.0 and runs locally on the user's computer.
+The standalone version [QuantyFey](https://github.com/CDLMarkus/QuantyFey/releases/) only works on **Windows** systems. It runs on R-portable 4.2.0 and runs locally on the user's computer.
 
 ### **Prerequisites**
 - **RTools**: Version 4.2 must be installed.
