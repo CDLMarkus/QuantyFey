@@ -105,3 +105,6 @@ The app provides the user the tools for versatile and interactive quantification
 ![Graphical Abstract of the App](tutorial/images/graphical_abstract.png)
 
 
+> Please cite [`https://doi.org/10.1016/j.aca.2025.344571`](https://doi.org/10.1016/j.aca.2025.344571) if you are using the application.
+
+
